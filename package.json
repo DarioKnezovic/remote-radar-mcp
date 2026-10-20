@@ -9,6 +9,10 @@
       "types": "./dist/app.d.ts",
       "default": "./dist/app.js"
     },
+    "./domain": {
+      "types": "./dist/domain/index.d.ts",
+      "default": "./dist/domain/index.js"
+    },
     "./package.json": "./package.json"
   },
   "bin": {
@@ -23,6 +27,9 @@
   "engines": {
     "node": ">=22.12"
   },
+  "workspaces": [
+    "web"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsx src/index.ts",
@@ -38,7 +45,10 @@
     "test:watch": "vitest",
     "test:db": "TEST_DATABASE_URL=${TEST_DATABASE_URL:-postgres://remote_radar:remote_radar@localhost:5433/remote_radar} vitest run",
     "test:coverage": "TEST_DATABASE_URL=${TEST_DATABASE_URL:-postgres://remote_radar:remote_radar@localhost:5433/remote_radar} vitest run --coverage",
-    "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js"
+    "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
+    "web:dev": "npm run build && npm run dev -w web",
+    "web:build": "npm run build && npm run build -w web",
+    "web:start": "npm run start -w web"
   },
   "keywords": [
     "mcp",

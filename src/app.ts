@@ -48,6 +48,23 @@ export interface RemoteRadarOptions {
 
 export const DEFAULT_USER_AGENT = `remote-radar-mcp/${VERSION} (+https://github.com/DarioKnezovic/remote-radar-mcp)`;
 
+/**
+ * A readable reason for a connection error. A refused connection is an AggregateError with
+ * an empty message (one error per address tried), so fall back to its first error or code.
+ */
+function describeError(error: unknown): string {
+  if (error instanceof AggregateError && !error.message) {
+    const [first] = error.errors as unknown[];
+    if (first !== undefined) return describeError(first);
+  }
+  if (error instanceof Error) {
+    // An empty message must fall through too, hence not `??`.
+    if (error.message) return error.message;
+    return (error as NodeJS.ErrnoException).code ?? error.name;
+  }
+  return String(error);
+}
+
 /** Connects to Postgres, applies migrations and builds every service. */
 export async function createRemoteRadar(options: RemoteRadarOptions = {}): Promise<RemoteRadar> {
   const env = options.env ?? process.env;
@@ -58,7 +75,7 @@ export async function createRemoteRadar(options: RemoteRadarOptions = {}): Promi
     await migrate(pool);
   } catch (error) {
     if (ownsPool) await pool.end();
-    const reason = error instanceof Error ? error.message : String(error);
+    const reason = describeError(error);
     throw new Error(
       `Cannot prepare the database (${reason}). Is Postgres running? Try \`docker compose up -d\` in the project folder.`,
       { cause: error },
@@ -91,32 +108,10 @@ export async function createRemoteRadar(options: RemoteRadarOptions = {}): Promi
   };
 }
 
-// The parts of the core the web app uses, so it imports from one place.
-export {
-  APPLICATION_STATUSES,
-  type ApplicationStatus,
-  type SavedJob,
-} from './domain/application.js';
-export {
-  EMPLOYMENT_TYPES,
-  REMOTE_SCOPES,
-  SOURCE_IDS,
-  type EmploymentType,
-  type Job,
-  type RemoteScope,
-  type SourceId,
-} from './domain/job.js';
-export {
-  matchJob,
-  RED_FLAG_CODES,
-  type MatchResult,
-  type RedFlag,
-  type RedFlagCode,
-} from './domain/match.js';
-export { profileSchema, type Profile, type SkillLevel } from './domain/profile.js';
-export { htmlToText, truncate } from './domain/text.js';
+// Everything pure (types, constants, matching) for convenience; a bundler should import
+// it from `remote-radar-mcp/domain` instead, which doesn't pull in the database layer.
+export * from './domain/index.js';
 export type { SaveResult, UpdateStatusResult } from './db/job-repository.js';
 export type { ProfileIssue, ProfileResult } from './profile/profile-store.js';
 export type { SearchParams, SearchResult, SourceStatus } from './services/job-search.js';
 export type { SourceInfo } from './sources/job-source.js';
-export { VERSION } from './version.js';

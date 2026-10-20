@@ -81,3 +81,47 @@ jobs:
           name: coverage
           path: coverage/
           retention-days: 14
+
+  web:
+    name: Web app (lint, build, smoke test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: remote_radar
+          POSTGRES_PASSWORD: remote_radar
+          POSTGRES_DB: remote_radar
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U remote_radar -d remote_radar"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    env:
+      DATABASE_URL: postgres://remote_radar:remote_radar@localhost:5432/remote_radar
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Build the core (the web app imports it)
+        run: npm run build
+      - run: npm run lint -w web
+      - name: Build (includes typecheck)
+        run: npm run build -w web
+      - name: Smoke test the pages against Postgres
+        run: |
+          npm run start -w web -- -p 3000 > web.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3000/ && break; sleep 1; done
+          curl -sf http://localhost:3000/ | grep -q 'Find remote jobs that fit you'
+          curl -sf http://localhost:3000/how-it-works | grep -q 'Where the jobs come from'
+          ! curl -s http://localhost:3000/ | grep -q 'can’t reach its database'
+      - name: Server log
+        if: always()
+        run: cat web.log || true

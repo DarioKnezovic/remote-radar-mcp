@@ -4,3 +4,5 @@ node_modules
 package-lock.json
 test/fixtures
 PROMPT.md
+web/.next
+web/next-env.d.ts

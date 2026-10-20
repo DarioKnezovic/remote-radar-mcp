@@ -22,3 +22,8 @@ PROMPT.md
 .DS_Store
 .idea/
 .vscode/*
+
+# Web app build output
+/web/.next
+/web/next-env.d.ts
+*.tsbuildinfo

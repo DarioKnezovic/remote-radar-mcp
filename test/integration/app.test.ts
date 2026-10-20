@@ -61,3 +61,13 @@ describe.skipIf(!TEST_DATABASE_URL)('createRemoteRadar', () => {
     expect(await app.tracker.listSavedJobs()).toEqual([]);
   });
 });
+
+describe('createRemoteRadar without a database', () => {
+  it('explains how to start Postgres, with the real reason', async () => {
+    await expect(
+      createRemoteRadar({ env: { DATABASE_URL: 'postgres://x:x@127.0.0.1:1/x' }, http: offline }),
+    ).rejects.toThrow(
+      /^Cannot prepare the database \(connect ECONNREFUSED 127\.0\.0\.1:1\)\. Is Postgres running\?/,
+    );
+  });
+});
