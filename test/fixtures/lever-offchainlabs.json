@@ -1,0 +1,78 @@
+[
+  {
+    "additionalPlain": "Position is 100% remote; must reside in U.S.; reports to HQ in New York, NY. Salary: $193,461 - $291,000 per year. Attention Offchain Job Seekers: This role …",
+    "additional": "<p>Position is 100% remote; must reside in U.S.; reports to HQ in New York, NY. Salary: $193,461 - $291,000 per year. Attention Offchain Job Seekers: This role …</p>",
+    "categories": {
+      "commitment": "Full-time",
+      "location": "Remote",
+      "team": "Engineering",
+      "allLocations": [
+        "Remote"
+      ]
+    },
+    "createdAt": 1790198212687,
+    "descriptionPlain": "At Offchain, we aren’t just building products: we’re leading a movement. As pioneers in blockchain scalability and security, we're at the forefront of …",
+    "description": "<p>At Offchain, we aren’t just building products: we’re leading a movement. As pioneers in blockchain scalability and security, we're at the forefront of …</p>",
+    "id": "778776a7-8c15-41cd-bb04-425c55086a0c",
+    "lists": [
+      {
+        "text": "What You’ll Do:",
+        "content": "<li>Work on the core infrastructure powering Arbitrum, the leading Ethereum scaling solution (20%).</li><li>Tackle complex distributed systems challenges, optimize performance, and contribute to the security and scalability of Arbitrum (10%).</li>"
+      },
+      {
+        "text": "What You’ll Need:",
+        "content": "<li>Bachelor’s degree or U.S. equivalent in Computer Science, Cybersecurity, Computer Engineering, or a related field</li><li>Plus 5 years of professional experience as a Software Engineer, Software Architect, or any occupation, job title, position designing, developing, and securing blockchain-based backend systems.</li>"
+      }
+    ],
+    "salaryRange": {
+      "min": 193461,
+      "currency": "USD",
+      "interval": "per-year-salary",
+      "max": 291000
+    },
+    "text": "Senior Backend Engineer",
+    "country": "US",
+    "workplaceType": "remote",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<p>At Offchain, we aren’t just building products: we’re leading a movement. As pioneers in blockchain scalability and security, we're at the forefront of …</p>",
+    "descriptionBodyPlain": "At Offchain, we aren’t just building products: we’re leading a movement. As pioneers in blockchain scalability and security, we're at the forefront of …",
+    "hostedUrl": "https://jobs.lever.co/offchainlabs/778776a7-8c15-41cd-bb04-425c55086a0c",
+    "applyUrl": "https://jobs.lever.co/offchainlabs/778776a7-8c15-41cd-bb04-425c55086a0c/apply"
+  },
+  {
+    "additionalPlain": "Attention Offchain Labs Job Seekers: The position is onsite and reports to our office in New York, NY. Salary: $180,000-$225,000 per year Please be advised …",
+    "additional": "<p>Attention Offchain Labs Job Seekers: The position is onsite and reports to our office in New York, NY. Salary: $180,000-$225,000 per year Please be advised …</p>",
+    "categories": {
+      "commitment": "Full-time",
+      "location": "New York City, NY",
+      "team": "Finance",
+      "allLocations": [
+        "New York City, NY"
+      ]
+    },
+    "createdAt": 1781733216563,
+    "descriptionPlain": "At Offchain Labs, we aren’t just building products: we’re leading a movement. As pioneers in blockchain scalability and security, we're at the forefront of …",
+    "description": "<p>At Offchain Labs, we aren’t just building products: we’re leading a movement. As pioneers in blockchain scalability and security, we're at the forefront of …</p>",
+    "id": "ccd3b5d3-1797-4a06-98ae-22a6937ab8c8",
+    "lists": [
+      {
+        "text": "What is the role: ",
+        "content": "<li>We’re looking for a mission-driven, resilient Director of Accounting to work with the Head of Finance to build out the Accounting department, ensuring that Offchain has accurate and timely financial reporting and implementing financial operating procedures.</li><li>This leader will roll up their sleeves and work both independently and as a manager.</li>"
+      },
+      {
+        "text": "What you'll do:",
+        "content": "<li>Lead the monthly close process and prepare and analyze financial statements, including income. statements, balance sheets, and statements of cash flow</li><li>Drive opportunities for process improvements and automation, optimize our accounting systems and tools, and lead the implementation of accounting best <a rel=\"noopener noreferrer\" href=\"http://practices.Ensure\" class=\"postings-link\">practices</a></li>"
+      }
+    ],
+    "text": "Director of Accounting",
+    "country": "US",
+    "workplaceType": "onsite",
+    "opening": "",
+    "openingPlain": "",
+    "descriptionBody": "<p>At Offchain Labs, we aren’t just building products: we’re leading a movement. As pioneers in blockchain scalability and security, we're at the forefront of …</p>",
+    "descriptionBodyPlain": "At Offchain Labs, we aren’t just building products: we’re leading a movement. As pioneers in blockchain scalability and security, we're at the forefront of …",
+    "hostedUrl": "https://jobs.lever.co/offchainlabs/ccd3b5d3-1797-4a06-98ae-22a6937ab8c8",
+    "applyUrl": "https://jobs.lever.co/offchainlabs/ccd3b5d3-1797-4a06-98ae-22a6937ab8c8/apply"
+  }
+]

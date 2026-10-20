@@ -73,6 +73,12 @@ describe('dedupeJobs', () => {
     expect(dedupeJobs([older, newer]).jobs).toEqual([newer]);
   });
 
+  it("prefers the company's own board over an aggregator's copy", () => {
+    const aggregator = makeJob({ source: 'arbeitnow', company: 'grafanalabs', title: 'SRE' });
+    const original = makeJob({ source: 'greenhouse', company: 'Grafana Labs', title: 'SRE' });
+    expect(dedupeJobs([aggregator, original]).jobs).toEqual([original]);
+  });
+
   it('returns an empty result for no jobs', () => {
     expect(dedupeJobs([])).toEqual({ jobs: [], removed: 0 });
   });

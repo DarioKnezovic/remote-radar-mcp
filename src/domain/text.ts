@@ -24,6 +24,11 @@ function decodeEntity(match: string, entity: string): string {
   return NAMED_ENTITIES[entity.toLowerCase()] ?? match;
 }
 
+/** Decodes HTML entities without touching tags (Greenhouse sends its HTML entity-escaped). */
+export function decodeHtmlEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, decodeEntity);
+}
+
 /** Converts listing HTML into readable plain text. Not a sanitizer — only used for display and matching. */
 export function htmlToText(html: string): string {
   return (

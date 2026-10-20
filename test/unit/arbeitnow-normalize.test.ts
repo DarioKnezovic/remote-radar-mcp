@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { jobSchema } from '../../src/domain/job.js';
-import {
-  mapEmploymentType,
-  normalizeArbeitnowResponse,
-  remoteScopeFor,
-} from '../../src/sources/arbeitnow/normalize.js';
+import { employmentTypeFromLabels } from '../../src/domain/employment.js';
+import { remoteScopeFor } from '../../src/domain/remote-scope.js';
+import { normalizeArbeitnowResponse } from '../../src/sources/arbeitnow/normalize.js';
 import { loadFixture } from '../helpers.js';
 
 // Trimmed sample of page 1 from https://www.arbeitnow.com/api/job-board-api (2026-10-20).
@@ -71,7 +69,7 @@ describe('normalizeArbeitnowResponse (recorded fixture)', () => {
   });
 });
 
-describe('mapEmploymentType', () => {
+describe('employmentTypeFromLabels', () => {
   it.each([
     [['Full Time'], 'full_time'],
     [['fulltime fixed term'], 'full_time'],
@@ -86,8 +84,12 @@ describe('mapEmploymentType', () => {
     [['Selbstständiger / freelancer'], 'freelance'],
     [['Mid', 'Experienced'], 'unknown'],
     [[], 'unknown'],
+    [['Full Time Contractor'], 'contract'],
+    [['Short Term'], 'contract'],
+    [['Permanent'], 'full_time'],
+    [['Full-time'], 'full_time'],
   ] as const)('%j → %s', (jobTypes, expected) => {
-    expect(mapEmploymentType(jobTypes)).toBe(expected);
+    expect(employmentTypeFromLabels(jobTypes)).toBe(expected);
   });
 });
 

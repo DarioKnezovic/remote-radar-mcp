@@ -13,8 +13,10 @@ npm-debug.log*
 .env.*
 !.env.example
 
-# Local profile (v2) — contains personal data
+# Personal, local-only files
 profile.json
+boards.json
+PROMPT.md
 
 # OS / editor
 .DS_Store

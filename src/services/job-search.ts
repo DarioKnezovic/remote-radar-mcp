@@ -38,7 +38,7 @@ async function fetchFromSource(source: JobSource): Promise<{ jobs: Job[]; status
   }
 }
 
-/** Fetches from every source in parallel, then dedupes, filters, sorts and limits. */
+/** Fetches from every source in parallel, then filters, dedupes, sorts and limits. */
 export class JobSearchService {
   constructor(
     private readonly sources: readonly JobSource[],
@@ -50,14 +50,17 @@ export class JobSearchService {
     const all = results.flatMap((result) => result.jobs);
     const sources = results.map((result) => result.status);
 
-    const { jobs: unique, removed } = dedupeJobs(all);
-    const matches = filterJobs(unique, {
+    // Filter first, then dedupe: a role posted once per country ("Remote, US" and "Remote,
+    // Germany") must survive a Europe search, whichever copy dedupe would otherwise keep.
+    const filtered = filterJobs(all, {
       query: params.query,
       tags: params.tags,
       remoteScopes: params.remoteScopes,
       postedWithinDays: params.postedWithinDays,
       now: this.now(),
-    }).sort((a, b) => b.published_at.localeCompare(a.published_at));
+    });
+    const { jobs: unique, removed } = dedupeJobs(filtered);
+    const matches = unique.sort((a, b) => b.published_at.localeCompare(a.published_at));
 
     return {
       jobs: matches.slice(0, params.limit),

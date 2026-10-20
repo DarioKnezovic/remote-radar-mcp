@@ -3,13 +3,7 @@ import { z } from 'zod';
 import { applicationStatusSchema } from '../domain/application.js';
 import { employmentTypeSchema, remoteScopeSchema, sourceIdSchema } from '../domain/job.js';
 import { htmlToText, truncate } from '../domain/text.js';
-import {
-  jobIdInput,
-  SOURCE_ATTRIBUTION,
-  toolError,
-  toolResult,
-  type TrackerStore,
-} from './shared.js';
+import { jobIdInput, attributionFor, toolError, toolResult, type TrackerStore } from './shared.js';
 
 /** Keeps one very long listing from flooding the model's context. */
 const MAX_DESCRIPTION_LENGTH = 12_000;
@@ -70,7 +64,7 @@ export function registerGetJobDetails(server: McpServer, store: TrackerStore): v
               updated_at: saved.updated_at,
             }
           : null,
-        attribution: `Listing via ${SOURCE_ATTRIBUTION[job.source]}. Apply at ${job.url}`,
+        attribution: `Listing via ${attributionFor(job)}. Apply at ${job.url}`,
       });
     },
   );

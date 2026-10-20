@@ -1,0 +1,30 @@
+{
+  "$comment": "Starter list of company job boards (verified 2026-10-20: each responds and had remote engineering roles). To customise, copy this file to boards.json (git-ignored) and edit it; boards.json takes precedence. Board tokens are the company part of the board URL, e.g. job-boards.greenhouse.io/gitlab, jobs.lever.co/jumpcloud, jobs.ashbyhq.com/linear.",
+  "greenhouse": [
+    { "board": "gitlab", "company": "GitLab" },
+    { "board": "grafanalabs", "company": "Grafana Labs" },
+    { "board": "mozilla", "company": "Mozilla" },
+    { "board": "canonical", "company": "Canonical" },
+    { "board": "wikimedia", "company": "Wikimedia Foundation" },
+    { "board": "planetscale", "company": "PlanetScale" },
+    { "board": "dataiku", "company": "Dataiku" }
+  ],
+  "lever": [
+    { "board": "offchainlabs", "company": "Offchain Labs" },
+    { "board": "jumpcloud", "company": "JumpCloud" },
+    { "board": "swile", "company": "Swile" }
+  ],
+  "ashby": [
+    { "board": "linear", "company": "Linear" },
+    { "board": "posthog", "company": "PostHog" },
+    { "board": "supabase", "company": "Supabase" },
+    { "board": "n8n", "company": "n8n" },
+    { "board": "sentry", "company": "Sentry" },
+    { "board": "clickhouse", "company": "ClickHouse" },
+    { "board": "doctolib", "company": "Doctolib" },
+    { "board": "voodoo", "company": "Voodoo" },
+    { "board": "kong", "company": "Kong" },
+    { "board": "qonto", "company": "Qonto" },
+    { "board": "ledger", "company": "Ledger" }
+  ]
+}

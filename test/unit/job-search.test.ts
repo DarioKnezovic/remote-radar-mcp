@@ -39,7 +39,7 @@ describe('JobSearchService', () => {
     ]);
   });
 
-  it('dedupes across sources before filtering', async () => {
+  it('dedupes across sources', async () => {
     const service = new JobSearchService(
       [
         new FakeSource([makeJob({ company: 'Acme', title: 'Frontend Engineer' })]),
@@ -61,6 +61,29 @@ describe('JobSearchService', () => {
 
     expect(result.jobs).toHaveLength(1);
     expect(result.duplicatesRemoved).toBe(1);
+  });
+
+  it('filters before deduping, so a per-country copy that matches is never lost', async () => {
+    // The same role posted for two countries; the US copy is "richer" (has a salary), so
+    // deduping first would keep it and a Europe search would then return nothing.
+    const us = makeJob({
+      company: 'GitLab',
+      title: 'Backend Engineer',
+      remote_scope: 'US only',
+      location: 'Remote, United States',
+      salary: 'USD 150,000',
+    });
+    const germany = makeJob({
+      company: 'GitLab',
+      title: 'Backend Engineer',
+      remote_scope: 'Europe',
+      location: 'Remote, Germany',
+    });
+    const service = new JobSearchService([new FakeSource([us, germany])], now);
+
+    const result = await service.search({ remoteScopes: ['Europe'], limit: 10 });
+
+    expect(result.jobs).toEqual([germany]);
   });
 
   it('passes every filter through', async () => {

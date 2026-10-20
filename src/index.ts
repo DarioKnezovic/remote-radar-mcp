@@ -9,6 +9,7 @@ import { logger } from './logger.js';
 import { createServer, SERVER_VERSION } from './server.js';
 import { JobSearchService } from './services/job-search.js';
 import { createHttpClient } from './sources/http.js';
+import { loadBoardsConfig, resolveBoardsFile } from './sources/boards-config.js';
 import { createSources } from './sources/registry.js';
 
 const USER_AGENT = `remote-radar-mcp/${SERVER_VERSION} (+https://github.com/DarioKnezovic/remote-radar-mcp)`;
@@ -30,8 +31,19 @@ async function main(): Promise<void> {
 
   const repository = new JobRepository(pool);
   const http = createHttpClient({ userAgent: USER_AGENT });
-  const sources = createSources(http, new PostgresFetchCacheStore(repository));
-  const server = createServer({ search: new JobSearchService(sources), store: repository });
+  const boardsFile = await resolveBoardsFile();
+  const boards = await loadBoardsConfig(boardsFile);
+  logger.info('loaded company boards', {
+    file: boardsFile.pathname,
+    greenhouse: boards.greenhouse.length,
+    lever: boards.lever.length,
+    ashby: boards.ashby.length,
+  });
+  const sources = createSources(http, new PostgresFetchCacheStore(repository), boards);
+  const server = createServer({
+    search: new JobSearchService(sources),
+    store: repository,
+  });
   const transport = new StdioServerTransport();
 
   const shutdown = async (signal: string) => {

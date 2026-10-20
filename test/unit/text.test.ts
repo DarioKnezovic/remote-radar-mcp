@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { foldText, htmlToText, truncate } from '../../src/domain/text.js';
-import { normalizeTags, textOrNull, toIsoUtc } from '../../src/sources/normalize-helpers.js';
+import { decodeHtmlEntities, foldText, htmlToText, truncate } from '../../src/domain/text.js';
+import {
+  formatSalaryRange,
+  normalizeTags,
+  splitTitle,
+  textOrNull,
+  toIsoUtc,
+} from '../../src/sources/normalize-helpers.js';
 
 describe('htmlToText', () => {
   it('turns block elements into line breaks and strips other tags', () => {
@@ -68,5 +74,41 @@ describe('textOrNull / normalizeTags', () => {
 
   it('dedupes tags case-insensitively, keeping the first spelling', () => {
     expect(normalizeTags(['React', ' react', '', 'Node.js'])).toEqual(['React', 'Node.js']);
+  });
+});
+
+describe('formatSalaryRange', () => {
+  it.each([
+    [
+      { min: 140000, max: 250000, currency: 'usd', interval: 'per-year' },
+      'USD 140,000–250,000 per year',
+    ],
+    [
+      { min: 193461, max: 291000, currency: 'USD', interval: 'per-year-salary' },
+      'USD 193,461–291,000 per year',
+    ],
+    [{ min: 50, max: 50, currency: 'EUR', interval: 'per-hour-wage' }, 'EUR 50 per hour'],
+    [{ min: 60000, max: 0, currency: 'EUR' }, 'EUR from 60,000'],
+    [{ max: 90000 }, 'up to 90,000'],
+    [{ min: 0, max: 0, currency: 'USD' }, null],
+  ] as const)('%j → %s', (input, expected) => {
+    expect(formatSalaryRange(input)).toBe(expected);
+  });
+});
+
+describe('decodeHtmlEntities', () => {
+  it('decodes entities but keeps tags', () => {
+    expect(decodeHtmlEntities('&lt;p&gt;R&amp;D&lt;/p&gt;')).toBe('<p>R&D</p>');
+  });
+});
+
+describe('splitTitle', () => {
+  it.each([
+    ['Staff PM, Platform |  Germany | Remote', 'Staff PM, Platform', 'Germany, Remote'],
+    ['Engineering Manager | Remote | Europe', 'Engineering Manager', 'Remote, Europe'],
+    ['Backend Engineer | Payments', 'Backend Engineer | Payments', null],
+    ['Plain title', 'Plain title', null],
+  ])('%j → %j + %j', (input, title, extra) => {
+    expect(splitTitle(input)).toEqual({ title, extra });
   });
 });

@@ -5,6 +5,7 @@ import {
   employmentTypeSchema,
   remoteScopeSchema,
   sourceIdSchema,
+  type Job,
   type SourceId,
 } from '../domain/job.js';
 import type { JobRepository } from '../db/job-repository.js';
@@ -15,11 +16,26 @@ export type TrackerStore = Pick<
   'getJob' | 'getSavedJob' | 'saveJob' | 'updateStatus' | 'listSavedJobs'
 >;
 
-/** Credit line required by each source's terms. */
-export const SOURCE_ATTRIBUTION: Record<SourceId, string> = {
+/** Job boards whose terms ask for credit by name, with a link back. */
+const BOARD_ATTRIBUTION: Partial<Record<SourceId, string>> = {
   remotive: 'Remotive (https://remotive.com)',
   arbeitnow: 'Arbeitnow (https://www.arbeitnow.com)',
+  remoteok: 'Remote OK (https://remoteok.com)',
 };
+
+const ATS_NAMES: Partial<Record<SourceId, string>> = {
+  greenhouse: 'Greenhouse',
+  lever: 'Lever',
+  ashby: 'Ashby',
+};
+
+/** Credit line for one job: the job board, or the company's own careers page on its ATS. */
+export function attributionFor(job: Pick<Job, 'source' | 'company'>): string {
+  return (
+    BOARD_ATTRIBUTION[job.source] ??
+    `${job.company}'s careers page (hosted on ${ATS_NAMES[job.source] ?? job.source})`
+  );
+}
 
 export const jobIdInput = z
   .string()

@@ -1,0 +1,134 @@
+{
+  "apiVersion": "1",
+  "jobs": [
+    {
+      "id": "0be1b52c-2401-4ae2-b7fc-5d018c1ff96f",
+      "title": "Technical Customer Success Manager - EMEA",
+      "department": "Sales & Customer Success",
+      "team": "Customer Success",
+      "employmentType": "FullTime",
+      "location": "Remote (EMEA)",
+      "shouldDisplayCompensationOnJobPostings": false,
+      "secondaryLocations": [],
+      "publishedAt": "2026-09-18T08:41:19.683+00:00",
+      "isListed": true,
+      "isRemote": true,
+      "workplaceType": "Remote",
+      "address": {
+        "postalAddress": {
+          "addressCountry": "European Union"
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/posthog/0be1b52c-2401-4ae2-b7fc-5d018c1ff96f",
+      "applyUrl": "https://jobs.ashbyhq.com/posthog/0be1b52c-2401-4ae2-b7fc-5d018c1ff96f/application",
+      "descriptionHtml": "<p>About PostHog PostHog is your product’s context layer. It ingests and stores your analytics, errors, replays, and business data so you and your agents can query and act on it. We launched out of Y Combinator's W20 cohort . We've since …</p>",
+      "descriptionPlain": "ABOUT POSTHOG PostHog is your product’s context layer. It ingests and stores your analytics, errors, replays, and business data so you and your agents can query and act on it. We launched out of Y Combinator's W20 cohort …",
+      "compensation": {
+        "compensationTierSummary": null,
+        "scrapeableCompensationSalarySummary": null,
+        "compensationTiers": [],
+        "summaryComponents": []
+      }
+    },
+    {
+      "id": "8dc3f33a-b930-4c54-b4c4-3e6bd2ff28d3",
+      "title": "AI Research Engineer",
+      "department": "Engineering",
+      "team": "PostHog AI",
+      "employmentType": "FullTime",
+      "location": "Hybrid (UK)",
+      "shouldDisplayCompensationOnJobPostings": false,
+      "secondaryLocations": [],
+      "publishedAt": "2026-08-18T19:01:08.379+00:00",
+      "isListed": true,
+      "isRemote": true,
+      "workplaceType": "Hybrid",
+      "address": {
+        "postalAddress": {
+          "addressRegion": "",
+          "addressCountry": "United Kingdom",
+          "addressLocality": "Cambridge"
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/posthog/8dc3f33a-b930-4c54-b4c4-3e6bd2ff28d3",
+      "applyUrl": "https://jobs.ashbyhq.com/posthog/8dc3f33a-b930-4c54-b4c4-3e6bd2ff28d3/application",
+      "descriptionHtml": "<p>About PostHog PostHog is your product’s context layer. It ingests and stores your analytics, errors, replays, and business data so you and your agents can query and act on it. We launched out of Y Combinator's W20 cohort . We've since …</p>",
+      "descriptionPlain": "ABOUT POSTHOG PostHog is your product’s context layer. It ingests and stores your analytics, errors, replays, and business data so you and your agents can query and act on it. We launched out of Y Combinator's W20 cohort …",
+      "compensation": {
+        "compensationTierSummary": null,
+        "scrapeableCompensationSalarySummary": null,
+        "compensationTiers": [],
+        "summaryComponents": []
+      }
+    },
+    {
+      "id": "1464036f-94d5-4dbd-aef8-fe99246a26d4",
+      "title": "Site Reliability Engineer (US - Pacific time)",
+      "department": "Engineering",
+      "team": "Cloud Foundations",
+      "employmentType": "FullTime",
+      "location": "San Francisco, CA",
+      "shouldDisplayCompensationOnJobPostings": false,
+      "secondaryLocations": [
+        {
+          "location": "Remote (US)",
+          "address": {
+            "postalAddress": {
+              "addressCountry": "United States"
+            }
+          }
+        }
+      ],
+      "publishedAt": "2026-08-06T08:48:53.622+00:00",
+      "isListed": true,
+      "isRemote": false,
+      "workplaceType": "OnSite",
+      "address": {
+        "postalAddress": {
+          "addressRegion": "California",
+          "addressCountry": "United States",
+          "addressLocality": "San Francisco"
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/posthog/1464036f-94d5-4dbd-aef8-fe99246a26d4",
+      "applyUrl": "https://jobs.ashbyhq.com/posthog/1464036f-94d5-4dbd-aef8-fe99246a26d4/application",
+      "descriptionHtml": "<p>About PostHog PostHog is your product’s context layer. It ingests and stores your analytics, errors, replays, and business data so you and your agents can query and act on it. We launched out of Y Combinator's W20 cohort . We've since …</p>",
+      "descriptionPlain": "ABOUT POSTHOG PostHog is your product’s context layer. It ingests and stores your analytics, errors, replays, and business data so you and your agents can query and act on it. We launched out of Y Combinator's W20 cohort …",
+      "compensation": {
+        "compensationTierSummary": null,
+        "scrapeableCompensationSalarySummary": null,
+        "compensationTiers": [],
+        "summaryComponents": []
+      }
+    },
+    {
+      "id": "20ab9628-20ff-4ae3-bd6a-46ae7e9dc6b8",
+      "title": "Product Engineer",
+      "department": "Engineering",
+      "team": "Product Engineering",
+      "employmentType": "FullTime",
+      "location": "Remote",
+      "shouldDisplayCompensationOnJobPostings": false,
+      "secondaryLocations": [],
+      "publishedAt": "2026-09-24T16:56:29.377+00:00",
+      "isListed": true,
+      "isRemote": true,
+      "workplaceType": "Remote",
+      "address": {
+        "postalAddress": {
+          "addressCountry": "USA"
+        }
+      },
+      "jobUrl": "https://jobs.ashbyhq.com/posthog/20ab9628-20ff-4ae3-bd6a-46ae7e9dc6b8",
+      "applyUrl": "https://jobs.ashbyhq.com/posthog/20ab9628-20ff-4ae3-bd6a-46ae7e9dc6b8/application",
+      "descriptionHtml": "<p>About PostHog PostHog is your product’s context layer. It ingests and stores your analytics, errors, replays, and business data so you and your agents can query and act on it. We launched out of Y Combinator's W20 cohort . We've since …</p>",
+      "descriptionPlain": "ABOUT POSTHOG PostHog is your product’s context layer. It ingests and stores your analytics, errors, replays, and business data so you and your agents can query and act on it. We launched out of Y Combinator's W20 cohort …",
+      "compensation": {
+        "compensationTierSummary": null,
+        "scrapeableCompensationSalarySummary": null,
+        "compensationTiers": [],
+        "summaryComponents": []
+      }
+    }
+  ]
+}

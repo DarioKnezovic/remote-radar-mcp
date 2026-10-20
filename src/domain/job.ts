@@ -1,6 +1,13 @@
 import { z } from 'zod';
 
-export const SOURCE_IDS = ['remotive', 'arbeitnow'] as const;
+export const SOURCE_IDS = [
+  'remotive',
+  'arbeitnow',
+  'remoteok',
+  'greenhouse',
+  'lever',
+  'ashby',
+] as const;
 export const sourceIdSchema = z.enum(SOURCE_IDS);
 export type SourceId = z.infer<typeof sourceIdSchema>;
 
@@ -36,7 +43,10 @@ export type EmploymentType = z.infer<typeof employmentTypeSchema>;
 
 /** The single shape every source is normalized into. */
 export const jobSchema = z.object({
-  /** Globally unique: `<source>:<source_job_id>`, e.g. `remotive:2091158`. */
+  /**
+   * Globally unique: `<source>:<source_job_id>`, e.g. `remotive:2091158`. Company-board
+   * sources include the board: `greenhouse:gitlab:8860302002`.
+   */
   id: z.string().min(1),
   source: sourceIdSchema,
   source_job_id: z.string().min(1),

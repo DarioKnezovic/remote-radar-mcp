@@ -1,3 +1,4 @@
+import { regionForCountry } from './countries.js';
 import type { RemoteScope } from './job.js';
 
 export type Region = 'worldwide' | 'europe' | 'eu' | 'us' | 'americas' | 'other';
@@ -50,6 +51,8 @@ const EUROPEAN_PLACES = [
 
 const AMERICAS_PLACES = [
   'americas',
+  'amer',
+  'namer',
   'north america',
   'south america',
   'latin america',
@@ -57,6 +60,7 @@ const AMERICAS_PLACES = [
   'canada',
   'mexico',
   'brazil',
+  'brasil',
   'argentina',
   'colombia',
   'chile',
@@ -131,4 +135,38 @@ export function scopeFromRegions(regions: ReadonlySet<Region>): RemoteScope {
   if (isSubsetOf(regions, ['us', 'americas'])) return 'Americas';
   if (regions.size === 1 && regions.has('other')) return 'Other';
   return 'Multi-region';
+}
+
+/**
+ * "Remote" as written in listings across languages and job boards: "Remote", "Home based"
+ * (Canonical), "Homeoffice" (DE), "Werken op afstand" (NL), "Télétravail"/"à distance" (FR),
+ * "Remoto" (ES/PT).
+ */
+const REMOTE_HINT =
+  /\b(?:remote|remoto|home[\s-]?(?:office|based)|werken op afstand|t[ée]l[ée]travail)\b|à distance/i;
+
+export function looksRemote(text: string | null | undefined): boolean {
+  return REMOTE_HINT.test(text ?? '');
+}
+
+/**
+ * Scope of a listing. Regions come from the location first, then the job's country code
+ * (when the source provides one), then the title ("Backend Developer - Remote from EU").
+ * A city ("Berlin") or just "Remote" says nothing about where remote work is allowed,
+ * so it stays `Unknown`.
+ */
+export function remoteScopeFor(
+  isRemote: boolean,
+  location: string | null,
+  title: string,
+  countryCode?: string | null,
+): RemoteScope {
+  if (!isRemote) return 'On-site';
+  const fromLocation = detectRegions(location);
+  if (fromLocation.size > 0) return scopeFromRegions(fromLocation);
+  const fromCountry = regionForCountry(countryCode);
+  if (fromCountry) return scopeFromRegions(new Set([fromCountry]));
+  // "Global"/"International" in a title describes the role ("Global Head of Sales"), not eligibility.
+  const fromTitle = new Set([...detectRegions(title)].filter((region) => region !== 'worldwide'));
+  return scopeFromRegions(fromTitle);
 }

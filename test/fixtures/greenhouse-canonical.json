@@ -1,0 +1,391 @@
+{
+  "jobs": [
+    {
+      "absolute_url": "https://job-boards.greenhouse.io/canonical/jobs/3433732",
+      "data_compliance": [
+        {
+          "type": "gdpr",
+          "requires_consent": false,
+          "requires_processing_consent": false,
+          "requires_retention_consent": false,
+          "retention_period": null,
+          "demographic_data_consent_applies": false
+        }
+      ],
+      "education": "education_optional",
+      "internal_job_id": 1947084,
+      "location": {
+        "name": "Home based - Worldwide"
+      },
+      "metadata": [
+        {
+          "id": 186225,
+          "name": "People management responsibilities?",
+          "value": false,
+          "value_type": "yes_no"
+        },
+        {
+          "id": 149021,
+          "name": "Employment Length",
+          "value": "Full-time",
+          "value_type": "single_select"
+        },
+        {
+          "id": 675557,
+          "name": "Core skills",
+          "value": [
+            "Analysers",
+            "Entrepreneur",
+            "Generalist",
+            "Problem Solver",
+            "Seller",
+            "Spokesperson",
+            "Technologist",
+            "Traveller"
+          ],
+          "value_type": "multi_select"
+        },
+        {
+          "id": 2739136,
+          "name": "External Departments (website)",
+          "value": [
+            "Engineering"
+          ],
+          "value_type": "multi_select"
+        },
+        {
+          "id": 2739137,
+          "name": "One line job description",
+          "value": "Help partners architect and implement Ubuntu solutions, maintaining a broad awareness of private and public cloud, edge, kubernetes, storage, AI and MLOps from Canonical.",
+          "value_type": "long_text"
+        },
+        {
+          "id": 3209541,
+          "name": "Canonical site",
+          "value": [],
+          "value_type": "multi_select"
+        },
+        {
+          "id": 3587161,
+          "name": "LinkedIn Posting Level",
+          "value": "Mid-Senior",
+          "value_type": "single_select"
+        },
+        {
+          "id": 11961371,
+          "name": "Featured job (Talent Team to complete)",
+          "value": false,
+          "value_type": "yes_no"
+        },
+        {
+          "id": 54742858,
+          "name": "Business Unit Type",
+          "value": null,
+          "value_type": "single_select"
+        },
+        {
+          "id": 54743567,
+          "name": "Req Category",
+          "value": null,
+          "value_type": "single_select"
+        },
+        {
+          "id": 56835606,
+          "name": "Discipline/Track",
+          "value": null,
+          "value_type": "single_select"
+        }
+      ],
+      "id": 3433732,
+      "updated_at": "2026-08-05T18:23:33-04:00",
+      "requisition_id": "769",
+      "title": "Alliances Field Engineer",
+      "company_name": "Canonical",
+      "first_published": "2021-09-20T14:14:26-04:00",
+      "language": "en",
+      "application_deadline": null,
+      "content": "&lt;p&gt;Canonical is a leading provider of open source software and operating systems to the global enterprise and technology markets. Our platform, Ubuntu, is very widely used in breakthrough enterprise initiatives such as public cloud, data …&lt;/p&gt;",
+      "departments": [
+        {
+          "id": 82563,
+          "name": "Field Engineering",
+          "child_ids": [],
+          "parent_id": null
+        }
+      ],
+      "offices": [
+        {
+          "id": 44282,
+          "name": "Home Based - Worldwide",
+          "location": null,
+          "child_ids": [],
+          "parent_id": 73277
+        }
+      ],
+      "ai_disclaimer": null,
+      "include_ai_disclaimer": null,
+      "ai_opt_out_request_url": null
+    },
+    {
+      "absolute_url": "https://job-boards.greenhouse.io/canonical/jobs/5569916",
+      "data_compliance": [
+        {
+          "type": "gdpr",
+          "requires_consent": false,
+          "requires_processing_consent": false,
+          "requires_retention_consent": false,
+          "retention_period": null,
+          "demographic_data_consent_applies": false
+        }
+      ],
+      "education": "education_optional",
+      "internal_job_id": 2108576,
+      "location": {
+        "name": "Home based - EMEA"
+      },
+      "metadata": [
+        {
+          "id": 186225,
+          "name": "People management responsibilities?",
+          "value": false,
+          "value_type": "yes_no"
+        },
+        {
+          "id": 149021,
+          "name": "Employment Length",
+          "value": "Full-time",
+          "value_type": "single_select"
+        },
+        {
+          "id": 675557,
+          "name": "Core skills",
+          "value": [
+            "Analysers",
+            "Conscience",
+            "Fixer",
+            "Organiser",
+            "Planner",
+            "Problem Solver",
+            "Stalwart",
+            "Tester"
+          ],
+          "value_type": "multi_select"
+        },
+        {
+          "id": 2739136,
+          "name": "External Departments (website)",
+          "value": [
+            "Finance"
+          ],
+          "value_type": "multi_select"
+        },
+        {
+          "id": 2739137,
+          "name": "One line job description",
+          "value": "Join our global accounting team ensuring financial rigour worldwide",
+          "value_type": "long_text"
+        },
+        {
+          "id": 3209541,
+          "name": "Canonical site",
+          "value": [],
+          "value_type": "multi_select"
+        },
+        {
+          "id": 3587161,
+          "name": "LinkedIn Posting Level",
+          "value": "Associate",
+          "value_type": "single_select"
+        },
+        {
+          "id": 11961371,
+          "name": "Featured job (Talent Team to complete)",
+          "value": true,
+          "value_type": "yes_no"
+        },
+        {
+          "id": 54742858,
+          "name": "Business Unit Type",
+          "value": null,
+          "value_type": "single_select"
+        },
+        {
+          "id": 54743567,
+          "name": "Req Category",
+          "value": null,
+          "value_type": "single_select"
+        },
+        {
+          "id": 56835606,
+          "name": "Discipline/Track",
+          "value": null,
+          "value_type": "single_select"
+        }
+      ],
+      "id": 5569916,
+      "updated_at": "2026-08-05T18:23:33-04:00",
+      "requisition_id": "831",
+      "title": "Accountant",
+      "company_name": "Canonical",
+      "first_published": "2024-01-22T18:02:51-05:00",
+      "language": "en",
+      "application_deadline": null,
+      "content": "&lt;p&gt;Canonical is a leading provider of open source software and operating systems to the global enterprise and technology markets. Our platform, Ubuntu, is very widely used in breakthrough enterprise initiatives such as public cloud, data …&lt;/p&gt;",
+      "departments": [
+        {
+          "id": 82566,
+          "name": "Operations",
+          "child_ids": [],
+          "parent_id": null
+        }
+      ],
+      "offices": [
+        {
+          "id": 44278,
+          "name": "Home Based - EMEA",
+          "location": null,
+          "child_ids": [],
+          "parent_id": 73277
+        }
+      ],
+      "ai_disclaimer": null,
+      "include_ai_disclaimer": null,
+      "ai_opt_out_request_url": null
+    },
+    {
+      "absolute_url": "https://job-boards.greenhouse.io/canonical/jobs/2969042",
+      "data_compliance": [
+        {
+          "type": "gdpr",
+          "requires_consent": false,
+          "requires_processing_consent": false,
+          "requires_retention_consent": false,
+          "retention_period": null,
+          "demographic_data_consent_applies": false
+        }
+      ],
+      "education": "education_optional",
+      "internal_job_id": 1427188,
+      "location": {
+        "name": "Home Based - Americas; Home based - EMEA"
+      },
+      "metadata": [
+        {
+          "id": 186225,
+          "name": "People management responsibilities?",
+          "value": false,
+          "value_type": "yes_no"
+        },
+        {
+          "id": 149021,
+          "name": "Employment Length",
+          "value": "Full-time",
+          "value_type": "single_select"
+        },
+        {
+          "id": 675557,
+          "name": "Core skills",
+          "value": [
+            "Analysers",
+            "Designer",
+            "Developer",
+            "Generalist",
+            "Problem Solver",
+            "Technologist",
+            "Tester"
+          ],
+          "value_type": "multi_select"
+        },
+        {
+          "id": 2739136,
+          "name": "External Departments (website)",
+          "value": [
+            "Engineering"
+          ],
+          "value_type": "multi_select"
+        },
+        {
+          "id": 2739137,
+          "name": "One line job description",
+          "value": "Develop and implement innovative automated solutions to deploy and test open source cloud and virtualization solutions.",
+          "value_type": "long_text"
+        },
+        {
+          "id": 3209541,
+          "name": "Canonical site",
+          "value": [],
+          "value_type": "multi_select"
+        },
+        {
+          "id": 3587161,
+          "name": "LinkedIn Posting Level",
+          "value": "Mid-Senior",
+          "value_type": "single_select"
+        },
+        {
+          "id": 11961371,
+          "name": "Featured job (Talent Team to complete)",
+          "value": null,
+          "value_type": "yes_no"
+        },
+        {
+          "id": 54742858,
+          "name": "Business Unit Type",
+          "value": null,
+          "value_type": "single_select"
+        },
+        {
+          "id": 54743567,
+          "name": "Req Category",
+          "value": null,
+          "value_type": "single_select"
+        },
+        {
+          "id": 56835606,
+          "name": "Discipline/Track",
+          "value": null,
+          "value_type": "single_select"
+        }
+      ],
+      "id": 2969042,
+      "updated_at": "2026-09-07T09:23:35-04:00",
+      "requisition_id": "504",
+      "title": "Distributed Systems Testing Software Engineer, Python / Go",
+      "company_name": "Canonical",
+      "first_published": "2021-03-18T12:52:37-04:00",
+      "language": "en",
+      "application_deadline": null,
+      "content": "&lt;p&gt;Canonical is a leading provider of open source software and operating systems to the global enterprise and technology markets. Our platform, Ubuntu, is very widely used in breakthrough enterprise initiatives such as public cloud, data …&lt;/p&gt;",
+      "departments": [
+        {
+          "id": 224929,
+          "name": "Cloud Engineering",
+          "child_ids": [],
+          "parent_id": null
+        }
+      ],
+      "offices": [
+        {
+          "id": 44276,
+          "name": "Home Based - Americas",
+          "location": null,
+          "child_ids": [],
+          "parent_id": 73277
+        },
+        {
+          "id": 44278,
+          "name": "Home Based - EMEA",
+          "location": null,
+          "child_ids": [],
+          "parent_id": 73277
+        }
+      ],
+      "ai_disclaimer": null,
+      "include_ai_disclaimer": null,
+      "ai_opt_out_request_url": null
+    }
+  ],
+  "meta": {
+    "total": 3
+  }
+}
