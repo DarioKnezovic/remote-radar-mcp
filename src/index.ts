@@ -42,6 +42,8 @@ async function main(): Promise<void> {
   };
   process.on('SIGINT', () => void shutdown('SIGINT'));
   process.on('SIGTERM', () => void shutdown('SIGTERM'));
+  // The client closing our stdin means it's gone; don't wait for idle DB connections to time out.
+  process.stdin.on('end', () => void shutdown('stdin closed'));
 
   await server.connect(transport);
   logger.info('remote-radar MCP server running on stdio', { version: SERVER_VERSION });

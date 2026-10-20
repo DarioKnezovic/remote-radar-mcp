@@ -1,5 +1,8 @@
 # Remote Radar MCP
 
+[![CI](https://github.com/DarioKnezovic/remote-radar-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/DarioKnezovic/remote-radar-mcp/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 An [MCP](https://modelcontextprotocol.io) server that helps you find remote developer jobs from
 **official public job APIs**, and keeps track of the ones you care about in a local Postgres
 database. Use it from Claude Desktop, Claude Code or any MCP client.
