@@ -1,4 +1,4 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -37,6 +37,17 @@ describe('boards config', () => {
       lever: [{ board: 'acme', company: 'Acme', region: 'global' }],
       ashby: [],
     });
+  });
+
+  it('looks for boards.json in CONFIG_DIR, else falls back to the starter list', async () => {
+    const config = join(dir, 'config');
+    await mkdir(config, { recursive: true });
+    const starter = await resolveBoardsFile({ CONFIG_DIR: config });
+    expect(starter.pathname).toMatch(/\/boards\.default\.json$/);
+
+    await writeFile(join(config, 'boards.json'), '{}');
+    const own = await resolveBoardsFile({ CONFIG_DIR: config });
+    expect(own.href).toBe(pathToFileURL(join(config, 'boards.json')).href);
   });
 
   it('rejects unsafe board tokens and explains why', async () => {

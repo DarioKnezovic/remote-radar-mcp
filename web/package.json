@@ -1,13 +1,13 @@
 {
   "name": "remote-radar-web",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Web app for Remote Radar: find, compare and track remote jobs. Never applies for you.",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 127.0.0.1",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -H 127.0.0.1",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },

@@ -1,34 +1,99 @@
-# Remote Radar MCP
+# Remote Radar
 
 [![CI](https://github.com/DarioKnezovic/remote-radar-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/DarioKnezovic/remote-radar-mcp/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-An [MCP](https://modelcontextprotocol.io) server that helps you find remote developer jobs from
-**official public job APIs**, and keeps track of the ones you care about in a local Postgres
-database. Use it from Claude Desktop, Claude Code or any MCP client.
+Remote Radar finds remote developer jobs from **official public job APIs**, checks each one
+against your profile, warns you about catches like _"must live in Germany"_ or _"fluent German
+required"_, and keeps track of the jobs you care about.
 
-It finds, filters, dedupes, matches against your profile, saves and tracks. **It never applies to
-jobs.** You read the listing and apply yourself, on the original site.
+**It never applies to jobs.** You read the listing and apply yourself, on the company's own page.
 
-- 🔎 **`search_jobs`**: one search across three job boards (Remotive, Arbeitnow, Remote OK) and
-  company careers pages on Greenhouse, Lever and Ashby, normalized into a single job shape, with
-  duplicates removed and filters for keywords, tags, remote region and posting date.
-- 🎯 **`match_job`, `get_profile`**: compares a job with your local `profile.json`: matched and
-  missing skills, plus red flags such as "requires German", "US hours", "EU residence required"
-  or "part-time", each with the sentence it's based on.
-- 📌 **`save_job`, `update_job_status`, `list_saved_jobs`**: a small application tracker
-  (`found → applied → interview → offer`, or `rejected` / `skipped`) with a dated notes log and a
-  full status history.
-- 📄 **`get_job_details`**: the full listing as clean text, plus its tracker status.
-- 🤝 **Respects the sources**: official APIs only, rate limits enforced across restarts, source
-  credit on every result.
+There are two ways to use it, and they share the same data:
 
-> Built with TypeScript (strict), the official MCP TypeScript SDK, zod, PostgreSQL with plain SQL
-> migrations, and Vitest.
+- 🖥️ **In your browser:** a web app at `http://localhost:3000`. No coding needed.
+- 🤖 **From Claude:** an [MCP](https://modelcontextprotocol.io) server for Claude Desktop, Claude
+  Code or any MCP client, so you can ask _"find frontend jobs I can do from Europe"_.
+
+| Find jobs                                                                          | How well a job fits you                                                      |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| ![Search results with fit summaries](docs/screenshots/find-jobs.jpg)               | ![A job page with warnings and matched skills](docs/screenshots/job-fit.jpg) |
+| **My jobs**                                                                        | **Your profile**                                                             |
+| ![Saved jobs by stage: Saved, Applied, Interviewing](docs/screenshots/my-jobs.jpg) | ![The first-run profile setup](docs/screenshots/profile-setup.jpg)           |
+
+<sub>Screenshots use made-up jobs and a fictional profile.</sub>
 
 ---
 
-## Demo
+## Quick start (no coding needed)
+
+You need **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** (free for personal
+use). Install it and start it.
+
+1. **Download Remote Radar.** On this page, click **Code → Download ZIP** and unzip it. (Or, if
+   you use git: `git clone https://github.com/DarioKnezovic/remote-radar-mcp.git`.)
+2. **Open a terminal in that folder.**
+   - macOS: right-click the folder in Finder → **New Terminal at Folder**.
+   - Windows: open the folder, click the address bar, type `cmd` and press Enter.
+3. **Start it:**
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+   The first start takes a few minutes. Later starts take seconds.
+
+4. **Open [http://localhost:3000](http://localhost:3000)** and set up your profile: where you
+   live, your citizenship, skills and languages. It takes about a minute.
+5. Go to **Find jobs**. The first search takes a little longer, because the job lists are
+   fetched; after that they're kept for a few hours.
+
+| To…                                  | Run (in the same folder)                                               |
+| ------------------------------------ | ---------------------------------------------------------------------- |
+| Stop it                              | `docker compose down`                                                  |
+| Start it again                       | `docker compose up -d`                                                 |
+| Update to a new version              | download it again (or `git pull`), then `docker compose up -d --build` |
+| Remove it, including your saved jobs | `docker compose down -v`, then delete the folder                       |
+
+**Your data stays on your computer.** Your profile is saved as `profile.json` in the project
+folder; saved jobs are in a small database inside Docker. Remote Radar only talks to the public job
+APIs listed under [Sources](#sources), and never sends your profile anywhere. The app has no
+login, so it only accepts connections from your own computer, not from your network.
+
+<details>
+<summary>Troubleshooting</summary>
+
+- **macOS: "Cannot connect to the Docker daemon"**: make sure Docker Desktop is running. If it is,
+  run `docker context use desktop-linux` once.
+- **"port is already allocated"**: something else uses port 3000 or 5433. Stop it, or change the
+  first number of the port in `docker-compose.yml` (e.g. `'127.0.0.1:3001:3000'`, then open
+  `localhost:3001`).
+- **Linux: "Cannot write …/profile.json"**: the app runs as user id 1000 unless told otherwise.
+  Start it as your own user instead: `UID=$(id -u) GID=$(id -g) docker compose up -d --build`.
+- **A source shows "didn't respond"**: that job board is down or slow. Its jobs are missing from
+  that search; Remote Radar tries again a few minutes later.
+
+</details>
+
+---
+
+## The web app
+
+| Page             | What it does                                                                                                                                                                                                                                                                                         |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Find jobs**    | Search by keywords, where you can work from (_open to where I live_, _anyone, anywhere_, _all remote jobs_) and how recent. Sort by best fit, or show only jobs with no warnings for you. Each result shows where it can be done from, the contract type, pay if listed, and a one-line fit summary. |
+| **Job page**     | The full listing, and **How well this fits you**: each warning in plain words with the sentence from the listing it's based on, matched and missing skills, and a big **Open the original listing** button.                                                                                          |
+| **My jobs**      | Saved jobs by stage: Saved → Applied → Interviewing → Offer, plus Rejected and Not interested. Mark a job **I applied** after applying on the company's site, change its stage, and add notes.                                                                                                       |
+| **My profile**   | A form for your profile, with a three-step setup the first time. Countries and time zones are dropdowns; skills are understood in their common spellings ("node" → Node.js).                                                                                                                         |
+| **How it works** | The whole process in five steps, every source, what each "where can I work from" label and each warning means, and what Remote Radar never does.                                                                                                                                                     |
+
+To run the web app without Docker (for development), see [Development](#development).
+
+---
+
+## Use it from Claude
+
+### Demo
 
 An example conversation in Claude Desktop. The companies and listings are made up; real results
 depend on what the sources have that day.
@@ -71,7 +136,7 @@ depend on what the sources have that day.
 
 ---
 
-## Tools
+### Tools
 
 | Tool                | Input                                                               | What it does                                                                                                                                                                                           |
 | ------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -130,21 +195,28 @@ only `save_job` and `update_job_status` write, and they only write to your local
 
 ## Setup
 
+This sets up the MCP server for Claude, and everything you need for development. (For the web app
+alone, the [Quick start](#quick-start-no-coding-needed) is enough.)
+
 **Requirements:** Node.js 22.12+ and Docker (for Postgres).
 
 ```bash
 git clone https://github.com/DarioKnezovic/remote-radar-mcp.git
 cd remote-radar-mcp
 npm install
-npm run db:up      # Postgres 18 on localhost:5433
+npm run db:up      # Postgres 18 on localhost:5433 (only Postgres, not the web app)
 npm run build
 ```
+
+If you also run the web app with `docker compose up`, both use the same database and the same
+`profile.json`: a job you save in Claude shows up in **My jobs**, and the other way round.
 
 The server runs database migrations automatically when it starts. You can also run them yourself
 with `npm run db:migrate`.
 
-**Your profile (for `match_job`):** copy `profile.example.json` to `profile.json` and fill it in.
-`profile.json` is git-ignored and re-read on every call, so edits apply without a restart.
+**Your profile (for `match_job`):** fill it in on the web app's **My profile** page, or copy
+`profile.example.json` to `profile.json` and edit it. `profile.json` is git-ignored and re-read on
+every call, so edits apply without a restart.
 
 **Company boards:** `boards.default.json` is a starter list of 21 remote-friendly companies on
 Greenhouse, Lever and Ashby. To follow other companies, copy it to `boards.json` (git-ignored) and
@@ -192,12 +264,13 @@ npm run inspect    # opens the MCP Inspector in your browser
 
 ### Configuration
 
-| Variable       | Default                                                            | Description                                          |
-| -------------- | ------------------------------------------------------------------ | ---------------------------------------------------- |
-| `DATABASE_URL` | `postgres://remote_radar:remote_radar@localhost:5433/remote_radar` | Matches `docker-compose.yml`.                        |
-| `LOG_LEVEL`    | `info`                                                             | `debug`, `info`, `warn`, `error`. Logs go to stderr. |
-| `PROFILE_FILE` | `profile.json` in the project folder                               | Path to your profile.                                |
-| `BOARDS_FILE`  | `boards.json`, else `boards.default.json`                          | Path to the company-boards list.                     |
+| Variable       | Default                                                            | Description                                                                                      |
+| -------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `DATABASE_URL` | `postgres://remote_radar:remote_radar@localhost:5433/remote_radar` | Matches `docker-compose.yml`.                                                                    |
+| `LOG_LEVEL`    | `info`                                                             | `debug`, `info`, `warn`, `error`. Logs go to stderr.                                             |
+| `CONFIG_DIR`   | the project folder                                                 | Folder with your `profile.json` and `boards.json`. Docker sets it to the mounted project folder. |
+| `PROFILE_FILE` | `profile.json` in `CONFIG_DIR`                                     | Path to your profile.                                                                            |
+| `BOARDS_FILE`  | `boards.json` in `CONFIG_DIR`, else `boards.default.json`          | Path to the company-boards list.                                                                 |
 
 ---
 
@@ -205,13 +278,21 @@ npm run inspect    # opens the MCP Inspector in your browser
 
 ```mermaid
 flowchart LR
-  client["Claude Desktop / Claude Code<br/>(MCP client)"]
+  claude["Claude Desktop / Claude Code<br/>(MCP client)"]
+  browser["Your browser<br/>localhost:3000"]
 
-  subgraph server["remote-radar MCP server (stdio)"]
-    direction LR
+  subgraph mcp["MCP server (stdio) · src/index.ts"]
     tools["tools/<br/>search_jobs · get_job_details · match_job · get_profile<br/>save_job · update_job_status · list_saved_jobs"]
+  end
+
+  subgraph webapp["Web app (Next.js) · web/"]
+    pages["pages & server actions<br/>Find jobs · Job page · My jobs · My profile · How it works"]
+  end
+
+  subgraph core["Core · createRemoteRadar() in src/app.ts"]
+    direction LR
     search["JobSearchService<br/>merge → filter → dedupe → sort → limit"]
-    domain["domain/<br/>Job · remote scope · filter · dedupe<br/>skills · match"]
+    domain["domain/ (pure)<br/>Job · remote scope · filter · dedupe<br/>skills · match"]
     cache["CachedJobSource<br/>TTL · stale-on-error · retry throttle"]
     boardsrc["Job boards<br/>Remotive · Arbeitnow · Remote OK"]
     atssrc["BoardsJobSource ×3<br/>Greenhouse · Lever · Ashby<br/>(one request per company)"]
@@ -224,24 +305,25 @@ flowchart LR
   profilefile[/"profile.json"/]
   boardsfile[/"boards.json"/]
 
-  client <-->|JSON-RPC over stdio| tools
-  tools --> search
-  tools --> repo
-  tools --> profile
-  tools --> domain
+  claude <-->|JSON-RPC over stdio| tools
+  browser <-->|HTTP, localhost only| pages
+  tools & pages --> search & repo & profile & domain
   search --> domain
   search --> cache
   cache --> boardsrc & atssrc
   cache -->|FetchCacheStore| repo
   boardsrc & atssrc -->|HTTPS, rate-limited by TTL| apis
-  profile -->|read per call| profilefile
+  profile -->|read per call, write from the form| profilefile
   boardsfile -.->|read at startup| atssrc
   repo --> db
 ```
 
+Both entry points use the same core, wired once by `createRemoteRadar()`: the same database,
+caches, matching and profile. Whatever you do in one shows up in the other.
+
 **One search, step by step**
 
-1. `search_jobs` asks `JobSearchService` for results.
+1. `search_jobs` (or the **Find jobs** page) asks `JobSearchService` for results.
 2. Each source is wrapped in `CachedJobSource`. If the last successful fetch, recorded in
    Postgres, is still fresh (Remotive and company boards: 6 h, Remote OK: 2 h, Arbeitnow: 1 h),
    the cached jobs are read from Postgres. Otherwise the source is called once, its jobs are
@@ -257,12 +339,14 @@ flowchart LR
 
 ```
 src/
-  index.ts            entry point: config, migrations, wiring, stdio transport
+  app.ts              createRemoteRadar(): connects, migrates and wires the core (both entry points)
+  index.ts            MCP entry point: createRemoteRadar() + stdio transport
   server.ts           createServer(deps): registers all tools (used directly by tests)
-  config.ts           env vars validated with zod
+  config.ts           env vars validated with zod, CONFIG_DIR
   domain/             pure logic, no I/O: Job, remote scope, countries, employment, filter,
                       dedupe, text, application status, profile, skills, match
-  profile/            reads profile.json
+                      (index.ts is published as remote-radar-mcp/domain)
+  profile/            reads and writes profile.json
   sources/            JobSource interface, HTTP client, cache, registry, boards config,
                       BoardsJobSource (many company boards on one ATS)
     remotive/         schema (raw API) · normalize · client
@@ -274,7 +358,14 @@ src/
   services/           JobSearchService
   db/                 pool, migration runner, JobRepository, Postgres cache store
   tools/              one file per MCP tool + shared output schemas
+web/                  the web app (Next.js App Router), an npm workspace
+  app/                pages, plus actions.ts (server actions: save, status, notes, profile)
+  components/         job card, fit panel, status controls, profile form, …
+  lib/                radar.ts (loads the core), labels (plain-language text), search, fit cache,
+                      sanitize (job descriptions)
 migrations/           plain SQL, applied in order
+scripts/demo-seed.ts  made-up jobs for a demo database (screenshots, trying the UI)
+Dockerfile            the web app image; docker-compose.yml runs it with Postgres
 test/
   fixtures/           recorded API responses (trimmed, see test/fixtures/README.md)
   unit/               no network, no database
@@ -285,18 +376,25 @@ test/
 
 ## Development
 
-| Command                     | What it does                                             |
-| --------------------------- | -------------------------------------------------------- |
-| `npm run dev`               | Run from source with tsx                                 |
-| `npm run build`             | Compile to `dist/`                                       |
-| `npm test`                  | Unit tests (integration tests skip without a database)   |
-| `npm run test:db`           | All tests, including Postgres integration tests          |
-| `npm run test:coverage`     | All tests with a coverage report (`coverage/index.html`) |
-| `npm run typecheck`         | `tsc --noEmit`                                           |
-| `npm run lint`              | ESLint (typescript-eslint strict, type-checked)          |
-| `npm run format`            | Prettier                                                 |
-| `npm run db:up` / `db:down` | Start / stop Postgres                                    |
-| `npm run inspect`           | Build and open the MCP Inspector                         |
+| Command                       | What it does                                                                           |
+| ----------------------------- | -------------------------------------------------------------------------------------- |
+| `npm run dev`                 | Run the MCP server from source with tsx                                                |
+| `npm run build`               | Compile the core and MCP server to `dist/`                                             |
+| `npm run web:dev`             | Build the core, then run the web app with hot reload at `localhost:3000`               |
+| `npm run web:build`           | Production build of the core and the web app                                           |
+| `npm run app:up` / `app:down` | Build and start / stop the Docker web app and Postgres                                 |
+| `npm run demo:seed`           | Fill a database named `*demo*` with made-up jobs (see `scripts/demo-seed.ts`)          |
+| `npm test`                    | Unit tests (integration tests skip without a database)                                 |
+| `npm run test:db`             | All tests, including Postgres integration tests                                        |
+| `npm run test:coverage`       | All tests with a coverage report (`coverage/index.html`)                               |
+| `npm run typecheck`           | `tsc --noEmit`                                                                         |
+| `npm run lint`                | ESLint (typescript-eslint strict, type-checked); `npm run lint -w web` for the web app |
+| `npm run format`              | Prettier                                                                               |
+| `npm run db:up` / `db:down`   | Start Postgres only / stop everything                                                  |
+| `npm run inspect`             | Build and open the MCP Inspector                                                       |
+
+The web app needs the core built first (`npm run build`), because it imports the compiled
+package. `web:dev` and `web:build` do that for you.
 
 **Tests never call the real APIs.** Normalization and dedupe are tested against responses
 recorded from every source (`test/fixtures/`). The tool tests connect a real MCP client
@@ -407,6 +505,38 @@ runtime magic. Migrations are numbered `.sql` files, each applied in a transacti
 stray `console.log` corrupts it. All logging goes to stderr as JSON lines, and ESLint rejects
 `console.log`.
 
+**Why each person runs their own copy, instead of one website.** A shared site would need
+accounts, hosting and a privacy policy, but the bigger reason is the sources: their terms are
+written for personal use (Arbeitnow: personal, non-commercial; Remotive: at most 4 requests a
+day), and a public site would republish their listings to everyone. A local copy fetches for one
+person, keeps the profile on that person's computer, and stays within each source's limits. Docker
+makes "run your own copy" a single command.
+
+**Why the web app is local-only.** It has no login, so whoever can reach it can read your profile
+and change your tracker. Docker publishes it (and Postgres) on `127.0.0.1` only, and `next dev` /
+`next start` listen on `127.0.0.1`, so nothing is reachable from your network.
+
+**Why the web app calls the core directly, not through MCP.** MCP is the interface for AI
+clients. The web app runs on the same machine as the core, so it calls the same TypeScript
+functions (`search`, `matchJob`, the tracker) in-process: no protocol layer, no JSON
+round-trips, full types. `createRemoteRadar()` wires the core once for both, so they can't drift
+apart.
+
+**Why the core has two entry points.** `remote-radar-mcp/domain` is pure (types, constants,
+`matchJob`) and safe to bundle into the web app. `remote-radar-mcp/app` touches the database and
+files, and finds its migrations, `profile.json` and boards file relative to its own location;
+bundling would break that, so the web app loads it with plain Node at runtime (`web/lib/radar.ts`).
+A lint rule stops value imports from `/app` in the web app.
+
+**Why plain language everywhere.** The core speaks in codes (`region_restricted`, `EU only`,
+`found`); the web app never shows them. `web/lib/labels.ts` maps each one to words ("May not hire
+where you live", "From EU countries", "Saved") with a one-line explanation, and every warning
+still shows the listing's own sentence it's based on, so you can judge it yourself.
+
+**Why job descriptions are sanitized.** Descriptions are HTML written by third parties. Before the
+job page shows one, `sanitize-html` keeps only basic formatting (paragraphs, lists, headings,
+links), drops scripts, styles, images, forms and event handlers, and only allows `http(s)` and
+`mailto` links, which open in a new tab.
 ---
 
 ## Sources
@@ -432,12 +562,17 @@ job searching.
   filter yet.
 - `match_job` is pattern-based: it catches common phrasings, not every way a requirement can be
   written. Read the evidence and the listing before deciding.
+- The web app has no login and is meant for one person on one computer. Don't expose it to a
+  network.
+- The Docker image is about 650 MB, mostly Next.js and its dependencies.
 
 ## Ideas
 
 - Show the other locations of a role that was posted once per country.
 - A salary filter, once salaries are parsed into numbers.
 - More ATS providers (Workable, SmartRecruiters, Recruitee) through `BoardsJobSource`.
+- Drafting a cover letter from the job page (today: ask Claude, which uses your profile's
+  achievements).
 
 ## License
 

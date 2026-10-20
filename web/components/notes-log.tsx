@@ -7,18 +7,14 @@ export function NotesLog({ notes, limit }: { notes: string | null; limit?: numbe
   if (entries.length === 0) return null;
   const shown = limit ? entries.slice(-limit) : entries;
   return (
-    <ul className="space-y-1.5 text-sm">
+    <ul className="space-y-2 text-sm">
       {shown.map((entry, i) => (
-        <li key={i} className="flex gap-2">
-          <span className="text-muted shrink-0 tabular-nums">
-            {entry.date ? formatDate(entry.date) : '—'}
-          </span>
-          <span className="whitespace-pre-line">
-            {entry.status && (
-              <span className="text-muted">{STATUS_LABELS[entry.status].label}: </span>
-            )}
-            {entry.text}
-          </span>
+        <li key={i}>
+          <p className="text-muted text-xs">
+            {entry.date ? formatDate(entry.date) : 'Note'}
+            {entry.status && ` · ${STATUS_LABELS[entry.status].label}`}
+          </p>
+          <p className="whitespace-pre-line">{entry.text}</p>
         </li>
       ))}
       {limit && entries.length > limit && (

@@ -2,6 +2,7 @@ import { access, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { z } from 'zod';
+import { configDir } from '../config.js';
 
 const boardSchema = z.object({
   board: z
@@ -39,12 +40,12 @@ async function exists(url: URL): Promise<boolean> {
 }
 
 /**
- * `BOARDS_FILE` if set, else your git-ignored `boards.json`, else the committed
- * `boards.default.json` starter list.
+ * `BOARDS_FILE` if set, else your git-ignored `boards.json` in the config folder, else the
+ * committed `boards.default.json` starter list.
  */
 export async function resolveBoardsFile(env: NodeJS.ProcessEnv = process.env): Promise<URL> {
   if (env.BOARDS_FILE) return pathToFileURL(resolve(env.BOARDS_FILE));
-  const own = new URL('boards.json', PACKAGE_ROOT);
+  const own = new URL('boards.json', configDir(env));
   return (await exists(own)) ? own : new URL('boards.default.json', PACKAGE_ROOT);
 }
 

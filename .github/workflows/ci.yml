@@ -125,3 +125,19 @@ jobs:
       - name: Server log
         if: always()
         run: cat web.log || true
+
+  docker:
+    name: Docker (build and start the web app)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build and start, as in the README's quick start
+        run: docker compose up -d --build --wait
+      - name: Smoke test
+        run: |
+          curl -sf http://127.0.0.1:3000/ | grep -q 'Find remote jobs that fit you'
+          curl -sf http://127.0.0.1:3000/profile | grep -q 'Set up your profile'
+      - name: Logs
+        if: always()
+        run: docker compose logs

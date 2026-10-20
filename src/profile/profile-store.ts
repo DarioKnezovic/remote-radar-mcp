@@ -2,6 +2,7 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { z } from 'zod';
+import { configDir } from '../config.js';
 import { profileSchema, type Profile } from '../domain/profile.js';
 
 export interface ProfileIssue {
@@ -23,14 +24,11 @@ export interface WritableProfileStore extends ProfileStore {
   save(input: unknown): Promise<ProfileResult>;
 }
 
-/** Package root; resolves the same from `src/profile/` and `dist/profile/`. */
-const PACKAGE_ROOT = new URL('../../', import.meta.url);
-
-/** `PROFILE_FILE` if set, else the git-ignored `profile.json` in the project folder. */
+/** `PROFILE_FILE` if set, else the git-ignored `profile.json` in the config folder. */
 export function resolveProfileFile(env: NodeJS.ProcessEnv = process.env): URL {
   return env.PROFILE_FILE
     ? pathToFileURL(resolve(env.PROFILE_FILE))
-    : new URL('profile.json', PACKAGE_ROOT);
+    : new URL('profile.json', configDir(env));
 }
 
 function toIssues(error: z.ZodError): ProfileIssue[] {

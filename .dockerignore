@@ -1,0 +1,16 @@
+# Only sources go into the image; your own files stay on your machine (mounted at runtime).
+.git
+**/node_modules
+dist
+coverage
+web/.next
+web/next-env.d.ts
+*.tsbuildinfo
+profile.json
+boards.json
+PROMPT.md
+.env
+.env.*
+.DS_Store
+.idea
+.vscode

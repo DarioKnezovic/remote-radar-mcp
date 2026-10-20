@@ -6,8 +6,8 @@ services:
       POSTGRES_PASSWORD: remote_radar
       POSTGRES_DB: remote_radar
     ports:
-      # 5433 on the host, so it doesn't clash with a locally installed Postgres.
-      - '5433:5432'
+      # Only reachable from this computer. 5433 so it doesn't clash with a local Postgres.
+      - '127.0.0.1:5433:5432'
     volumes:
       # Postgres 18+ images keep data under /var/lib/postgresql/<major>/.
       - pgdata:/var/lib/postgresql
@@ -16,6 +16,25 @@ services:
       interval: 2s
       timeout: 3s
       retries: 15
+
+  # The web app: http://localhost:3000. `npm run db:up` starts only Postgres (for Claude).
+  web:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Runs as your user, so it can write profile.json in the project folder (Linux:
+    # `UID=$(id -u) GID=$(id -g) docker compose up -d`; macOS and Windows don't need it).
+    user: '${UID:-1000}:${GID:-1000}'
+    environment:
+      DATABASE_URL: postgres://remote_radar:remote_radar@postgres:5432/remote_radar
+      # Your profile.json and boards.json live in the project folder, shared with Claude.
+      CONFIG_DIR: /config
+    volumes:
+      - ./:/config
+    ports:
+      # No login, so only reachable from this computer, never from your network.
+      - '127.0.0.1:3000:3000'
 
 volumes:
   pgdata:

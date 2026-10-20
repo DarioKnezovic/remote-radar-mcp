@@ -1,7 +1,7 @@
 {
   "name": "remote-radar-mcp",
-  "version": "0.2.0",
-  "description": "MCP server that finds, scores, saves and tracks remote developer jobs from official public job APIs. Never auto-applies.",
+  "version": "0.3.0",
+  "description": "Find, compare and track remote developer jobs from official public job APIs, in a local web app or from Claude (MCP server). Never auto-applies.",
   "type": "module",
   "main": "dist/index.js",
   "exports": {
@@ -34,7 +34,7 @@
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
-    "db:up": "docker compose up -d --wait",
+    "db:up": "docker compose up -d --wait postgres",
     "db:down": "docker compose down",
     "db:migrate": "tsx src/db/migrate-cli.ts",
     "typecheck": "tsc --noEmit",
@@ -48,7 +48,10 @@
     "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
     "web:dev": "npm run build && npm run dev -w web",
     "web:build": "npm run build && npm run build -w web",
-    "web:start": "npm run start -w web"
+    "web:start": "npm run start -w web",
+    "app:up": "docker compose up -d --build --wait",
+    "app:down": "docker compose down",
+    "demo:seed": "tsx scripts/demo-seed.ts"
   },
   "keywords": [
     "mcp",

@@ -102,6 +102,12 @@ describe('FileProfileStore', () => {
   it('honours PROFILE_FILE', () => {
     expect(resolveProfileFile({ PROFILE_FILE: '/tmp/me.json' }).pathname).toBe('/tmp/me.json');
     expect(resolveProfileFile({}).pathname).toMatch(/\/profile\.json$/);
+    expect(resolveProfileFile({ CONFIG_DIR: '/srv/config' }).pathname).toBe(
+      '/srv/config/profile.json',
+    );
+    expect(resolveProfileFile({ CONFIG_DIR: '/srv/config/' }).pathname).toBe(
+      '/srv/config/profile.json',
+    );
   });
 });
 
