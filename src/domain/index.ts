@@ -20,6 +20,7 @@ export {
   type RedFlag,
   type RedFlagCode,
 } from './match.js';
-export { profileSchema, type Profile, type SkillLevel } from './profile.js';
+export { profileSchema, type Profile, type ProfileInput, type SkillLevel } from './profile.js';
+export { canonicalSkill, SKILL_NAMES } from './skills.js';
 export { htmlToText, truncate } from './text.js';
 export { VERSION } from '../version.js';

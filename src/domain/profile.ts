@@ -48,5 +48,7 @@ export const profileSchema = z.object({
     .default([]),
 });
 export type Profile = z.infer<typeof profileSchema>;
+/** What a profile form may send: optional lists can be left out. */
+export type ProfileInput = z.input<typeof profileSchema>;
 
 export type SkillLevel = 'strong' | 'some' | 'learning';

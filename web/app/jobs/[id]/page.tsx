@@ -4,8 +4,10 @@ import { notFound } from 'next/navigation';
 import { FitPanel } from '@/components/fit-panel';
 import { scopeTone } from '@/components/job-card';
 import { SaveButton } from '@/components/save-button';
+import { NotesLog } from '@/components/notes-log';
 import { SetupProblem } from '@/components/setup-problem';
-import { Badge, Callout } from '@/components/ui';
+import { StatusControls } from '@/components/status-controls';
+import { Badge } from '@/components/ui';
 import { fitFor } from '@/lib/fit';
 import { formatDate, postedAgo } from '@/lib/format';
 import { EMPLOYMENT_LABELS, SCOPE_LABELS, STATUS_LABELS } from '@/lib/labels';
@@ -39,9 +41,10 @@ export default async function JobPage({ params }: { params: Params }) {
   const { radar, job } = loaded;
   if (!job) notFound();
 
-  const [profileResult, saved] = await Promise.all([
+  const [profileResult, saved, history] = await Promise.all([
     radar.profiles.load(),
     radar.tracker.getSavedJob(job.id),
+    radar.tracker.getStatusHistory(job.id),
   ]);
   const fit = profileResult.ok ? fitFor(job, profileResult.profile) : undefined;
   const source = radar.sources.find((s) => s.id === job.source);
@@ -107,14 +110,47 @@ export default async function JobPage({ params }: { params: Params }) {
       </p>
 
       {saved && (
-        <div className="mt-6">
-          <Callout tone="neutral" title={`In My jobs: ${STATUS_LABELS[saved.status].label}`}>
+        <section
+          aria-labelledby="tracker-heading"
+          className="bg-surface border-border mt-6 rounded-xl border p-5"
+        >
+          <h2 id="tracker-heading" className="font-semibold">
+            In My jobs: {STATUS_LABELS[saved.status].label}
+          </h2>
+          <p className="text-muted mt-1 text-sm">
             Saved on {formatDate(saved.saved_at)}. {STATUS_LABELS[saved.status].hint}{' '}
-            <Link href="/tracker" className="font-medium underline underline-offset-2">
+            <Link href="/tracker" className="text-accent hover:underline">
               Open My jobs
             </Link>
-          </Callout>
-        </div>
+          </p>
+          <div className="mt-4">
+            <StatusControls key={saved.status} jobId={job.id} status={saved.status} />
+          </div>
+          {saved.notes && (
+            <div className="border-border mt-4 border-t pt-4">
+              <h3 className="mb-2 text-sm font-semibold">Notes</h3>
+              <NotesLog notes={saved.notes} />
+            </div>
+          )}
+          {history.length > 0 && (
+            <details className="border-border mt-4 border-t pt-4 text-sm">
+              <summary className="text-muted cursor-pointer">History</summary>
+              <ol className="mt-2 space-y-1">
+                {history.map((entry, i) => (
+                  <li key={i} className="text-muted">
+                    <span className="tabular-nums">
+                      {formatDate(entry.changed_at.toISOString())}
+                    </span>
+                    {' · '}
+                    {entry.from_status
+                      ? `${STATUS_LABELS[entry.from_status].label} → ${STATUS_LABELS[entry.to_status].label}`
+                      : 'Saved to My jobs'}
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )}
+        </section>
       )}
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_22rem] lg:items-start">

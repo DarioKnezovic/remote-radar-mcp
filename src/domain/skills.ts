@@ -75,6 +75,9 @@ const CATALOG: readonly SkillDefinition[] = [
   { name: 'Cypress', patterns: [/\bcypress\b/i] },
 ];
 
+/** Every skill the matcher recognises, by its display name. */
+export const SKILL_NAMES: readonly string[] = CATALOG.map((skill) => skill.name);
+
 const BY_NAME = new Map(CATALOG.map((skill) => [foldText(skill.name), skill]));
 
 /** Catalog name for a skill as a person writes it ("node", "Postgres", "ci/cd"), if known. */
