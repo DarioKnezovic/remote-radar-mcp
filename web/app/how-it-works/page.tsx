@@ -158,9 +158,9 @@ export default async function HowItWorksPage() {
 
       <Section title="Where your data lives">
         <Callout tone="neutral" title="Everything stays on your computer">
-          Your profile is a file in the project folder (<code>profile.json</code>). Saved jobs and
-          the job cache are in a small database that runs on your computer in Docker. If you also
-          use Remote Radar from Claude, both see the same saved jobs.
+          Your profile is a file in the project folder (<code>profile.json</code>). Saved jobs, your
+          cover letter drafts and the job cache are in a small database that runs on your computer
+          in Docker. If you also use Remote Radar from Claude, both see the same saved jobs.
         </Callout>
       </Section>
     </div>

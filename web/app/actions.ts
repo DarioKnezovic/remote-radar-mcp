@@ -99,3 +99,30 @@ export async function saveProfileAction(input: unknown): Promise<SaveProfileResu
   // one would also swap the setup wizard for the full form before it can say "ready".)
   return { ok: true };
 }
+
+const MAX_LETTER = 20_000;
+
+export type SaveCoverLetterActionResult =
+  { ok: true; updatedAt: string | null } | { ok: false; error: string };
+
+/** Saves your edited cover letter draft for a job (empty = delete). Never sends it anywhere. */
+export async function saveCoverLetterAction(
+  jobId: string,
+  body: string,
+): Promise<SaveCoverLetterActionResult> {
+  if (!validJobId(jobId)) return { ok: false, error: 'Invalid job.' };
+  if (typeof body !== 'string' || body.length > MAX_LETTER) {
+    return {
+      ok: false,
+      error: `A draft can be up to ${MAX_LETTER.toLocaleString('en-US')} characters.`,
+    };
+  }
+  try {
+    const radar = await getRadar();
+    const result = await radar.tracker.saveCoverLetter(jobId, body);
+    if (result.kind === 'job_not_found') return { ok: false, error: 'This job no longer exists.' };
+    return { ok: true, updatedAt: result.kind === 'saved' ? result.coverLetter.updated_at : null };
+  } catch {
+    return { ok: false, error: DB_ERROR };
+  }
+}

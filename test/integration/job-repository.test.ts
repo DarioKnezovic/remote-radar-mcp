@@ -26,8 +26,10 @@ describe.skipIf(!TEST_DATABASE_URL)('JobRepository (Postgres)', () => {
   describe('migrations', () => {
     it('are idempotent', async () => {
       expect(await migrate(db.pool)).toEqual([]);
-      const { rows } = await db.pool.query<{ name: string }>('SELECT name FROM schema_migrations');
-      expect(rows.map((row) => row.name)).toEqual(['001_init.sql']);
+      const { rows } = await db.pool.query<{ name: string }>(
+        'SELECT name FROM schema_migrations ORDER BY name',
+      );
+      expect(rows.map((row) => row.name)).toEqual(['001_init.sql', '002_cover_letters.sql']);
     });
   });
 
@@ -211,6 +213,33 @@ describe.skipIf(!TEST_DATABASE_URL)('JobRepository (Postgres)', () => {
       await expect(
         db.pool.query("INSERT INTO saved_jobs (job_id, status) VALUES ($1, 'hired')", [job.id]),
       ).rejects.toThrow(/check constraint/);
+    });
+  });
+  describe('cover letters', () => {
+    it('refuses a draft for a job that was never fetched', async () => {
+      expect(await repo.saveCoverLetter('remotive:nope', 'Dear team')).toEqual({
+        kind: 'job_not_found',
+      });
+    });
+
+    it('saves, replaces and deletes a draft', async () => {
+      const job = makeJob();
+      await repo.upsertJobs([job], seenAt);
+      expect(await repo.getCoverLetter(job.id)).toBeUndefined();
+
+      await repo.saveCoverLetter(job.id, 'First draft');
+      clock = new Date('2026-10-21T08:00:00.000Z');
+      expect(await repo.saveCoverLetter(job.id, 'Second draft')).toEqual({
+        kind: 'saved',
+        coverLetter: { body: 'Second draft', updated_at: '2026-10-21T08:00:00.000Z' },
+      });
+      expect(await repo.getCoverLetter(job.id)).toEqual({
+        body: 'Second draft',
+        updated_at: '2026-10-21T08:00:00.000Z',
+      });
+
+      expect(await repo.saveCoverLetter(job.id, '   ')).toEqual({ kind: 'deleted' });
+      expect(await repo.getCoverLetter(job.id)).toBeUndefined();
     });
   });
 });

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { coverLetterPromptIntro, draftCoverLetter } from 'remote-radar-mcp/domain';
+import { CoverLetterEditor } from '@/components/cover-letter';
 import { FitPanel } from '@/components/fit-panel';
 import { scopeTone } from '@/components/job-card';
 import { SaveButton } from '@/components/save-button';
@@ -41,10 +43,11 @@ export default async function JobPage({ params }: { params: Params }) {
   const { radar, job } = loaded;
   if (!job) notFound();
 
-  const [profileResult, saved, history] = await Promise.all([
+  const [profileResult, saved, history, coverLetter] = await Promise.all([
     radar.profiles.load(),
     radar.tracker.getSavedJob(job.id),
     radar.tracker.getStatusHistory(job.id),
+    radar.tracker.getCoverLetter(job.id),
   ]);
   const fit = profileResult.ok ? fitFor(job, profileResult.profile) : undefined;
   const source = radar.sources.find((s) => s.id === job.source);
@@ -152,6 +155,40 @@ export default async function JobPage({ params }: { params: Params }) {
           )}
         </section>
       )}
+
+      <details
+        open={coverLetter !== undefined}
+        className="bg-surface border-border group mt-6 rounded-xl border"
+      >
+        <summary className="cursor-pointer list-none p-5">
+          <span className="font-semibold">✍️ Cover letter draft</span>
+          <span className="text-muted ml-2 text-sm">
+            {coverLetter
+              ? `saved ${formatDate(coverLetter.updated_at)}`
+              : 'a first draft from your profile, to edit and send yourself'}
+          </span>
+          <span aria-hidden className="text-muted float-right group-open:rotate-180">
+            ▾
+          </span>
+        </summary>
+        <div className="border-border border-t p-5">
+          {profileResult.ok && fit ? (
+            <CoverLetterEditor
+              jobId={job.id}
+              generated={draftCoverLetter({ job, profile: profileResult.profile, fit })}
+              saved={coverLetter}
+              promptIntro={coverLetterPromptIntro({ job, profile: profileResult.profile, fit })}
+            />
+          ) : (
+            <p className="text-muted text-sm">
+              Set up your profile first, and Remote Radar writes a first draft from it.{' '}
+              <Link href="/profile" className="text-accent hover:underline">
+                Set up my profile
+              </Link>
+            </p>
+          )}
+        </div>
+      </details>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_22rem] lg:items-start">
         <section aria-labelledby="description-heading" className="min-w-0 lg:order-1">

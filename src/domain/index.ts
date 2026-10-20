@@ -5,6 +5,14 @@
 export { APPLICATION_STATUSES, type ApplicationStatus, type SavedJob } from './application.js';
 export { isEuCountry, regionForCountry } from './countries.js';
 export {
+  coverLetterPromptIntro,
+  draftCoverLetter,
+  NAME_PLACEHOLDER,
+  pickStory,
+  STORY_PLACEHOLDER,
+  type CoverLetterInput,
+} from './cover-letter.js';
+export {
   EMPLOYMENT_TYPES,
   REMOTE_SCOPES,
   SOURCE_IDS,

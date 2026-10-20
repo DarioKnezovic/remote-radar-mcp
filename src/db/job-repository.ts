@@ -77,6 +77,14 @@ export type SaveResult =
 export type UpdateStatusResult =
   { kind: 'updated'; saved: SavedJob; previousStatus: ApplicationStatus } | { kind: 'not_saved' };
 
+export interface CoverLetter {
+  body: string;
+  updated_at: string;
+}
+
+export type SaveCoverLetterResult =
+  { kind: 'saved'; coverLetter: CoverLetter } | { kind: 'deleted' } | { kind: 'job_not_found' };
+
 /** All SQL lives here. Methods take plain values and return domain objects. */
 export class JobRepository {
   constructor(
@@ -249,6 +257,35 @@ export class JobRepository {
       const saved = must(await this.getSavedJob(jobId, client), `saved job ${jobId}`);
       return { kind: 'updated', saved, previousStatus: previous.status } as const;
     });
+  }
+
+  // ── Cover letter drafts ───────────────────────────────────────────────────
+
+  async getCoverLetter(jobId: string): Promise<CoverLetter | undefined> {
+    const { rows } = await this.pool.query<{ body: string; updated_at: Date }>(
+      'SELECT body, updated_at FROM cover_letters WHERE job_id = $1',
+      [jobId],
+    );
+    const row = rows[0];
+    return row && { body: row.body, updated_at: row.updated_at.toISOString() };
+  }
+
+  /** Saves (or replaces) the draft for a job. An empty body deletes it. */
+  async saveCoverLetter(jobId: string, body: string): Promise<SaveCoverLetterResult> {
+    if (!body.trim()) {
+      await this.pool.query('DELETE FROM cover_letters WHERE job_id = $1', [jobId]);
+      return { kind: 'deleted' };
+    }
+    const { rows } = await this.pool.query<{ updated_at: Date }>(
+      `INSERT INTO cover_letters (job_id, body, updated_at)
+       SELECT id, $2, $3 FROM jobs WHERE id = $1
+       ON CONFLICT (job_id) DO UPDATE SET body = EXCLUDED.body, updated_at = EXCLUDED.updated_at
+       RETURNING updated_at`,
+      [jobId, body, this.now()],
+    );
+    const row = rows[0];
+    if (!row) return { kind: 'job_not_found' };
+    return { kind: 'saved', coverLetter: { body, updated_at: row.updated_at.toISOString() } };
   }
 
   async getStatusHistory(jobId: string) {

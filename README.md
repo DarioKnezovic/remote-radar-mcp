@@ -79,13 +79,13 @@ login, so it only accepts connections from your own computer, not from your netw
 
 ## The web app
 
-| Page             | What it does                                                                                                                                                                                                                                                                                         |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Find jobs**    | Search by keywords, where you can work from (_open to where I live_, _anyone, anywhere_, _all remote jobs_) and how recent. Sort by best fit, or show only jobs with no warnings for you. Each result shows where it can be done from, the contract type, pay if listed, and a one-line fit summary. |
-| **Job page**     | The full listing, and **How well this fits you**: each warning in plain words with the sentence from the listing it's based on, matched and missing skills, and a big **Open the original listing** button.                                                                                          |
-| **My jobs**      | Saved jobs by stage: Saved → Applied → Interviewing → Offer, plus Rejected and Not interested. Mark a job **I applied** after applying on the company's site, change its stage, and add notes.                                                                                                       |
-| **My profile**   | A form for your profile, with a three-step setup the first time. Countries and time zones are dropdowns; skills are understood in their common spellings ("node" → Node.js).                                                                                                                         |
-| **How it works** | The whole process in five steps, every source, what each "where can I work from" label and each warning means, and what Remote Radar never does.                                                                                                                                                     |
+| Page             | What it does                                                                                                                                                                                                                                                                                                            |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Find jobs**    | Search by keywords, where you can work from (_open to where I live_, _anyone, anywhere_, _all remote jobs_) and how recent. Sort by best fit, or show only jobs with no warnings for you. Each result shows where it can be done from, the contract type, pay if listed, and a one-line fit summary.                    |
+| **Job page**     | The full listing, and **How well this fits you**: each warning in plain words with the sentence from the listing it's based on, matched and missing skills, and a big **Open the original listing** button. Plus a **cover letter draft** written from your profile, which you edit, save, copy, or polish with Claude. |
+| **My jobs**      | Saved jobs by stage: Saved → Applied → Interviewing → Offer, plus Rejected and Not interested. Mark a job **I applied** after applying on the company's site, change its stage, and add notes.                                                                                                                          |
+| **My profile**   | A form for your profile, with a three-step setup the first time. Countries and time zones are dropdowns; skills are understood in their common spellings ("node" → Node.js).                                                                                                                                            |
+| **How it works** | The whole process in five steps, every source, what each "where can I work from" label and each warning means, and what Remote Radar never does.                                                                                                                                                                        |
 
 To run the web app without Docker (for development), see [Development](#development).
 
@@ -537,6 +537,15 @@ still shows the listing's own sentence it's based on, so you can judge it yourse
 job page shows one, `sanitize-html` keeps only basic formatting (paragraphs, lists, headings,
 links), drops scripts, styles, images, forms and event handlers, and only allows `http(s)` and
 `mailto` links, which open in a new tab.
+
+**Why the cover letter draft is written locally, not by an AI.** The draft is built from your
+profile alone: the role, your skills that the listing mentions (never ones you marked "learning"
+as experience), the achievement that shares the most skills with the job, and where you work
+from. Anything missing becomes a `[bracketed]` placeholder instead of being made up. An AI would
+write better prose, but it would mean sending your profile to an API and needing a key. Instead,
+**Copy prompt for Claude** puts the listing, your profile, the fit check and your draft on the
+clipboard, with instructions to stay truthful, and you paste it into Claude yourself. Drafts are
+saved per job in the `cover_letters` table.
 ---
 
 ## Sources
@@ -571,8 +580,6 @@ job searching.
 - Show the other locations of a role that was posted once per country.
 - A salary filter, once salaries are parsed into numbers.
 - More ATS providers (Workable, SmartRecruiters, Recruitee) through `BoardsJobSource`.
-- Drafting a cover letter from the job page (today: ask Claude, which uses your profile's
-  achievements).
 
 ## License
 

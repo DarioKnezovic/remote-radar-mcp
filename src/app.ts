@@ -111,7 +111,12 @@ export async function createRemoteRadar(options: RemoteRadarOptions = {}): Promi
 // Everything pure (types, constants, matching) for convenience; a bundler should import
 // it from `remote-radar-mcp/domain` instead, which doesn't pull in the database layer.
 export * from './domain/index.js';
-export type { SaveResult, UpdateStatusResult } from './db/job-repository.js';
+export type {
+  CoverLetter,
+  SaveCoverLetterResult,
+  SaveResult,
+  UpdateStatusResult,
+} from './db/job-repository.js';
 export type { ProfileIssue, ProfileResult } from './profile/profile-store.js';
 export type { SearchParams, SearchResult, SourceStatus } from './services/job-search.js';
 export type { SourceInfo } from './sources/job-source.js';

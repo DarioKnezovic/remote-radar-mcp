@@ -35,7 +35,7 @@ export async function createTestDatabase(): Promise<TestDatabase> {
     schema,
     async reset() {
       await pool.query(
-        'TRUNCATE jobs, saved_jobs, job_status_history, source_fetches RESTART IDENTITY CASCADE',
+        'TRUNCATE jobs, saved_jobs, job_status_history, source_fetches, cover_letters RESTART IDENTITY CASCADE',
       );
     },
     async drop() {
