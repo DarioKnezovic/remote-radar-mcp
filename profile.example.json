@@ -1,0 +1,29 @@
+{
+  "$comment": "Example profile (fictional). Copy to profile.json (git-ignored) and edit. Country codes are ISO 3166-1 alpha-2. Skills are matched by common spellings, e.g. \"Node.js\" also matches \"node\" and \"nodejs\".",
+  "name": "Alex Example",
+  "location": {
+    "city": "Belgrade",
+    "country": "Serbia",
+    "country_code": "RS",
+    "timezone": "CET"
+  },
+  "citizenship": ["RS"],
+  "years_experience": 6,
+  "skills": {
+    "strong": ["TypeScript", "React", "Node.js", "PostgreSQL"],
+    "some": ["Docker", "GraphQL"],
+    "learning": ["Rust"]
+  },
+  "languages": ["English", "Serbian"],
+  "looking_for": {
+    "roles": ["Senior frontend engineer", "Full-stack engineer"],
+    "employment_types": ["full_time", "contract"]
+  },
+  "stories": [
+    {
+      "title": "Cut checkout load time in half",
+      "summary": "Moved a React checkout to server-side rendering and code splitting; time to interactive went from 6.1s to 2.8s and conversion rose 4%.",
+      "skills": ["React", "Next.js", "Performance"]
+    }
+  ]
+}

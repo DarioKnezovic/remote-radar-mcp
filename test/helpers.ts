@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
 import type { Job } from '../src/domain/job.js';
+import type { Profile } from '../src/domain/profile.js';
+import type { ProfileStore } from '../src/profile/profile-store.js';
 import type { JobSource, SourceInfo } from '../src/sources/job-source.js';
 import type { TrackerStore } from '../src/tools/shared.js';
 
@@ -61,3 +63,40 @@ export const unusedStore: TrackerStore = {
   updateStatus: notInThisTest,
   listSavedJobs: notInThisTest,
 };
+
+/** A valid profile resembling the project owner's situation: EU citizen living outside the EU. */
+export function makeProfile(overrides: Partial<Profile> = {}): Profile {
+  return {
+    location: {
+      city: 'Mostar',
+      country: 'Bosnia and Herzegovina',
+      country_code: 'BA',
+      timezone: 'CET',
+    },
+    citizenship: ['HR'],
+    years_experience: 8,
+    skills: {
+      strong: ['TypeScript', 'React', 'Node.js', 'PostgreSQL'],
+      some: ['Rust', 'Vue.js'],
+      learning: ['Python'],
+    },
+    languages: ['English', 'Croatian'],
+    looking_for: { roles: ['Full-stack engineer'], employment_types: ['full_time', 'contract'] },
+    stories: [],
+    ...overrides,
+  };
+}
+
+/** ProfileStore that returns a fixed profile, or a fixed error. */
+export function staticProfiles(result: Profile | string): ProfileStore {
+  return {
+    load: () =>
+      Promise.resolve(
+        typeof result === 'string'
+          ? { ok: false as const, error: result }
+          : { ok: true as const, profile: result, file: '/test/profile.json' },
+      ),
+  };
+}
+
+export const unusedProfiles: ProfileStore = { load: notInThisTest };

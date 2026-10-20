@@ -1,6 +1,6 @@
 {
   "name": "remote-radar-mcp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MCP server that finds, scores, saves and tracks remote developer jobs from official public job APIs. Never auto-applies.",
   "type": "module",
   "main": "dist/index.js",
@@ -9,7 +9,9 @@
   },
   "files": [
     "dist",
-    "migrations"
+    "migrations",
+    "boards.default.json",
+    "profile.example.json"
   ],
   "engines": {
     "node": ">=22.12"
@@ -37,7 +39,7 @@
     "jobs",
     "remote"
   ],
-  "author": "Dario Knezovi\u0107",
+  "author": "Dario Knezović",
   "license": "MIT",
   "private": true,
   "dependencies": {

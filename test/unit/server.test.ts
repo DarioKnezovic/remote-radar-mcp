@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createServer, SERVER_NAME, SERVER_VERSION } from '../../src/server.js';
 import { JobSearchService } from '../../src/services/job-search.js';
 import type { JobSource } from '../../src/sources/job-source.js';
-import { FakeSource, makeJob, unusedStore } from '../helpers.js';
+import { FakeSource, makeJob, unusedProfiles, unusedStore } from '../helpers.js';
 
 let client: Client | undefined;
 
@@ -15,7 +15,11 @@ afterEach(async () => {
 
 async function connect(sources: JobSource[]): Promise<Client> {
   const now = () => new Date('2026-10-20T12:00:00Z');
-  const server = createServer({ search: new JobSearchService(sources, now), store: unusedStore });
+  const server = createServer({
+    search: new JobSearchService(sources, now),
+    store: unusedStore,
+    profiles: unusedProfiles,
+  });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   client = new Client({ name: 'test-client', version: '0.0.0' });
   await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
@@ -29,12 +33,14 @@ describe('MCP server', () => {
     expect(c.getInstructions()).toContain('never applies');
   });
 
-  it('lists all v1 tools', async () => {
+  it('lists all tools', async () => {
     const c = await connect([]);
     const { tools } = await c.listTools();
     expect(tools.map((t) => t.name).sort()).toEqual([
       'get_job_details',
+      'get_profile',
       'list_saved_jobs',
+      'match_job',
       'save_job',
       'search_jobs',
       'update_job_status',

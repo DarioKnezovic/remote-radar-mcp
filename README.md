@@ -7,11 +7,15 @@ An [MCP](https://modelcontextprotocol.io) server that helps you find remote deve
 **official public job APIs**, and keeps track of the ones you care about in a local Postgres
 database. Use it from Claude Desktop, Claude Code or any MCP client.
 
-It finds, filters, dedupes, saves and tracks. **It never applies to jobs.** You read the listing
-and apply yourself, on the original site.
+It finds, filters, dedupes, matches against your profile, saves and tracks. **It never applies to
+jobs.** You read the listing and apply yourself, on the original site.
 
-- 🔎 **`search_jobs`**: one search across Remotive and Arbeitnow, normalized into a single job
-  shape, with duplicates removed and filters for keywords, tags, remote region and posting date.
+- 🔎 **`search_jobs`**: one search across three job boards (Remotive, Arbeitnow, Remote OK) and
+  company careers pages on Greenhouse, Lever and Ashby, normalized into a single job shape, with
+  duplicates removed and filters for keywords, tags, remote region and posting date.
+- 🎯 **`match_job`, `get_profile`**: compares a job with your local `profile.json`: matched and
+  missing skills, plus red flags such as "requires German", "US hours", "EU residence required"
+  or "part-time", each with the sentence it's based on.
 - 📌 **`save_job`, `update_job_status`, `list_saved_jobs`**: a small application tracker
   (`found → applied → interview → offer`, or `rejected` / `skipped`) with a dated notes log and a
   full status history.
@@ -44,11 +48,12 @@ depend on what the sources have that day.
 >
 > **You:** Tell me more about the Globex one. Do they require German?
 >
-> **Claude:** _calls `get_job_details` with `{ "job_id": "arbeitnow:frontend-lead-typescript-berlin-12345" }`_
+> **Claude:** _calls `match_job` with `{ "job_id": "arbeitnow:frontend-lead-typescript-berlin-12345" }`_
 >
-> The listing is in English and asks for "fluent English; German is a plus", so German isn't
-> required. They want 6+ years with React and TypeScript, experience leading a small team, and
-> CI/CD. Remote within Europe, with optional visits to the Berlin office.
+> Good fit: it wants TypeScript, React, Next.js and CI/CD, all strong skills in your profile; the
+> only missing one is GraphQL. German is "a plus", not a requirement. One red flag: _"You must be
+> based in the EU"_. You're an EU citizen but live outside the EU, so ask whether EU work
+> authorization is enough.
 >
 > **You:** Save it. Note: strong stack match, ask about team size.
 >
@@ -75,6 +80,16 @@ depend on what the sources have that day.
 | `save_job`          | `job_id`, `notes?`                                                  | Saves the job with status `found`. Saving again keeps the status and appends the note.                                                                                                                 |
 | `update_job_status` | `job_id`, `status`, `notes?`                                        | `status` is one of `found`, `applied`, `interview`, `offer`, `rejected`, `skipped`. Every change goes into the status history.                                                                         |
 | `list_saved_jobs`   | `status?`                                                           | Saved jobs with status and notes, most recently updated first.                                                                                                                                         |
+| `get_profile`       | –                                                                   | Your `profile.json`: skills by level, location, citizenship, languages, what you're looking for, achievement stories (for drafting tailored applications you send yourself).                           |
+| `match_job`         | `job_id`                                                            | Matched skills (with your level), missing skills, skill coverage, red flags with evidence, and notes (e.g. "requires EU work authorization: you have it").                                             |
+
+**Red flags `match_job` looks for:** on-site or hybrid; remote region that excludes where you
+live (US only, Americas, …); EU or country residence requirements; work authorization you don't
+have (EU citizenship counts for the EU and every EU country); required languages you don't speak
+(nice-to-haves are reported as notes instead); listings written in another language; employment
+types you're not looking for (part-time, internship, …); unpaid or equity-only; US working hours
+when you're on European time; more years of experience than your profile has. It's heuristic by
+design: every flag carries the sentence it's based on, so you (or Claude) can judge it.
 
 **Search filters**
 
@@ -96,8 +111,8 @@ only `save_job` and `update_job_status` write, and they only write to your local
 
 ```ts
 {
-  id: "remotive:2091158",        // "<source>:<source id>"
-  source: "remotive" | "arbeitnow",
+  id: "remotive:2091158",        // "<source>:<source id>"; company boards: "greenhouse:gitlab:8860302002"
+  source: "remotive" | "arbeitnow" | "remoteok" | "greenhouse" | "lever" | "ashby",
   url: string,                   // original listing: apply here
   title: string,
   company: string,
@@ -127,6 +142,15 @@ npm run build
 
 The server runs database migrations automatically when it starts. You can also run them yourself
 with `npm run db:migrate`.
+
+**Your profile (for `match_job`):** copy `profile.example.json` to `profile.json` and fill it in.
+`profile.json` is git-ignored and re-read on every call, so edits apply without a restart.
+
+**Company boards:** `boards.default.json` is a starter list of 21 remote-friendly companies on
+Greenhouse, Lever and Ashby. To follow other companies, copy it to `boards.json` (git-ignored) and
+edit it; the board token is the company part of the board URL (`job-boards.greenhouse.io/gitlab`,
+`jobs.lever.co/jumpcloud`, `jobs.ashbyhq.com/linear`). Lever boards hosted in the EU need
+`"region": "eu"`.
 
 > **Docker Desktop on macOS:** if `docker` says it can't connect to `/var/run/docker.sock`, run
 > `docker context use desktop-linux` once.
@@ -172,6 +196,8 @@ npm run inspect    # opens the MCP Inspector in your browser
 | -------------- | ------------------------------------------------------------------ | ---------------------------------------------------- |
 | `DATABASE_URL` | `postgres://remote_radar:remote_radar@localhost:5433/remote_radar` | Matches `docker-compose.yml`.                        |
 | `LOG_LEVEL`    | `info`                                                             | `debug`, `info`, `warn`, `error`. Logs go to stderr. |
+| `PROFILE_FILE` | `profile.json` in the project folder                               | Path to your profile.                                |
+| `BOARDS_FILE`  | `boards.json`, else `boards.default.json`                          | Path to the company-boards list.                     |
 
 ---
 
@@ -183,28 +209,33 @@ flowchart LR
 
   subgraph server["remote-radar MCP server (stdio)"]
     direction LR
-    tools["tools/<br/>search_jobs · get_job_details<br/>save_job · update_job_status · list_saved_jobs"]
-    search["JobSearchService<br/>merge → dedupe → filter → sort → limit"]
-    domain["domain/<br/>Job · remote scope · filter · dedupe"]
+    tools["tools/<br/>search_jobs · get_job_details · match_job · get_profile<br/>save_job · update_job_status · list_saved_jobs"]
+    search["JobSearchService<br/>merge → filter → dedupe → sort → limit"]
+    domain["domain/<br/>Job · remote scope · filter · dedupe<br/>skills · match"]
     cache["CachedJobSource<br/>TTL · stale-on-error · retry throttle"]
-    remotive["RemotiveSource"]
-    arbeitnow["ArbeitnowSource"]
+    boardsrc["Job boards<br/>Remotive · Arbeitnow · Remote OK"]
+    atssrc["BoardsJobSource ×3<br/>Greenhouse · Lever · Ashby<br/>(one request per company)"]
     repo["JobRepository<br/>(all SQL)"]
+    profile["FileProfileStore"]
   end
 
   db[("PostgreSQL<br/>jobs · saved_jobs<br/>job_status_history · source_fetches")]
-  rapi["remotive.com/api"]
-  aapi["arbeitnow.com/api"]
+  apis["Public job APIs"]
+  profilefile[/"profile.json"/]
+  boardsfile[/"boards.json"/]
 
   client <-->|JSON-RPC over stdio| tools
   tools --> search
   tools --> repo
+  tools --> profile
+  tools --> domain
   search --> domain
   search --> cache
-  cache --> remotive & arbeitnow
+  cache --> boardsrc & atssrc
   cache -->|FetchCacheStore| repo
-  remotive -->|HTTPS, ≤ 4/day| rapi
-  arbeitnow -->|HTTPS, ≤ 3 pages/hour| aapi
+  boardsrc & atssrc -->|HTTPS, rate-limited by TTL| apis
+  profile -->|read per call| profilefile
+  boardsfile -.->|read at startup| atssrc
   repo --> db
 ```
 
@@ -212,12 +243,13 @@ flowchart LR
 
 1. `search_jobs` asks `JobSearchService` for results.
 2. Each source is wrapped in `CachedJobSource`. If the last successful fetch, recorded in
-   Postgres, is still fresh (Remotive: 6 h, Arbeitnow: 1 h), the cached jobs are read from
-   Postgres. Otherwise the source is called once, its jobs are upserted, and the fetch is
-   recorded.
+   Postgres, is still fresh (Remotive and company boards: 6 h, Remote OK: 2 h, Arbeitnow: 1 h),
+   the cached jobs are read from Postgres. Otherwise the source is called once, its jobs are
+   upserted, and the fetch is recorded.
 3. The source client validates the raw response with zod, one listing at a time, so one bad
-   listing doesn't drop the whole feed, and normalizes it into a `Job`.
-4. Jobs from all sources are merged, deduped, filtered, sorted and cut to `limit`.
+   listing doesn't drop the whole feed, and normalizes it into a `Job`. Company-board sources
+   fetch their boards four at a time and skip a board that fails (renamed, moved to another ATS).
+4. Jobs from all sources are merged, filtered, deduped, sorted and cut to `limit`.
 5. A failing source shows up as `ok: false` in the result, and the other sources' jobs are still
    returned. The tool only reports an error if every source fails.
 
@@ -228,10 +260,17 @@ src/
   index.ts            entry point: config, migrations, wiring, stdio transport
   server.ts           createServer(deps): registers all tools (used directly by tests)
   config.ts           env vars validated with zod
-  domain/             pure logic, no I/O: Job, remote scope, filter, dedupe, text, application status
-  sources/            JobSource interface, HTTP client, cache, registry
+  domain/             pure logic, no I/O: Job, remote scope, countries, employment, filter,
+                      dedupe, text, application status, profile, skills, match
+  profile/            reads profile.json
+  sources/            JobSource interface, HTTP client, cache, registry, boards config,
+                      BoardsJobSource (many company boards on one ATS)
     remotive/         schema (raw API) · normalize · client
     arbeitnow/        schema (raw API) · normalize · client (pagination)
+    remoteok/         schema (raw API) · normalize · client
+    greenhouse/       schema (raw API) · normalize · client (one request per board)
+    lever/            schema (raw API) · normalize · client (global and EU hosts)
+    ashby/            schema (raw API) · normalize · client
   services/           JobSearchService
   db/                 pool, migration runner, JobRepository, Postgres cache store
   tools/              one file per MCP tool + shared output schemas
@@ -260,16 +299,17 @@ test/
 | `npm run inspect`           | Build and open the MCP Inspector                         |
 
 **Tests never call the real APIs.** Normalization and dedupe are tested against responses
-recorded from Remotive and Arbeitnow (`test/fixtures/`). The tool tests connect a real MCP client
+recorded from every source (`test/fixtures/`). The tool tests connect a real MCP client
 to the server over an in-memory transport. Integration tests run the real migrations in a
 throwaway Postgres schema.
 
 ### Adding a job source
 
 1. Create `src/sources/<name>/` with `schema.ts` (zod schema of the raw API), `normalize.ts`
-   (raw → `Job`) and `client.ts` (a class implementing `JobSource`).
-2. Add the id to `SOURCE_IDS` in `src/domain/job.ts` and an attribution line to
-   `SOURCE_ATTRIBUTION` in `src/tools/shared.ts`.
+   (raw → `Job`) and `client.ts` (a class implementing `JobSource`). For an ATS with one board
+   per company, build a `BoardsJobSource` from a per-board fetch function instead.
+2. Add the id to `SOURCE_IDS` in `src/domain/job.ts`, and to `attributionFor` in
+   `src/tools/shared.ts` if the source's terms ask for credit by name.
 3. Register it in `src/sources/registry.ts` with a TTL that fits the source's rate limits.
 4. Record a sample response into `test/fixtures/` (trimmed) and test the normalizer against it.
 
@@ -286,28 +326,40 @@ remember. You read the listing and apply yourself. The tool descriptions and ser
 instructions say this explicitly, so the model doesn't offer to "apply for you" either.
 
 **Why only official APIs.** Scraping sites that forbid it (LinkedIn, Wellfound and others) breaks
-their terms and breaks whenever their HTML changes. Remotive and Arbeitnow both publish free
-APIs. Their terms shape the code:
+their terms and breaks whenever their HTML changes. Every source here publishes a public API.
+Their terms shape the code:
 
 - **Rate limits:** Remotive advises at most 4 requests a day. Arbeitnow asks not to abuse its
-  free API.
-- **Attribution:** every result carries the source name and the original URL.
+  free API. Remote OK and the ATS APIs state no limit, so they're cached for 2–6 hours and
+  company boards are fetched a few at a time.
+- **Attribution:** every result carries the source name and the original URL. Remote OK
+  requires a followed link back to its listing page, so `url` is always the Remote OK URL.
+- **Read-only:** Lever's API also accepts applications; that endpoint is never called.
 - **No republishing:** the test fixtures are trimmed samples rather than full copies of
   listings, and this README uses made-up listings.
 
 **Why a `JobSource` interface, with caching as a separate wrapper.** Sources are messy in
 different ways. Remotive gives free-text locations. Arbeitnow mixes languages in `job_types`,
 sometimes reports remote jobs as `remote: false`, and sometimes puts the location in the title.
-Each source keeps that mess in its own folder and outputs the same `Job`, so dedupe, filters
-and the tracker are written once. Rate limiting is a separate concern, so `CachedJobSource` wraps
-any source instead of each client caching on its own. Adding Greenhouse, Lever or Ashby is a new
-folder and one line in the registry.
+Greenhouse has no remote flag at all, Lever's `workplaceType` says `"onsite"` where its docs
+say `"on-site"`, and Ashby's address sometimes holds a region ("European Union") instead of a
+country. Each source keeps that mess in its own folder and outputs the same `Job`, so dedupe,
+filters, matching and the tracker are written once. Rate limiting is a separate concern, so
+`CachedJobSource` wraps any source instead of each client caching on its own. The v2 sources
+were added exactly that way: a folder each, plus a line in the registry.
+
+**Why company boards.** Aggregators like Remotive give few jobs and repost listings late.
+Greenhouse, Lever and Ashby host the careers pages of thousands of companies, through public
+APIs, so following a company means adding its board token to `boards.json`. When an aggregator
+reposts a company's job, dedupe keeps the company's own listing, since that's where you apply.
 
 **Why the cache lives in Postgres.** MCP clients start a new server process for many sessions.
 An in-memory cache would refetch on every start, which would quickly break Remotive's 4-per-day
 limit. Fetches are recorded in `source_fetches`, and the jobs of the latest fetch are the rows
-with `last_seen_at` at or after that fetch. This also means `get_job_details` works for any job
-you've seen in a search, not only saved ones.
+with `last_seen_at` at or after that fetch. This also means `get_job_details` and `match_job`
+work for any job you've seen in a search, not only saved ones. Trade-off: the cache holds
+normalized jobs, not raw responses, so a change to a normalizer only shows once that source's
+cache expires.
 
 **Why filtering happens locally.** Remotive's documented `search` and `limit` parameters are
 currently ignored by the free API, which always returns the latest 10 jobs. Arbeitnow has no
@@ -325,9 +377,22 @@ Region names in a title are used when the location has none ("…Remote from EU"
 cleanup (`Acme GmbH` = `Acme, Inc.`) and the titles' words overlap by at least 80%. Gender
 markers like `(m/w/d)`, "Remote", and spelling variants like front-end/frontend are ignored, but
 seniority words are kept: "Senior Frontend Engineer" is a different role than "Frontend
-Engineer". The copy with more information (salary, known scope, tags) is kept. Trade-off: the
-same role posted for two cities (Berlin and Karlsruhe) collapses into one result, and the second
-city isn't shown.
+Engineer". The copy with more information (salary, known scope, tags; the company's own board
+over an aggregator) is kept. A location tacked onto the title ("Staff Engineer | Germany |
+Remote") is moved into the location first, so per-country copies match.
+
+Dedupe runs **after** filtering. Companies often post one copy of a role per country ("Remote,
+US" and "Remote, Germany"); deduping first could keep the US copy and a Europe search would then
+lose the job entirely. Trade-off: copies that all match collapse into one result, so the other
+locations aren't listed.
+
+**Why `match_job` is heuristic, and shows its evidence.** Requirements hide in prose ("you must
+be based in the EU", "Deutschkenntnisse", "overlap with PST business hours"). Pattern rules
+catch most of them cheaply and predictably; each flag carries the sentence it came from, so a
+false positive is easy to spot and the model can read the full listing when it matters. The
+rules know some important distinctions: EU _work authorization_ is satisfied by any EU
+citizenship, but EU _residence_ isn't if you live outside the EU; "German is a plus" is a note,
+not a flag; "working across Europe and the US" isn't a timezone requirement.
 
 **Why notes are a log.** Notes are appended, not overwritten
 (`[2026-10-21 applied] Sent CV via careers page`), so a note added when saving ("referral from a
@@ -346,35 +411,33 @@ stray `console.log` corrupts it. All logging goes to stderr as JSON lines, and E
 
 ## Sources
 
-| Source                                 | Endpoint                                          | Notes                                                                                                                       |
-| -------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| [Remotive](https://remotive.com)       | `GET https://remotive.com/api/remote-jobs`        | Free API returns the latest ~10 jobs, delayed 24 h. Cached 6 h (≤ 4 requests/day). Credit Remotive and link to the listing. |
-| [Arbeitnow](https://www.arbeitnow.com) | `GET https://www.arbeitnow.com/api/job-board-api` | 300 jobs/page, mostly Germany/EU, mostly on-site. First 3 pages, cached 1 h. Personal, non-commercial use; link back.       |
+| Source                                   | Endpoint                                                                     | Notes                                                                                                                       |
+| ---------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| [Remotive](https://remotive.com)         | `GET https://remotive.com/api/remote-jobs`                                   | Free API returns the latest ~10 jobs, delayed 24 h. Cached 6 h (≤ 4 requests/day). Credit Remotive and link to the listing. |
+| [Arbeitnow](https://www.arbeitnow.com)   | `GET https://www.arbeitnow.com/api/job-board-api`                            | 300 jobs/page, mostly Germany/EU, mostly on-site. First 3 pages, cached 1 h. Personal, non-commercial use; link back.       |
+| [Remote OK](https://remoteok.com)        | `GET https://remoteok.com/api`                                               | Latest ~100 remote jobs. Cached 2 h. Link back to the Remote OK listing (followed) and name Remote OK; don't use the logo.  |
+| [Greenhouse](https://www.greenhouse.com) | `GET boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true`           | Public, no auth. Free-text location only (no remote flag or employment type). Cached 6 h.                                   |
+| [Lever](https://www.lever.co)            | `GET api.lever.co/v0/postings/{board}?mode=json` (EU: `api.eu.lever.co`)     | Public, no auth. `workplaceType`, country code, salary range. Cached 6 h.                                                   |
+| [Ashby](https://www.ashbyhq.com)         | `GET api.ashbyhq.com/posting-api/job-board/{board}?includeCompensation=true` | Public, no auth. Unlisted jobs skipped; `publishedAt` is the last publish date. Cached 6 h.                                 |
 
 Job data belongs to these sources and the companies that posted it. This project is for personal
 job searching.
 
 ## Limitations
 
-- Remotive's free API gives few jobs (about 10), so most results come from Arbeitnow, which is
-  mostly German and on-site.
-- Most Arbeitnow remote jobs end up with scope `Unknown`. Include `Unknown` in `remote_scope` to
-  see them.
-- Salaries are raw text (`"$50-$75 /hour"`, `"OTE $25k - $35k"`), and Arbeitnow has none, so
-  there's no salary filter yet.
+- Remotive's free API gives few jobs (about 10). Arbeitnow is mostly German and on-site.
+- Many remote jobs say only "Remote" or a city, so they get scope `Unknown`. Include `Unknown` in
+  `remote_scope` to see them, and check the listing.
+- Salaries are raw text, and Arbeitnow and Greenhouse (in its list API) give none, so there's no salary
+  filter yet.
+- `match_job` is pattern-based: it catches common phrasings, not every way a requirement can be
+  written. Read the evidence and the listing before deciding.
 
-## Roadmap (v2)
+## Ideas
 
-- **More sources:** RemoteOK, and company boards on Greenhouse
-  (`boards-api.greenhouse.io/v1/boards/{company}/jobs`), Lever
-  (`api.lever.co/v0/postings/{company}?mode=json`) and Ashby
-  (`api.ashbyhq.com/posting-api/job-board/{name}`).
-- **`get_profile`:** reads a local, git-ignored `profile.json` (skills, experience, location,
-  citizenship, stories).
-- **`match_job { job_id }`:** compares a job with the profile and returns matched skills, missing
-  skills and red flags. Examples: "requires German", "on-site", "US only", "part-time", "requires
-  EU residence while you live outside the EU". This will be a pure function in
-  `src/domain/match.ts` over the normalized job, which already keeps the full description for it.
+- Show the other locations of a role that was posted once per country.
+- A salary filter, once salaries are parsed into numbers.
+- More ATS providers (Workable, SmartRecruiters, Recruitee) through `BoardsJobSource`.
 
 ## License
 

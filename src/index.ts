@@ -6,6 +6,7 @@ import { migrate } from './db/migrate.js';
 import { createPool } from './db/pool.js';
 import { PostgresFetchCacheStore } from './db/postgres-fetch-cache-store.js';
 import { logger } from './logger.js';
+import { FileProfileStore, resolveProfileFile } from './profile/profile-store.js';
 import { createServer, SERVER_VERSION } from './server.js';
 import { JobSearchService } from './services/job-search.js';
 import { createHttpClient } from './sources/http.js';
@@ -40,9 +41,11 @@ async function main(): Promise<void> {
     ashby: boards.ashby.length,
   });
   const sources = createSources(http, new PostgresFetchCacheStore(repository), boards);
+  const profiles = new FileProfileStore(resolveProfileFile());
   const server = createServer({
     search: new JobSearchService(sources),
     store: repository,
+    profiles,
   });
   const transport = new StdioServerTransport();
 
