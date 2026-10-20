@@ -128,6 +128,50 @@ describe('matchJob: red flags', () => {
     ).toEqual([]);
   });
 
+  it('listed hiring countries are compared with where the user lives, not the broad scope', () => {
+    // n8n-style list: Croatia (a citizenship) is listed, Bosnia (home) isn't.
+    const croatiaListed = matchJob(
+      makeJob({
+        remote_scope: 'Europe',
+        location: 'Berlin Office; Romania; Serbia; Croatia; The Netherlands; Kosovo',
+      }),
+      profile,
+    ).red_flags;
+    expect(croatiaListed).toEqual([
+      expect.objectContaining({
+        code: 'region_restricted',
+        message: expect.stringContaining("HR is listed and you're a citizen") as string,
+      }),
+    ]);
+
+    expectFlag('region_restricted', '', { remote_scope: 'Europe', location: 'Remote, Poland' });
+    expectFlag('region_restricted', '', { remote_scope: 'Europe', location: 'Germany (Remote)' });
+    expectFlag('region_restricted', '', {
+      remote_scope: 'Multi-region',
+      location: 'Remote, Canada; Remote, Israel; Remote, United Kingdom',
+    });
+
+    const homeListed = matchJob(
+      makeJob({ remote_scope: 'Europe', location: 'Berlin Office; Bosnia; Croatia' }),
+      profile,
+    );
+    expect(homeListed.red_flags).toEqual([]);
+    expect(homeListed.notes).toContain(
+      'Bosnia and Herzegovina is explicitly listed as a hiring country.',
+    );
+
+    // A region anywhere in the list, or no country at all, leaves it to the scope check.
+    expectNoFlag('region_restricted', '', { remote_scope: 'Europe', location: 'Europe; Germany' });
+    expectNoFlag('region_restricted', '', {
+      remote_scope: 'Europe',
+      location: 'London; Stockholm',
+    });
+    expectNoFlag('region_restricted', '', {
+      remote_scope: 'Multi-region',
+      location: 'Home Based - Americas; Home based - EMEA',
+    });
+  });
+
   it('country residence requirements', () => {
     expectFlag('residence_required', '<p>You must be based in Germany.</p>');
     expectNoFlag('residence_required', '<p>You must be based in Bosnia and Herzegovina.</p>');

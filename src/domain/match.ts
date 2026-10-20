@@ -1,4 +1,10 @@
-import { EU_COUNTRY_CODES, isEuCountry, isEuropeanCountry, regionForCountry } from './countries.js';
+import {
+  EU_COUNTRY_CODES,
+  countryCodeForName,
+  isEuCountry,
+  isEuropeanCountry,
+  regionForCountry,
+} from './countries.js';
 import type { EmploymentType, Job } from './job.js';
 import type { Profile, SkillLevel } from './profile.js';
 import { detectRegions } from './remote-scope.js';
@@ -47,52 +53,6 @@ const EMPLOYMENT_LABELS: Record<EmploymentType, string> = {
   freelance: 'freelance',
   internship: 'an internship',
   unknown: 'unknown',
-};
-
-/** English names → codes, for the countries that show up in authorization/residence clauses. */
-const COUNTRY_NAMES: Record<string, string> = {
-  'united states': 'US',
-  us: 'US',
-  'u.s.': 'US',
-  usa: 'US',
-  america: 'US',
-  'united kingdom': 'GB',
-  uk: 'GB',
-  britain: 'GB',
-  'great britain': 'GB',
-  england: 'GB',
-  canada: 'CA',
-  switzerland: 'CH',
-  norway: 'NO',
-  australia: 'AU',
-  india: 'IN',
-  israel: 'IL',
-  germany: 'DE',
-  france: 'FR',
-  netherlands: 'NL',
-  'the netherlands': 'NL',
-  spain: 'ES',
-  portugal: 'PT',
-  italy: 'IT',
-  ireland: 'IE',
-  poland: 'PL',
-  austria: 'AT',
-  belgium: 'BE',
-  sweden: 'SE',
-  denmark: 'DK',
-  finland: 'FI',
-  croatia: 'HR',
-  czechia: 'CZ',
-  'czech republic': 'CZ',
-  romania: 'RO',
-  greece: 'GR',
-  hungary: 'HU',
-  estonia: 'EE',
-  bosnia: 'BA',
-  'bosnia and herzegovina': 'BA',
-  serbia: 'RS',
-  brazil: 'BR',
-  mexico: 'MX',
 };
 
 const EU_NAMES = /^(?:the\s+)?(?:eu|european union|eea|european economic area)$/i;
@@ -193,10 +153,6 @@ function findEvidence(
     : undefined;
 }
 
-function countryCodeFor(name: string): string | undefined {
-  return COUNTRY_NAMES[foldText(name.trim()).replace(/^the\s+/, '')];
-}
-
 function hasEuCitizenship(profile: Profile): boolean {
   return profile.citizenship.some((code) => EU_COUNTRY_CODES.has(code));
 }
@@ -249,12 +205,83 @@ function checkWorkplace(job: Job, flags: RedFlag[]) {
   }
 }
 
+/** A location part naming a region rather than a country: "Europe", "EMEA", "Remote, Global". */
+const REGION_WORDS =
+  /\b(?:europe|european|eu|eea|emea|worldwide|anywhere|global|international|apac|asia|latam|americas|north america|south america|africa|middle east|nordics|dach|benelux|balkans|cee)\b/i;
+
+/** Words around a country in a location part: "Remote, Poland", "Germany (Remote)", "UK - Remote". */
+const LOCATION_NOISE = /\(?\b(?:remote|home[\s-]based|based|office|hq|only)\b\)?|[()]/gi;
+
+function countryInSegment(segment: string): string | undefined {
+  const words = segment
+    .replace(LOCATION_NOISE, ' ')
+    .split(/[\s-]+/)
+    .filter(Boolean);
+  // Longest suffix first: "London UK" → "UK", "United Kingdom" before "Kingdom".
+  for (let i = 0; i < words.length; i++) {
+    const code = countryCodeForName(words.slice(i).join(' '));
+    if (code) return code;
+  }
+  return undefined;
+}
+
+/**
+ * The countries a location lists, when it is only a list of countries ("Remote, Poland;
+ * Remote, United Kingdom", "Croatia; Serbia; Berlin Office"). Undefined when it names a
+ * region (then the scope check applies) or no country. Parts that are neither, such as
+ * a city, are ignored.
+ */
+export function listedCountries(location: string | null): ReadonlySet<string> | undefined {
+  if (!location) return undefined;
+  const codes = new Set<string>();
+  for (const part of location.split(/[;|\n]/)) {
+    if (REGION_WORDS.test(part.replace(LOCATION_NOISE, ' '))) return undefined;
+    for (const segment of part.split(',')) {
+      const code = countryInSegment(segment);
+      if (code) codes.add(code);
+    }
+  }
+  return codes.size > 0 ? codes : undefined;
+}
+
+/**
+ * A remote job that hires in named countries only is usually limited to people living in
+ * them (they need an entity or employer of record there), so compare with where the user
+ * lives, not with the broad scope. Returns true when it decided.
+ */
+function checkListedCountries(job: Job, profile: Profile, flags: RedFlag[], notes: string[]) {
+  const countries = listedCountries(job.location);
+  if (!countries) return false;
+  const home = profile.location.country_code;
+  if (countries.has(home)) {
+    notes.push(`${profile.location.country} is explicitly listed as a hiring country.`);
+    return true;
+  }
+  const citizenOf = profile.citizenship.filter((code) => countries.has(code));
+  flags.push({
+    code: 'region_restricted',
+    message:
+      `Hires only in the listed countries; ${profile.location.country}, where you live, isn't one of them.` +
+      (citizenOf.length > 0
+        ? ` ${citizenOf.join(', ')} is listed and you're a citizen, but hiring there usually means living there. Ask whether they can employ you from ${profile.location.country}.`
+        : ''),
+    ...(job.location && { evidence: job.location }),
+  });
+  return true;
+}
+
 function checkRegion(job: Job, profile: Profile, flags: RedFlag[], notes: string[]) {
   const home = regionForCountry(profile.location.country_code);
   const livesInEu = isEuCountry(profile.location.country_code);
   const evidence = job.location ?? undefined;
   const flag = (message: string) =>
     flags.push({ code: 'region_restricted', message, ...(evidence && { evidence }) });
+
+  const countryScoped =
+    job.remote_scope === 'Europe' ||
+    job.remote_scope === 'EU only' ||
+    job.remote_scope === 'Multi-region';
+  if (countryScoped && checkListedCountries(job, profile, flags, notes)) return;
 
   switch (job.remote_scope) {
     case 'US only':
@@ -317,7 +344,7 @@ function checkResidence(text: string, profile: Profile, flags: RedFlag[]) {
   );
   const place = country?.match[1];
   if (country && place && !EU_NAMES.test(place)) {
-    const code = countryCodeFor(place);
+    const code = countryCodeForName(place);
     if (code !== profile.location.country_code) {
       flags.push({
         code: 'residence_required',
@@ -336,7 +363,7 @@ function checkWorkAuthorization(text: string, profile: Profile, flags: RedFlag[]
   );
   const place = found?.match[1];
   if (found && place) {
-    const code = countryCodeFor(place);
+    const code = countryCodeForName(place);
     const isEu = EU_NAMES.test(place) || (code !== undefined && EU_COUNTRY_CODES.has(code));
     if (isEu && hasEuCitizenship(profile)) {
       notes.push(`Requires the right to work in ${place}: you have it through EU citizenship.`);
