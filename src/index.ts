@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { loadConfig } from './config.js';
+import { JobRepository } from './db/job-repository.js';
+import { migrate } from './db/migrate.js';
+import { createPool } from './db/pool.js';
+import { PostgresFetchCacheStore } from './db/postgres-fetch-cache-store.js';
 import { logger } from './logger.js';
 import { createServer, SERVER_VERSION } from './server.js';
 import { JobSearchService } from './services/job-search.js';
@@ -9,14 +14,30 @@ import { createSources } from './sources/registry.js';
 const USER_AGENT = `remote-radar-mcp/${SERVER_VERSION} (+https://github.com/DarioKnezovic/remote-radar-mcp)`;
 
 async function main(): Promise<void> {
+  const config = loadConfig();
+  const pool = createPool(config.databaseUrl);
+
+  try {
+    await migrate(pool);
+  } catch (error) {
+    await pool.end();
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `Cannot prepare the database (${reason}). Is Postgres running? Try \`docker compose up -d\` in the project folder.`,
+      { cause: error },
+    );
+  }
+
+  const repository = new JobRepository(pool);
   const http = createHttpClient({ userAgent: USER_AGENT });
-  const search = new JobSearchService(createSources(http));
-  const server = createServer({ search });
+  const sources = createSources(http, new PostgresFetchCacheStore(repository));
+  const server = createServer({ search: new JobSearchService(sources), store: repository });
   const transport = new StdioServerTransport();
 
   const shutdown = async (signal: string) => {
     logger.info('shutting down', { signal });
     await server.close();
+    await pool.end();
     process.exit(0);
   };
   process.on('SIGINT', () => void shutdown('SIGINT'));

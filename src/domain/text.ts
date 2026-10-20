@@ -26,14 +26,18 @@ function decodeEntity(match: string, entity: string): string {
 
 /** Converts listing HTML into readable plain text. Not a sanitizer — only used for display and matching. */
 export function htmlToText(html: string): string {
-  return html
-    .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' ')
-    .replace(/<br\s*\/?>|<\/(p|div|li|ul|ol|h[1-6]|tr)>/gi, '\n')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, decodeEntity)
-    .replace(/[ \t\f\v\u00a0]+/g, ' ')
-    .replace(/ *\n[\s]*/g, '\n')
-    .trim();
+  return (
+    html
+      .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' ')
+      // Inline formatting shouldn't add spaces: "<b>Type</b>Script." → "TypeScript."
+      .replace(/<\/?(?:a|abbr|b|code|em|i|small|span|strong|sub|sup|u)\b[^>]*>/gi, '')
+      .replace(/<br\s*\/?>|<\/(p|div|li|ul|ol|h[1-6]|tr)>/gi, '\n')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, decodeEntity)
+      .replace(/[ \t\f\v\u00a0]+/g, ' ')
+      .replace(/ *\n[\s]*/g, '\n')
+      .trim()
+  );
 }
 
 /** Lowercase and strip diacritics, so "Mostar" matches "mostar" and "Zürich" matches "zurich". */

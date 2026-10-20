@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import type { Job } from '../src/domain/job.js';
 import type { JobSource, SourceInfo } from '../src/sources/job-source.js';
+import type { TrackerStore } from '../src/tools/shared.js';
 
 export function loadFixture(name: string): unknown {
   return JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), 'utf8'));
@@ -47,3 +48,16 @@ export class FakeSource implements JobSource {
       : Promise.resolve(this.result);
   }
 }
+
+function notInThisTest(): never {
+  throw new Error('store not used in this test');
+}
+
+/** For tests that only exercise search_jobs. */
+export const unusedStore: TrackerStore = {
+  getJob: notInThisTest,
+  getSavedJob: notInThisTest,
+  saveJob: notInThisTest,
+  updateStatus: notInThisTest,
+  listSavedJobs: notInThisTest,
+};

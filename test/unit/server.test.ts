@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createServer, SERVER_NAME, SERVER_VERSION } from '../../src/server.js';
 import { JobSearchService } from '../../src/services/job-search.js';
 import type { JobSource } from '../../src/sources/job-source.js';
-import { FakeSource, makeJob } from '../helpers.js';
+import { FakeSource, makeJob, unusedStore } from '../helpers.js';
 
 let client: Client | undefined;
 
@@ -15,7 +15,7 @@ afterEach(async () => {
 
 async function connect(sources: JobSource[]): Promise<Client> {
   const now = () => new Date('2026-10-20T12:00:00Z');
-  const server = createServer({ search: new JobSearchService(sources, now) });
+  const server = createServer({ search: new JobSearchService(sources, now), store: unusedStore });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   client = new Client({ name: 'test-client', version: '0.0.0' });
   await Promise.all([server.connect(serverTransport), client.connect(clientTransport)]);
@@ -29,7 +29,26 @@ describe('MCP server', () => {
     expect(c.getInstructions()).toContain('never applies');
   });
 
-  it('lists search_jobs as a read-only tool', async () => {
+  it('lists all v1 tools', async () => {
+    const c = await connect([]);
+    const { tools } = await c.listTools();
+    expect(tools.map((t) => t.name).sort()).toEqual([
+      'get_job_details',
+      'list_saved_jobs',
+      'save_job',
+      'search_jobs',
+      'update_job_status',
+    ]);
+  });
+
+  it('marks only the tracker-writing tools as non-read-only', async () => {
+    const c = await connect([]);
+    const { tools } = await c.listTools();
+    const writers = tools.filter((t) => t.annotations?.readOnlyHint === false).map((t) => t.name);
+    expect(writers.sort()).toEqual(['save_job', 'update_job_status']);
+  });
+
+  it('exposes the search_jobs inputs from the spec', async () => {
     const c = await connect([]);
     const { tools } = await c.listTools();
     const tool = tools.find((t) => t.name === 'search_jobs');

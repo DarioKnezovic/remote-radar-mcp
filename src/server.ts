@@ -1,6 +1,11 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { JobSearchService } from './services/job-search.js';
+import { registerGetJobDetails } from './tools/get-job-details.js';
+import { registerListSavedJobs } from './tools/list-saved-jobs.js';
+import { registerSaveJob } from './tools/save-job.js';
 import { registerSearchJobs } from './tools/search-jobs.js';
+import type { TrackerStore } from './tools/shared.js';
+import { registerUpdateJobStatus } from './tools/update-job-status.js';
 
 export const SERVER_NAME = 'remote-radar';
 export const SERVER_VERSION = '0.1.0';
@@ -11,6 +16,7 @@ Always show the job's source and URL so the user can apply on the original listi
 
 export interface ServerDeps {
   search: JobSearchService;
+  store: TrackerStore;
 }
 
 /**
@@ -26,6 +32,10 @@ export function createServer(deps: ServerDeps): McpServer {
   );
 
   registerSearchJobs(server, deps.search);
+  registerGetJobDetails(server, deps.store);
+  registerSaveJob(server, deps.store);
+  registerUpdateJobStatus(server, deps.store);
+  registerListSavedJobs(server, deps.store);
 
   return server;
 }

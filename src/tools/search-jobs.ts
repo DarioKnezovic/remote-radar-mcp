@@ -9,6 +9,7 @@ import {
 } from '../domain/job.js';
 import { htmlToText, truncate } from '../domain/text.js';
 import type { JobSearchService } from '../services/job-search.js';
+import { toolError, toolResult } from './shared.js';
 
 const SNIPPET_LENGTH = 240;
 const MAX_TAGS_IN_SUMMARY = 8;
@@ -121,23 +122,16 @@ export function registerSearchJobs(server: McpServer, search: JobSearchService):
       const okSources = result.sources.filter((source) => source.ok);
       if (okSources.length === 0) {
         const reasons = result.sources.map((s) => `${s.name}: ${s.error ?? 'unknown error'}`);
-        return {
-          isError: true,
-          content: [{ type: 'text', text: `All job sources failed. ${reasons.join('; ')}` }],
-        };
+        return toolError(`All job sources failed. ${reasons.join('; ')}`);
       }
 
-      const structuredContent = {
+      return toolResult({
         jobs: result.jobs.map(toJobSummary),
         total_matches: result.totalMatches,
         duplicates_removed: result.duplicatesRemoved,
         sources: result.sources,
         attribution: `Listings via ${okSources.map((s) => `${s.name} (${s.homepage})`).join(', ')}. Apply on the original listing URL.`,
-      };
-      return {
-        content: [{ type: 'text', text: JSON.stringify(structuredContent, null, 2) }],
-        structuredContent,
-      };
+      });
     },
   );
 }
