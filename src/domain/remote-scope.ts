@@ -13,6 +13,7 @@ const EUROPEAN_PLACES = [
   'ireland',
   'germany',
   'deutschland',
+  'deutschlandweit',
   'france',
   'spain',
   'portugal',
@@ -117,7 +118,12 @@ function isSubsetOf(regions: ReadonlySet<Region>, allowed: readonly Region[]): b
 export function classifyRemoteScope(location: string | null | undefined): RemoteScope {
   if (!location?.trim()) return 'Unknown';
   const regions = detectRegions(location);
-  if (regions.size === 0) return 'Other';
+  return regions.size === 0 ? 'Other' : scopeFromRegions(regions);
+}
+
+/** Maps a non-empty set of detected regions to a {@link RemoteScope}. */
+export function scopeFromRegions(regions: ReadonlySet<Region>): RemoteScope {
+  if (regions.size === 0) return 'Unknown';
   if (regions.has('worldwide')) return 'Worldwide';
   if (regions.size === 1 && regions.has('eu')) return 'EU only';
   if (regions.size === 1 && regions.has('us')) return 'US only';

@@ -1,3 +1,4 @@
+import { ArbeitnowSource } from './arbeitnow/client.js';
 import { CachedJobSource } from './cache.js';
 import type { HttpClient } from './http.js';
 import type { JobSource } from './job-source.js';
@@ -11,6 +12,11 @@ export function createSources(http: HttpClient): JobSource[] {
     // Remotive advises max 4 requests/day.
     new CachedJobSource(new RemotiveSource(http), {
       ttlMs: 6 * HOUR_MS,
+      retryAfterMs: HOUR_MS / 4,
+    }),
+    // Arbeitnow updates hourly; one refresh = up to 3 page requests.
+    new CachedJobSource(new ArbeitnowSource(http), {
+      ttlMs: HOUR_MS,
       retryAfterMs: HOUR_MS / 4,
     }),
   ];
