@@ -19,7 +19,7 @@ describe('normalizeArbeitnowResponse (recorded fixture)', () => {
   };
 
   it('normalizes every listing into a valid Job', () => {
-    expect(jobs).toHaveLength(12);
+    expect(jobs).toHaveLength(17);
     expect(skipped).toBe(0);
     for (const job of jobs) expect(() => jobSchema.parse(job)).not.toThrow();
   });

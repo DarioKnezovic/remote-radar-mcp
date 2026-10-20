@@ -50,7 +50,7 @@ describe('ArbeitnowSource', () => {
     const jobs = await new ArbeitnowSource(http, 3).fetchJobs();
 
     expect(http.requested).toEqual([ARBEITNOW_API_URL, PAGE(2), PAGE(3)]);
-    expect(jobs).toHaveLength(12 + 1 + 1);
+    expect(jobs).toHaveLength(17 + 1 + 1);
   });
 
   it('stops when there is no next page', async () => {

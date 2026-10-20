@@ -205,6 +205,86 @@
       ],
       "location": "Portfolio Location",
       "created_at": 1792496419
+    },
+    {
+      "slug": "senior-accountant-finance-operations-germany-367174",
+      "company_name": "Eggai",
+      "title": "Senior Accountant – Finance Operations (m/f/d)",
+      "description": "<p>About us EggAI is a fast-growing, 100% remote AI consulting and development startup based in Munich. We build agentic AI solutions for enterprise clients. We are growing in several European markets at the same time, are actively building our internal structures — and are looking …</p>",
+      "remote": false,
+      "url": "https://www.arbeitnow.com/jobs/companies/eggai/senior-accountant-finance-operations-germany-367174",
+      "tags": [
+        "Business Engineering / Outcome Management"
+      ],
+      "job_types": [
+        "Full Time"
+      ],
+      "location": "Germany",
+      "created_at": 1792496419
+    },
+    {
+      "slug": "senior-accountant-finance-operations-germany-85629",
+      "company_name": "Eggai",
+      "title": "Senior Accountant – Finance Operations (m/f/d)",
+      "description": "<p>About us EggAI is a fast-growing, 100% remote AI consulting and development startup based in Munich. We build agentic AI solutions for enterprise clients. We are growing in several European markets at the same time, are actively building our internal structures — and are looking …</p>",
+      "remote": false,
+      "url": "https://www.arbeitnow.com/jobs/companies/eggai/senior-accountant-finance-operations-germany-85629",
+      "tags": [
+        "Business Engineering / Outcome Management"
+      ],
+      "job_types": [
+        "Full Time"
+      ],
+      "location": "Germany",
+      "created_at": 1792496419
+    },
+    {
+      "slug": "digital-media-manager-programmatic-social-berlin-182870",
+      "company_name": "IONOS SE",
+      "title": "Digital Media Manager (w/m/d) Programmatic & Social",
+      "description": "<p>Über IONOS Bei IONOS verwalten wir nicht nur Server, wir prägen mit unseren Lösungen die digitale Zukunft für über 6,2 Millionen Kundinnen und Kunden weltweit. Als Europas führender Hosting-Anbieter und Pionier für unabhängige Cloud-Lösungen bauen wir eine Infrastruktur der …</p>",
+      "remote": false,
+      "url": "https://www.arbeitnow.com/jobs/companies/ionos-se/digital-media-manager-programmatic-social-berlin-182870",
+      "tags": [
+        "Marketing and Communication"
+      ],
+      "job_types": [
+        "Unbefristeter arbeitsvertrag"
+      ],
+      "location": "Berlin",
+      "created_at": 1792495857
+    },
+    {
+      "slug": "digital-media-manager-programmatic-social-karlsruhe-156878",
+      "company_name": "IONOS SE",
+      "title": "Digital Media Manager (w/m/d) Programmatic & Social",
+      "description": "<p>Über IONOS Bei IONOS verwalten wir nicht nur Server, wir prägen mit unseren Lösungen die digitale Zukunft für über 6,2 Millionen Kundinnen und Kunden weltweit. Als Europas führender Hosting-Anbieter und Pionier für unabhängige Cloud-Lösungen bauen wir eine Infrastruktur der …</p>",
+      "remote": false,
+      "url": "https://www.arbeitnow.com/jobs/companies/ionos-se/digital-media-manager-programmatic-social-karlsruhe-156878",
+      "tags": [
+        "Marketing and Communication"
+      ],
+      "job_types": [
+        "Unbefristeter arbeitsvertrag"
+      ],
+      "location": "Karlsruhe",
+      "created_at": 1792495857
+    },
+    {
+      "slug": "remote-software-engineer-product-297213",
+      "company_name": "Circuithub",
+      "title": "Software Engineer, Product",
+      "description": "<p>About CircuitHub CircuitHub is reshaping electronics manufacturing with The Grid, a factory-scale robotics platform that makes small-batch, high-mix electronics assembly radically more efficient. Think semiconductor-fab precision applied to the chaotic world of prototyping and …</p>",
+      "remote": true,
+      "url": "https://www.arbeitnow.com/jobs/companies/circuithub/remote-software-engineer-product-297213",
+      "tags": [
+        "Software Engineering"
+      ],
+      "job_types": [
+        "Full Time"
+      ],
+      "location": "Remote",
+      "created_at": 1792507240
     }
   ],
   "links": {
