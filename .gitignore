@@ -1,0 +1,22 @@
+# Build output
+/dist
+/coverage
+/tmp
+/out-tsc
+
+# Dependencies
+/node_modules
+npm-debug.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Local profile (v2) — contains personal data
+profile.json
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/*
