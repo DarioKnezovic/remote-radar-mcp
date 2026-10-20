@@ -1,13 +1,26 @@
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import type { z } from 'zod';
 import { profileSchema, type Profile } from '../domain/profile.js';
 
+export interface ProfileIssue {
+  /** Dotted field path, e.g. "location.country_code"; "(root)" for the whole file. */
+  path: string;
+  message: string;
+}
+
 export type ProfileResult =
-  { ok: true; profile: Profile; file: string } | { ok: false; error: string };
+  | { ok: true; profile: Profile; file: string }
+  | { ok: false; error: string; issues?: ProfileIssue[] };
 
 export interface ProfileStore {
   load(): Promise<ProfileResult>;
+}
+
+/** A profile store that can also be written, e.g. from the web app's profile form. */
+export interface WritableProfileStore extends ProfileStore {
+  save(input: unknown): Promise<ProfileResult>;
 }
 
 /** Package root; resolves the same from `src/profile/` and `dist/profile/`. */
@@ -20,8 +33,16 @@ export function resolveProfileFile(env: NodeJS.ProcessEnv = process.env): URL {
     : new URL('profile.json', PACKAGE_ROOT);
 }
 
+function toIssues(error: z.ZodError): ProfileIssue[] {
+  return error.issues.map((i) => ({ path: i.path.join('.') || '(root)', message: i.message }));
+}
+
+function describeIssues(issues: readonly ProfileIssue[]): string {
+  return issues.map((i) => `${i.path}: ${i.message}`).join('; ');
+}
+
 /** Reads the file on every call, so edits to profile.json apply without a restart. */
-export class FileProfileStore implements ProfileStore {
+export class FileProfileStore implements WritableProfileStore {
   constructor(private readonly file: URL) {}
 
   async load(): Promise<ProfileResult> {
@@ -43,10 +64,33 @@ export class FileProfileStore implements ProfileStore {
     }
     const parsed = profileSchema.safeParse(raw);
     if (!parsed.success) {
-      const issues = parsed.error.issues.map(
-        (i) => `${i.path.join('.') || '(root)'}: ${i.message}`,
-      );
-      return { ok: false, error: `Invalid profile ${path}: ${issues.join('; ')}` };
+      const issues = toIssues(parsed.error);
+      return { ok: false, error: `Invalid profile ${path}: ${describeIssues(issues)}`, issues };
+    }
+    return { ok: true, profile: parsed.data, file: path };
+  }
+
+  /**
+   * Validates and writes the profile. Nothing is written when it's invalid. The write
+   * goes to a temporary file first, so a crash never leaves a half-written profile.
+   */
+  async save(input: unknown): Promise<ProfileResult> {
+    const path = fileURLToPath(this.file);
+    const parsed = profileSchema.safeParse(input);
+    if (!parsed.success) {
+      const issues = toIssues(parsed.error);
+      return { ok: false, error: `Invalid profile: ${describeIssues(issues)}`, issues };
+    }
+    const temp = `${path}.${String(process.pid)}.tmp`;
+    try {
+      await mkdir(dirname(path), { recursive: true });
+      await writeFile(temp, `${JSON.stringify(parsed.data, null, 2)}\n`, 'utf8');
+      await rename(temp, path);
+    } catch (error) {
+      return {
+        ok: false,
+        error: `Cannot write ${path}: ${error instanceof Error ? error.message : String(error)}`,
+      };
     }
     return { ok: true, profile: parsed.data, file: path };
   }

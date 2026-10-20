@@ -1,4 +1,4 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -63,6 +63,40 @@ describe('FileProfileStore', () => {
       years_experience: null,
       stories: [],
     });
+  });
+
+  it('saves a valid profile (creating the folder) and loads it back normalized', async () => {
+    const store = new FileProfileStore(pathToFileURL(join(dir, 'new', 'profile.json')));
+    const saved = await store.save({
+      location: { country: 'Croatia', country_code: 'hr', timezone: 'CET' },
+      citizenship: ['hr'],
+      skills: { strong: ['TypeScript'] },
+    });
+    expect(saved.ok).toBe(true);
+    const loaded = await store.load();
+    expect(loaded.ok && loaded.profile).toMatchObject({
+      location: { country_code: 'HR' },
+      skills: { strong: ['TypeScript'], some: [], learning: [] },
+    });
+    expect(await readdir(join(dir, 'new'))).toEqual(['profile.json']); // no temp file left
+  });
+
+  it('refuses an invalid profile with per-field issues, leaving the file untouched', async () => {
+    const file = join(dir, 'keep.json');
+    const store = new FileProfileStore(pathToFileURL(file));
+    await store.save(makeProfile());
+    const before = await readFile(file, 'utf8');
+
+    const result = await store.save({ ...makeProfile(), citizenship: [], years_experience: -1 });
+
+    expect(result).toMatchObject({
+      ok: false,
+      issues: [
+        { path: 'citizenship', message: expect.any(String) as string },
+        { path: 'years_experience', message: expect.any(String) as string },
+      ],
+    });
+    expect(await readFile(file, 'utf8')).toBe(before);
   });
 
   it('honours PROFILE_FILE', () => {

@@ -9,9 +9,10 @@ import { registerSaveJob } from './tools/save-job.js';
 import { registerSearchJobs } from './tools/search-jobs.js';
 import type { TrackerStore } from './tools/shared.js';
 import { registerUpdateJobStatus } from './tools/update-job-status.js';
+import { VERSION } from './version.js';
 
 export const SERVER_NAME = 'remote-radar';
-export const SERVER_VERSION = '0.2.0';
+export const SERVER_VERSION = VERSION;
 
 const INSTRUCTIONS = `Remote Radar finds remote developer jobs from official public job APIs.
 It searches, saves and tracks jobs, and compares them with the user's profile; it never applies

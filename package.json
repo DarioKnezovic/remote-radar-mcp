@@ -4,6 +4,13 @@
   "description": "MCP server that finds, scores, saves and tracks remote developer jobs from official public job APIs. Never auto-applies.",
   "type": "module",
   "main": "dist/index.js",
+  "exports": {
+    "./app": {
+      "types": "./dist/app.d.ts",
+      "default": "./dist/app.js"
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
     "remote-radar-mcp": "dist/index.js"
   },
