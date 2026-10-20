@@ -140,7 +140,7 @@ describe('matchJob: red flags', () => {
     expect(croatiaListed).toEqual([
       expect.objectContaining({
         code: 'region_restricted',
-        message: expect.stringContaining("HR is listed and you're a citizen") as string,
+        message: expect.stringContaining("Croatia is listed and you're a citizen") as string,
       }),
     ]);
 

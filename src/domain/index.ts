@@ -3,6 +3,7 @@
  * network, so a bundler (the web app) can include it. Published as `remote-radar-mcp/domain`.
  */
 export { APPLICATION_STATUSES, type ApplicationStatus, type SavedJob } from './application.js';
+export { isEuCountry, regionForCountry } from './countries.js';
 export {
   EMPLOYMENT_TYPES,
   REMOTE_SCOPES,

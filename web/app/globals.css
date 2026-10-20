@@ -66,3 +66,55 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* Job descriptions (sanitized HTML from the sources). */
+.listing {
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.listing > * + * {
+  margin-top: 0.85em;
+}
+.listing :is(h1, h2, h3, h4, h5, h6) {
+  font-weight: 600;
+  margin-top: 1.4em;
+}
+.listing :is(h1, h2) {
+  font-size: 1.15rem;
+}
+.listing :is(ul, ol) {
+  padding-left: 1.4em;
+}
+.listing ul {
+  list-style: disc;
+}
+.listing ol {
+  list-style: decimal;
+}
+.listing li + li {
+  margin-top: 0.3em;
+}
+.listing a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.listing blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 0.9em;
+  color: var(--text-muted);
+}
+.listing :is(pre, code) {
+  background: var(--surface-muted);
+  border-radius: 0.3rem;
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+}
+.listing table {
+  display: block;
+  overflow-x: auto;
+}
+.listing :is(th, td) {
+  border: 1px solid var(--border);
+  padding: 0.3em 0.6em;
+}

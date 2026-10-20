@@ -168,17 +168,23 @@ function isEuropeanTimezone(timezone: string): boolean {
 // ── Individual checks ───────────────────────────────────────────────────────
 
 function checkSkills(text: string, profile: Profile) {
+  const detected = detectSkills(text);
+  const mentioned = new Set(detected);
   const matched: MatchResult['matched_skills'] = [];
   const owned = new Set<string>();
   for (const level of LEVELS) {
     for (const skill of profile.skills[level]) {
-      const name = canonicalSkill(skill) ?? skill;
+      const known = canonicalSkill(skill);
+      const name = known ?? skill;
       if (owned.has(name)) continue;
       owned.add(name);
-      if (mentionsSkill(text, skill)) matched.push({ skill: name, level });
+      // Catalog skills were already checked by detectSkills; others need a word search.
+      if (known ? mentioned.has(known) : mentionsSkill(text, skill)) {
+        matched.push({ skill: name, level });
+      }
     }
   }
-  const missing = detectSkills(text).filter((skill) => !owned.has(skill));
+  const missing = detected.filter((skill) => !owned.has(skill));
   const total = matched.length + missing.length;
   return {
     matched,
@@ -212,15 +218,17 @@ const REGION_WORDS =
 /** Words around a country in a location part: "Remote, Poland", "Germany (Remote)", "UK - Remote". */
 const LOCATION_NOISE = /\(?\b(?:remote|home[\s-]based|based|office|hq|only)\b\)?|[()]/gi;
 
-function countryInSegment(segment: string): string | undefined {
+/** The country a segment names, with its name as written: "Remote, Poland" → PL, "Poland". */
+function countryInSegment(segment: string): { code: string; name: string } | undefined {
   const words = segment
     .replace(LOCATION_NOISE, ' ')
     .split(/[\s-]+/)
     .filter(Boolean);
   // Longest suffix first: "London UK" → "UK", "United Kingdom" before "Kingdom".
   for (let i = 0; i < words.length; i++) {
-    const code = countryCodeForName(words.slice(i).join(' '));
-    if (code) return code;
+    const name = words.slice(i).join(' ');
+    const code = countryCodeForName(name);
+    if (code) return { code, name };
   }
   return undefined;
 }
@@ -231,17 +239,18 @@ function countryInSegment(segment: string): string | undefined {
  * region (then the scope check applies) or no country. Parts that are neither, such as
  * a city, are ignored.
  */
-export function listedCountries(location: string | null): ReadonlySet<string> | undefined {
+export function listedCountries(location: string | null): ReadonlyMap<string, string> | undefined {
   if (!location) return undefined;
-  const codes = new Set<string>();
+  /** Code → the country's name as the listing writes it. */
+  const countries = new Map<string, string>();
   for (const part of location.split(/[;|\n]/)) {
     if (REGION_WORDS.test(part.replace(LOCATION_NOISE, ' '))) return undefined;
     for (const segment of part.split(',')) {
-      const code = countryInSegment(segment);
-      if (code) codes.add(code);
+      const country = countryInSegment(segment);
+      if (country && !countries.has(country.code)) countries.set(country.code, country.name);
     }
   }
-  return codes.size > 0 ? codes : undefined;
+  return countries.size > 0 ? countries : undefined;
 }
 
 /**
@@ -257,13 +266,13 @@ function checkListedCountries(job: Job, profile: Profile, flags: RedFlag[], note
     notes.push(`${profile.location.country} is explicitly listed as a hiring country.`);
     return true;
   }
-  const citizenOf = profile.citizenship.filter((code) => countries.has(code));
+  const citizenOf = profile.citizenship.flatMap((code) => countries.get(code) ?? []);
   flags.push({
     code: 'region_restricted',
     message:
       `Hires only in the listed countries; ${profile.location.country}, where you live, isn't one of them.` +
       (citizenOf.length > 0
-        ? ` ${citizenOf.join(', ')} is listed and you're a citizen, but hiring there usually means living there. Ask whether they can employ you from ${profile.location.country}.`
+        ? ` ${citizenOf.join(' and ')} ${citizenOf.length === 1 ? 'is' : 'are'} listed and you're a citizen, but hiring there usually means living there. Ask whether they can employ you from ${profile.location.country}.`
         : ''),
     ...(job.location && { evidence: job.location }),
   });
@@ -391,14 +400,23 @@ function checkWorkAuthorization(text: string, profile: Profile, flags: RedFlag[]
   }
 }
 
+/** Built once: per language, a cheap "is it mentioned at all" test and the requirement pattern. */
+const LANGUAGE_PATTERNS = LANGUAGES.map(({ name, native }) => ({
+  name,
+  native,
+  mentioned: new RegExp(`\\b${name}\\b`, 'i'),
+  required: new RegExp(
+    `\\b(?:fluent|fluency|native|proficien(?:t|cy)|business[\\s-](?:level|fluent|fluency)|excellent|strong|very good|advanced|professional|full professional)\\s+(?:command of\\s+|level of\\s+|knowledge of\\s+|skills in\\s+|in\\s+|written and spoken\\s+|spoken and written\\s+)?(?:the\\s+)?${name}\\b|\\b${name}\\s*(?:\\(|-|:)?\\s*(?:C1|C2|B2|\\(?native|fluent|required|mandatory|is required|is a must)|\\b(?:speak|speaks|speaking|write|written|spoken)\\s+(?:fluent\\s+)?${name}\\b`,
+    'i',
+  ),
+}));
+
 function checkLanguages(text: string, profile: Profile, flags: RedFlag[], notes: string[]) {
-  for (const { name, native } of LANGUAGES) {
+  for (const { name, native, mentioned, required } of LANGUAGE_PATTERNS) {
     if (speaks(profile, name)) continue;
-    const english = new RegExp(
-      `\\b(?:fluent|fluency|native|proficien(?:t|cy)|business[\\s-](?:level|fluent|fluency)|excellent|strong|very good|advanced|professional|full professional)\\s+(?:command of\\s+|level of\\s+|knowledge of\\s+|skills in\\s+|in\\s+|written and spoken\\s+|spoken and written\\s+)?(?:the\\s+)?${name}\\b|\\b${name}\\s*(?:\\(|-|:)?\\s*(?:C1|C2|B2|\\(?native|fluent|required|mandatory|is required|is a must)|\\b(?:speak|speaks|speaking|write|written|spoken)\\s+(?:fluent\\s+)?${name}\\b`,
-      'i',
-    );
-    const found = findEvidence(text, english) ?? (native ? findEvidence(text, native) : undefined);
+    const found =
+      (mentioned.test(text) ? findEvidence(text, required) : undefined) ??
+      (native ? findEvidence(text, native) : undefined);
     if (!found) continue;
     const after = text.slice(found.match.index, found.match.index + found.match[0].length + 60);
     if (NICE_TO_HAVE.test(after)) {
@@ -413,15 +431,23 @@ function checkLanguages(text: string, profile: Profile, flags: RedFlag[], notes:
   }
 }
 
+/** Folded stopword → the languages it belongs to, built once. */
+const STOPWORD_LANGUAGES = new Map<string, string[]>();
+for (const [language, stopwords] of Object.entries(STOPWORDS)) {
+  for (const word of stopwords.map(foldText)) {
+    STOPWORD_LANGUAGES.set(word, [...(STOPWORD_LANGUAGES.get(word) ?? []), language]);
+  }
+}
+
 function checkPostingLanguage(text: string, profile: Profile, flags: RedFlag[]) {
   const words = foldText(text).match(/\p{L}+/gu) ?? [];
   if (words.length < 40) return;
-  const counts = Object.fromEntries(
-    Object.entries(STOPWORDS).map(([language, stopwords]) => {
-      const set = new Set(stopwords.map(foldText));
-      return [language, words.filter((word) => set.has(word)).length];
-    }),
-  );
+  const counts: Record<string, number> = {};
+  for (const word of words) {
+    for (const language of STOPWORD_LANGUAGES.get(word) ?? []) {
+      counts[language] = (counts[language] ?? 0) + 1;
+    }
+  }
   const english = counts.English ?? 0;
   for (const [language, count] of Object.entries(counts)) {
     if (language === 'English' || speaks(profile, language)) continue;
