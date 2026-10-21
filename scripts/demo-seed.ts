@@ -155,13 +155,14 @@ const DEMO_JOBS: DemoJob[] = [
     ),
   },
   // One role posted once per country, as Mozilla and Grafana Labs do: shown as one job.
-  ...(['Spain', 'Canada'] as const).map((country, i): DemoJob => ({
+  // Serbia (where the example profile lives) is the oldest copy, yet shown first for that profile.
+  ...(['Spain', 'Canada', 'Serbia'] as const).map((country, i): DemoJob => ({
     slug: `harbor-platform-${country.toLowerCase()}`,
     source: 'greenhouse',
     title: 'Platform Engineer',
     company: 'Harbor Metrics',
     location: `Remote, ${country}`,
-    remote_scope: country === 'Spain' ? 'Europe' : 'Americas',
+    remote_scope: country === 'Canada' ? 'Americas' : 'Europe',
     employment_type: 'full_time',
     salary: null,
     tags: [],

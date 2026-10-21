@@ -101,4 +101,5 @@ export function staticProfiles(result: Profile | string): ProfileStore {
   };
 }
 
-export const unusedProfiles: ProfileStore = { load: notInThisTest };
+/** A first-time user: no profile.json yet. */
+export const noProfile = staticProfiles('No profile.json yet.');

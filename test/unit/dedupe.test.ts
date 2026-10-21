@@ -6,6 +6,7 @@ import {
   titleSimilarity,
   titleTokens,
 } from '../../src/domain/dedupe.js';
+import type { Job } from '../../src/domain/job.js';
 import { makeJob } from '../helpers.js';
 
 describe('normalizeCompany', () => {
@@ -78,6 +79,14 @@ describe('dedupeJobs', () => {
     const aggregator = makeJob({ source: 'arbeitnow', company: 'grafanalabs', title: 'SRE' });
     const original = makeJob({ source: 'greenhouse', company: 'Grafana Labs', title: 'SRE' });
     expect(dedupeJobs([aggregator, original]).jobs).toEqual([original]);
+  });
+
+  it('keeps the copy the preference ranks highest, even if another is richer', () => {
+    const canada = makeJob({ location: 'Remote Canada', salary: '$150k', tags: ['react'] });
+    const serbia = makeJob({ location: 'Remote Serbia', tags: [] });
+    const prefer = (job: Job) => (job.location === 'Remote Serbia' ? 3 : 0);
+    expect(dedupeJobs([canada, serbia]).jobs).toEqual([canada]);
+    expect(dedupeJobs([canada, serbia], prefer).jobs).toEqual([serbia]);
   });
 
   it('returns an empty result for no jobs', () => {

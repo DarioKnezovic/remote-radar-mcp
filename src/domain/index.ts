@@ -24,6 +24,7 @@ export {
 } from './job.js';
 export {
   matchJob,
+  placeFit,
   RED_FLAG_CODES,
   type MatchResult,
   type RedFlag,

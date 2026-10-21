@@ -3,8 +3,16 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { afterEach, describe, expect, it } from 'vitest';
 import { createServer, SERVER_NAME, SERVER_VERSION } from '../../src/server.js';
 import { JobSearchService } from '../../src/services/job-search.js';
+import type { ProfileStore } from '../../src/profile/profile-store.js';
 import type { JobSource } from '../../src/sources/job-source.js';
-import { FakeSource, makeJob, unusedProfiles, unusedStore } from '../helpers.js';
+import {
+  FakeSource,
+  makeJob,
+  makeProfile,
+  noProfile,
+  staticProfiles,
+  unusedStore,
+} from '../helpers.js';
 
 let client: Client | undefined;
 
@@ -13,12 +21,12 @@ afterEach(async () => {
   client = undefined;
 });
 
-async function connect(sources: JobSource[]): Promise<Client> {
+async function connect(sources: JobSource[], profiles: ProfileStore = noProfile): Promise<Client> {
   const now = () => new Date('2026-10-20T12:00:00Z');
   const server = createServer({
     search: new JobSearchService(sources, now),
     store: unusedStore,
-    profiles: unusedProfiles,
+    profiles,
   });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   client = new Client({ name: 'test-client', version: '0.0.0' });
@@ -122,6 +130,24 @@ describe('search_jobs tool', () => {
           ],
         },
       ],
+    });
+  });
+
+  it("shows the copy for the user's country when there is a profile", async () => {
+    const role = { title: 'Staff Engineer', company: 'Mozilla' };
+    const canada = makeJob({ ...role, location: 'Remote Canada', remote_scope: 'Americas' });
+    const bosnia = makeJob({
+      ...role,
+      location: 'Remote, Bosnia and Herzegovina',
+      remote_scope: 'Europe',
+      published_at: '2026-09-01T00:00:00.000Z',
+    });
+    const c = await connect([new FakeSource([canada, bosnia])], staticProfiles(makeProfile()));
+
+    const result = await c.callTool({ name: 'search_jobs', arguments: {} });
+
+    expect(result.structuredContent).toMatchObject({
+      jobs: [{ id: bosnia.id, other_locations: [{ job_id: canada.id }] }],
     });
   });
 

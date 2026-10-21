@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { JobSearchService } from '../../src/services/job-search.js';
 import type { JobSource } from '../../src/sources/job-source.js';
-import { FakeSource, makeJob } from '../helpers.js';
+import { FakeSource, makeJob, makeProfile } from '../helpers.js';
 
 const now = () => new Date('2026-10-20T12:00:00Z');
 const arbeitnowInfo = { id: 'arbeitnow', name: 'Arbeitnow', homepage: 'https://a.test' } as const;
@@ -163,5 +163,23 @@ describe('JobSearchService', () => {
       { job_id: us.id, location: 'United States (Remote)', remote_scope: 'US only', url: us.url },
     ]);
     expect(result.otherListings.has(other.id)).toBe(false);
+  });
+
+  it("shows the copy for the profile's country, and lists the others", async () => {
+    const role = { company: 'Hostaway', title: 'Senior Backend Engineer' };
+    const canada = makeJob({ ...role, location: 'Remote Canada', remote_scope: 'Americas' });
+    const bosnia = makeJob({
+      ...role,
+      location: 'Remote: Bosnia and Herzegovina',
+      remote_scope: 'Europe',
+      published_at: '2026-09-01T00:00:00.000Z', // older: without a profile, Canada wins
+    });
+    const service = new JobSearchService([new FakeSource([canada, bosnia])], now);
+
+    expect((await service.search({ limit: 10 })).jobs).toEqual([canada]);
+
+    const result = await service.search({ profile: makeProfile(), limit: 10 });
+    expect(result.jobs).toEqual([bosnia]);
+    expect(result.otherListings.get(bosnia.id)?.map((o) => o.location)).toEqual(['Remote Canada']);
   });
 });

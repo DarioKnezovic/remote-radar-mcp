@@ -7,6 +7,8 @@ import {
 } from '../domain/dedupe.js';
 import { filterJobs } from '../domain/filter.js';
 import type { Job, RemoteScope } from '../domain/job.js';
+import { placeFit } from '../domain/match.js';
+import type { Profile } from '../domain/profile.js';
 import type { MinSalary } from '../domain/salary.js';
 import type { JobSource, SourceInfo } from '../sources/job-source.js';
 
@@ -17,6 +19,8 @@ export interface SearchParams {
   postedWithinDays?: number | undefined;
   minSalary?: MinSalary | undefined;
   salaryListed?: boolean | undefined;
+  /** Of a role posted once per country, show the copy for where this person lives. */
+  profile?: Profile | undefined;
   limit: number;
 }
 
@@ -76,7 +80,11 @@ export class JobSearchService {
       salaryListed: params.salaryListed,
       now: this.now(),
     });
-    const { jobs: unique, removed } = dedupeJobs(filtered);
+    const { profile } = params;
+    const { jobs: unique, removed } = dedupeJobs(
+      filtered,
+      profile && ((job) => placeFit(job, profile)),
+    );
     const matches = unique.sort((a, b) => b.published_at.localeCompare(a.published_at));
     const jobs = matches.slice(0, params.limit);
 

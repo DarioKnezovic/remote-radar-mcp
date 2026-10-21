@@ -37,7 +37,7 @@ export function createServer(deps: ServerDeps): McpServer {
     { instructions: INSTRUCTIONS },
   );
 
-  registerSearchJobs(server, deps.search);
+  registerSearchJobs(server, deps.search, deps.profiles);
   registerGetJobDetails(server, deps.store);
   registerSaveJob(server, deps.store);
   registerUpdateJobStatus(server, deps.store);

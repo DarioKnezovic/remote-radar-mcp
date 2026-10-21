@@ -219,6 +219,7 @@ async function Results({
       postedWithinDays: query.days || undefined,
       minSalary: query.pay ? { amount: query.pay, currency: query.currency } : undefined,
       salaryListed: query.paid || undefined,
+      profile,
       // Everything: fit filtering, sorting and "Show more" happen here, on the full list.
       limit: 100_000,
     }),

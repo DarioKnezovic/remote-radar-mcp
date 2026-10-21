@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { matchJob, type RedFlagCode } from '../../src/domain/match.js';
+import { matchJob, placeFit, type RedFlagCode } from '../../src/domain/match.js';
 import { canonicalSkill, detectSkills, mentionsSkill } from '../../src/domain/skills.js';
 import { makeJob, makeProfile } from '../helpers.js';
 
@@ -285,5 +285,21 @@ describe('matchJob: red flags', () => {
       profile,
     );
     expect(result.red_flags).toEqual([]);
+  });
+});
+
+describe('placeFit', () => {
+  // The default profile lives in Bosnia and Herzegovina (not in the EU), a Croatian citizen.
+  it.each([
+    ['Remote: Croatia, Bosnia and Herzegovina, Serbia', 'Europe', 3],
+    ['Europe', 'Europe', 2],
+    ['Worldwide', 'Worldwide', 2],
+    ['Remote', 'Unknown', 1],
+    ['Remote Germany', 'Europe', 0], // hires in Germany only
+    ['EU', 'EU only', 0],
+    ['Remote - US', 'US only', 0],
+    ['Sarajevo', 'On-site', 0],
+  ] as const)('%s (%s) → %i', (location, remote_scope, expected) => {
+    expect(placeFit(makeJob({ location, remote_scope }), profile)).toBe(expected);
   });
 });

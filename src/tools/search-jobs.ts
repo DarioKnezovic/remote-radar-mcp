@@ -9,6 +9,7 @@ import {
 } from '../domain/job.js';
 import { CURRENCIES, RATES_DATE } from '../domain/salary.js';
 import { htmlToText, truncate } from '../domain/text.js';
+import type { ProfileStore } from '../profile/profile-store.js';
 import type { JobSearchService } from '../services/job-search.js';
 import type { OtherListing } from '../domain/dedupe.js';
 import { MAX_OTHER_LOCATIONS, otherLocationsSchema, toolError, toolResult } from './shared.js';
@@ -120,18 +121,24 @@ function toScopeList(scope: RemoteScope | RemoteScope[] | undefined): RemoteScop
   return Array.isArray(scope) ? scope : [scope];
 }
 
-export function registerSearchJobs(server: McpServer, search: JobSearchService): void {
+export function registerSearchJobs(
+  server: McpServer,
+  search: JobSearchService,
+  profiles: ProfileStore,
+): void {
   server.registerTool(
     'search_jobs',
     {
       title: 'Search remote jobs',
       description:
-        "Searches remote job listings from official public job APIs, removes duplicates (same company + similar title; a role posted once per country becomes one job, with the other places in other_locations) and returns a short list, newest first. Results are read-only: this never applies to jobs. Always show each job's source and url.",
+        "Searches remote job listings from official public job APIs, removes duplicates (same company + similar title; a role posted once per country becomes one job, showing the copy for where the user lives if they have a profile, with the other places in other_locations) and returns a short list, newest first. Results are read-only: this never applies to jobs. Always show each job's source and url.",
       inputSchema: searchJobsInput,
       outputSchema: searchJobsOutput,
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
     async (args) => {
+      // Without a (valid) profile, search still works; it just can't pick the user's copy.
+      const loaded = await profiles.load();
       const result = await search.search({
         query: args.query,
         tags: args.tags,
@@ -142,6 +149,7 @@ export function registerSearchJobs(server: McpServer, search: JobSearchService):
             ? undefined
             : { amount: args.min_salary, currency: args.salary_currency },
         salaryListed: args.salary_listed_only,
+        profile: loaded.ok ? loaded.profile : undefined,
         limit: args.limit,
       });
 

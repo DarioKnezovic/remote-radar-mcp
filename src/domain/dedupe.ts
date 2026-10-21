@@ -124,7 +124,12 @@ function richness(job: Job): number {
   );
 }
 
-function preferred(a: Job, b: Job): Job {
+/** Ranks copies of one role for the user, e.g. by how well their place suits them. Higher wins. */
+export type CopyPreference = (job: Job) => number;
+
+function preferred(a: Job, b: Job, prefer: CopyPreference | undefined): Job {
+  const fit = prefer ? prefer(a) - prefer(b) : 0;
+  if (fit !== 0) return fit > 0 ? a : b;
   const diff = richness(a) - richness(b);
   if (diff !== 0) return diff > 0 ? a : b;
   return a.published_at >= b.published_at ? a : b;
@@ -138,10 +143,11 @@ export interface DedupeResult {
 
 /**
  * Removes listings for the same role at the same company (often the same job posted
- * on two boards, or re-posted). Keeps the copy with the most information. Order of
- * the surviving jobs follows their first appearance.
+ * on two boards, or once per country). Keeps the copy `prefer` ranks highest (when given),
+ * then the one with the most information. Order of the surviving jobs follows their first
+ * appearance.
  */
-export function dedupeJobs(jobs: readonly Job[]): DedupeResult {
+export function dedupeJobs(jobs: readonly Job[], prefer?: CopyPreference): DedupeResult {
   const byCompany = new Map<string, Job[]>();
   const order: Job[] = [];
 
@@ -153,7 +159,7 @@ export function dedupeJobs(jobs: readonly Job[]): DedupeResult {
       group.push(job);
       order.push(job);
     } else {
-      const winner = preferred(kept, job);
+      const winner = preferred(kept, job, prefer);
       if (winner !== kept) {
         group[group.indexOf(kept)] = winner;
         order[order.indexOf(kept)] = winner;

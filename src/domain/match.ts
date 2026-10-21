@@ -331,6 +331,21 @@ function checkRegion(job: Job, profile: Profile, flags: RedFlag[], notes: string
   }
 }
 
+/**
+ * How well a job's place suits where the user lives, from its location and scope only (no
+ * description): 3 names the user's country, 2 has a region that covers it, 1 doesn't say,
+ * 0 is on-site or limited elsewhere. Used to show the copy of a role posted once per
+ * country that is meant for the user.
+ */
+export function placeFit(job: Job, profile: Profile): number {
+  if (job.remote_scope === 'On-site') return 0;
+  if (listedCountries(job.location)?.has(profile.location.country_code)) return 3;
+  const flags: RedFlag[] = [];
+  checkRegion(job, profile, flags, []);
+  if (flags.length > 0) return 0;
+  return job.remote_scope === 'Unknown' ? 1 : 2;
+}
+
 /** "Must be based in the EU", "EU residents only", "must live in Germany". */
 function checkResidence(text: string, profile: Profile, flags: RedFlag[]) {
   const livesInEu = isEuCountry(profile.location.country_code);

@@ -6,7 +6,7 @@ import { PostgresFetchCacheStore } from '../../src/db/postgres-fetch-cache-store
 import { createServer } from '../../src/server.js';
 import { JobSearchService } from '../../src/services/job-search.js';
 import { CachedJobSource } from '../../src/sources/cache.js';
-import { FakeSource, makeJob, unusedProfiles } from '../helpers.js';
+import { FakeSource, makeJob, noProfile } from '../helpers.js';
 import { createTestDatabase, TEST_DATABASE_URL, type TestDatabase } from './db.js';
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -40,7 +40,7 @@ describe.skipIf(!TEST_DATABASE_URL)('tracker tools (MCP + Postgres)', () => {
     const server = createServer({
       search: new JobSearchService([cached], () => NOW),
       store: repository,
-      profiles: unusedProfiles,
+      profiles: noProfile,
     });
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     const c = new Client({ name: 'test-client', version: '0.0.0' });
