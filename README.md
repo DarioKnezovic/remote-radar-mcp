@@ -388,6 +388,7 @@ test/
 | `npm run demo:seed`           | Fill a database named `*demo*` with made-up jobs (see `scripts/demo-seed.ts`)          |
 | `npm test`                    | Unit tests (integration tests skip without a database)                                 |
 | `npm run test:db`             | All tests, including Postgres integration tests                                        |
+| `npm run web:e2e`             | Build the web app and run its browser tests (Playwright) on a fresh demo database      |
 | `npm run test:coverage`       | All tests with a coverage report (`coverage/index.html`)                               |
 | `npm run typecheck`           | `tsc --noEmit`                                                                         |
 | `npm run lint`                | ESLint (typescript-eslint strict, type-checked); `npm run lint -w web` for the web app |

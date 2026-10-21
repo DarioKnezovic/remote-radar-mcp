@@ -49,6 +49,7 @@
     "web:dev": "npm run build && npm run dev -w web",
     "web:build": "npm run build && npm run build -w web",
     "web:start": "npm run start -w web",
+    "web:e2e": "npm run web:build && npm run test:e2e -w web",
     "app:up": "docker compose up -d --build --wait",
     "app:down": "docker compose down",
     "demo:seed": "tsx scripts/demo-seed.ts"

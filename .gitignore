@@ -26,4 +26,9 @@ PROMPT.md
 # Web app build output
 /web/.next
 /web/next-env.d.ts
+
+# Browser tests
+/web/e2e/.tmp
+/web/test-results
+/web/playwright-report
 *.tsbuildinfo

@@ -14,3 +14,8 @@ PROMPT.md
 .DS_Store
 .idea
 .vscode
+
+# Browser test output
+web/e2e/.tmp
+web/test-results
+web/playwright-report
