@@ -30,8 +30,10 @@ There are two ways to use it, and they share the same data:
 You need **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** (free for personal
 use). Install it and start it.
 
-1. **Download Remote Radar.** On this page, click **Code → Download ZIP** and unzip it. (Or, if
-   you use git: `git clone https://github.com/DarioKnezovic/remote-radar-mcp.git`.)
+1. **Download Remote Radar.** Open the
+   [latest release](https://github.com/DarioKnezovic/remote-radar-mcp/releases/latest), click
+   **Source code (zip)** under **Assets** and unzip it. (Or, if you use git:
+   `git clone https://github.com/DarioKnezovic/remote-radar-mcp.git`.)
 2. **Open a terminal in that folder.**
    - macOS: right-click the folder in Finder → **New Terminal at Folder**.
    - Windows: open the folder, click the address bar, type `cmd` and press Enter.
@@ -48,12 +50,12 @@ use). Install it and start it.
 5. Go to **Find jobs**. The first search takes a little longer, because the job lists are
    fetched; after that they're kept for a few hours.
 
-| To…                                  | Run (in the same folder)                                               |
-| ------------------------------------ | ---------------------------------------------------------------------- |
-| Stop it                              | `docker compose down`                                                  |
-| Start it again                       | `docker compose up -d`                                                 |
-| Update to a new version              | download it again (or `git pull`), then `docker compose up -d --build` |
-| Remove it, including your saved jobs | `docker compose down -v`, then delete the folder                       |
+| To…                                  | Run (in the same folder)                                                         |
+| ------------------------------------ | -------------------------------------------------------------------------------- |
+| Stop it                              | `docker compose down`                                                            |
+| Start it again                       | `docker compose up -d`                                                           |
+| Update to a new version              | download the latest release (or `git pull`), then `docker compose up -d --build` |
+| Remove it, including your saved jobs | `docker compose down -v`, then delete the folder                                 |
 
 **Your data stays on your computer.** Your profile is saved as `profile.json` in the project
 folder; saved jobs are in a small database inside Docker. Remote Radar only talks to the public job
