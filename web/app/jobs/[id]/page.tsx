@@ -160,14 +160,17 @@ export default async function JobPage({ params }: { params: Params }) {
         open={coverLetter !== undefined}
         className="bg-surface border-border group mt-6 rounded-xl border"
       >
-        <summary className="cursor-pointer list-none p-5">
-          <span className="font-semibold">✍️ Cover letter draft</span>
-          <span className="text-muted ml-2 text-sm">
-            {coverLetter
-              ? `saved ${formatDate(coverLetter.updated_at)}`
-              : 'a first draft from your profile, to edit and send yourself'}
+        <summary className="flex cursor-pointer list-none items-start gap-3 p-5 [&::-webkit-details-marker]:hidden">
+          {/* One block, so a long hint wraps under the title and the arrow stays top right. */}
+          <span className="min-w-0 flex-1">
+            <span className="font-semibold">✍️ Cover letter draft</span>
+            <span className="text-muted ml-2 text-sm">
+              {coverLetter
+                ? `saved ${formatDate(coverLetter.updated_at)}`
+                : 'a first draft from your profile, to edit and send yourself'}
+            </span>
           </span>
-          <span aria-hidden className="text-muted float-right group-open:rotate-180">
+          <span aria-hidden className="text-muted group-open:rotate-180">
             ▾
           </span>
         </summary>
