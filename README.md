@@ -602,7 +602,6 @@ job searching.
   written. Read the evidence and the listing before deciding.
 - The web app has no login and is meant for one person on one computer. Don't expose it to a
   network.
-- The Docker image is about 650 MB, mostly Next.js and its dependencies.
 
 ## Ideas
 
