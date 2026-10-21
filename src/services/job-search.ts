@@ -1,6 +1,7 @@
 import { dedupeJobs } from '../domain/dedupe.js';
 import { filterJobs } from '../domain/filter.js';
 import type { Job, RemoteScope } from '../domain/job.js';
+import type { MinSalary } from '../domain/salary.js';
 import type { JobSource, SourceInfo } from '../sources/job-source.js';
 
 export interface SearchParams {
@@ -8,6 +9,8 @@ export interface SearchParams {
   tags?: readonly string[] | undefined;
   remoteScopes?: readonly RemoteScope[] | undefined;
   postedWithinDays?: number | undefined;
+  minSalary?: MinSalary | undefined;
+  salaryListed?: boolean | undefined;
   limit: number;
 }
 
@@ -57,6 +60,8 @@ export class JobSearchService {
       tags: params.tags,
       remoteScopes: params.remoteScopes,
       postedWithinDays: params.postedWithinDays,
+      minSalary: params.minSalary,
+      salaryListed: params.salaryListed,
       now: this.now(),
     });
     const { jobs: unique, removed } = dedupeJobs(filtered);

@@ -7,6 +7,7 @@ import {
   type Job,
   type RemoteScope,
 } from '../domain/job.js';
+import { CURRENCIES, RATES_DATE } from '../domain/salary.js';
 import { htmlToText, truncate } from '../domain/text.js';
 import type { JobSearchService } from '../services/job-search.js';
 import { toolError, toolResult } from './shared.js';
@@ -42,6 +43,20 @@ export const searchJobsInput = {
     .max(365)
     .optional()
     .describe('Only jobs published in the last N days.'),
+  min_salary: z
+    .number()
+    .int()
+    .min(1)
+    .max(10_000_000)
+    .optional()
+    .describe(
+      `Minimum yearly salary before tax, in salary_currency. Hides jobs whose stated salary range can't reach it; jobs that state no salary are kept (most don't). Hourly, daily and monthly pay counts as full-time yearly pay; other currencies are converted with approximate rates from ${RATES_DATE}.`,
+    ),
+  salary_currency: z
+    .enum(CURRENCIES)
+    .default('USD')
+    .describe('Currency of min_salary (default USD).'),
+  salary_listed_only: z.boolean().optional().describe('Only jobs that state a salary.'),
   limit: z.number().int().min(1).max(50).default(20).describe('Max jobs to return (default 20).'),
 };
 
@@ -116,6 +131,11 @@ export function registerSearchJobs(server: McpServer, search: JobSearchService):
         tags: args.tags,
         remoteScopes: toScopeList(args.remote_scope),
         postedWithinDays: args.posted_within_days,
+        minSalary:
+          args.min_salary === undefined
+            ? undefined
+            : { amount: args.min_salary, currency: args.salary_currency },
+        salaryListed: args.salary_listed_only,
         limit: args.limit,
       });
 

@@ -97,6 +97,7 @@ describe('JobSearchService', () => {
             published_at: '2026-09-01T00:00:00.000Z',
           }),
           makeJob({ title: 'Vue Dev US', tags: ['vue'], remote_scope: 'US only', location: 'USA' }),
+          makeJob({ title: 'Vue Dev Cheap', tags: ['vue'], salary: 'USD 20,000 per year' }),
         ]),
       ],
       now,
@@ -107,10 +108,13 @@ describe('JobSearchService', () => {
       tags: ['VUE'],
       remoteScopes: ['Worldwide'],
       postedWithinDays: 7,
+      minSalary: { amount: 50_000, currency: 'USD' },
       limit: 10,
     });
 
     expect(result.jobs.map((job) => job.title)).toEqual(['Vue Dev']);
+    const listed = await service.search({ salaryListed: true, limit: 10 });
+    expect(listed.jobs.map((job) => job.title)).toEqual(['Vue Dev Cheap']);
   });
 
   it('reports a failing source without failing the search, including non-Error rejections', async () => {

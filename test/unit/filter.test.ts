@@ -106,3 +106,22 @@ describe('filterJobs', () => {
     ).toEqual([match]);
   });
 });
+
+describe('salary filters', () => {
+  const low = makeJob({ title: 'Low', salary: '€50,000–60,000 per year' });
+  const high = makeJob({ title: 'High', salary: '$150k - $180k' });
+  const unknown = makeJob({ title: 'Unknown', salary: null });
+
+  it('hides jobs whose salary is below the minimum and keeps those without one', () => {
+    const jobs = filterJobs([low, high, unknown], {
+      minSalary: { amount: 80_000, currency: 'EUR' },
+      now,
+    });
+    expect(jobs.map((job) => job.title)).toEqual(['High', 'Unknown']);
+  });
+
+  it('can require a stated salary', () => {
+    const jobs = filterJobs([low, high, unknown], { salaryListed: true, now });
+    expect(jobs.map((job) => job.title)).toEqual(['Low', 'High']);
+  });
+});

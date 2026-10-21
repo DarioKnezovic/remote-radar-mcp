@@ -7,9 +7,11 @@ import { JobCard } from '@/components/job-card';
 import { SetupProblem } from '@/components/setup-problem';
 import { Callout, PageHeader } from '@/components/ui';
 import { fitFor, fitScore } from '@/lib/fit';
-import { plural } from '@/lib/format';
+import { formatDate, plural } from '@/lib/format';
 import { loadRadar } from '@/lib/load';
+import { CURRENCIES, RATES_DATE } from 'remote-radar-mcp/domain';
 import {
+  currencyFor,
   DAYS_OPTIONS,
   PAGE_SIZE,
   parseQuery,
@@ -31,7 +33,7 @@ export default async function JobsPage({ searchParams }: { searchParams: SearchP
 
   const profileResult = await radar.profiles.load();
   const profile = profileResult.ok ? profileResult.profile : undefined;
-  const query = parseQuery(await searchParams, profile !== undefined);
+  const query = parseQuery(await searchParams, profile !== undefined, currencyFor(profile));
 
   return (
     <div>
@@ -90,7 +92,7 @@ function SearchForm({ query, hasProfile }: { query: JobQuery; hasProfile: boolea
         </button>
       </div>
 
-      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="text-sm">
           <span className="text-muted mb-1 block">Where can you work from?</span>
           <select name="where" defaultValue={query.where} className={fieldClass}>
@@ -113,6 +115,33 @@ function SearchForm({ query, hasProfile }: { query: JobQuery; hasProfile: boolea
             ))}
           </select>
         </label>
+        <fieldset className="text-sm">
+          <legend className="text-muted mb-1">Minimum salary a year</legend>
+          <div className="flex gap-2">
+            <label className="min-w-0 flex-1">
+              <span className="sr-only">Amount</span>
+              <input
+                type="text"
+                inputMode="numeric"
+                name="pay"
+                defaultValue={query.pay ? query.pay.toLocaleString('en-US') : ''}
+                placeholder="Any"
+                maxLength={12}
+                className={fieldClass}
+              />
+            </label>
+            <label>
+              <span className="sr-only">Currency</span>
+              <select name="currency" defaultValue={query.currency} className={fieldClass}>
+                {CURRENCIES.map((currency) => (
+                  <option key={currency} value={currency}>
+                    {currency}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </fieldset>
         {hasProfile && (
           <label className="text-sm">
             <span className="text-muted mb-1 block">Order</span>
@@ -127,18 +156,35 @@ function SearchForm({ query, hasProfile }: { query: JobQuery; hasProfile: boolea
         )}
       </div>
 
-      {hasProfile && (
-        <label className="mt-3 flex items-center gap-2 text-sm">
+      <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+        {hasProfile && (
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="clean"
+              value="1"
+              defaultChecked={query.clean}
+              className="accent-accent size-4"
+            />
+            Only show jobs with no warnings for me
+          </label>
+        )}
+        <label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"
-            name="clean"
+            name="paid"
             value="1"
-            defaultChecked={query.clean}
+            defaultChecked={query.paid}
             className="accent-accent size-4"
           />
-          Only show jobs with no warnings for me
+          Only jobs that state a salary
         </label>
-      )}
+      </div>
+      <p className="text-muted mt-2 text-xs leading-relaxed">
+        Most jobs don’t state a salary. They stay in the list unless you tick “Only jobs that state
+        a salary”. Hourly and day rates count as full-time pay for a year. Other currencies are
+        converted with rough exchange rates from {formatDate(RATES_DATE)}.
+      </p>
     </Form>
   );
 }
@@ -171,6 +217,8 @@ async function Results({
       query: query.q || undefined,
       remoteScopes: scopesFor(query.where, profile),
       postedWithinDays: query.days || undefined,
+      minSalary: query.pay ? { amount: query.pay, currency: query.currency } : undefined,
+      salaryListed: query.paid || undefined,
       // Everything: fit filtering, sorting and "Show more" happen here, on the full list.
       limit: 100_000,
     }),
@@ -230,7 +278,9 @@ async function Results({
         <Callout tone="neutral" title="No jobs match this search">
           Try fewer or different words
           {query.where !== 'all' && ', or choose “All remote jobs”'}
-          {query.clean && ', or allow jobs with warnings'}.
+          {query.clean && ', or allow jobs with warnings'}
+          {query.pay > 0 && ', or lower the minimum salary'}
+          {query.paid && ', or include jobs that don’t state a salary'}.
         </Callout>
       ) : (
         <ul className="space-y-3">

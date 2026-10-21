@@ -58,7 +58,7 @@ export const jobSchema = z.object({
   location: z.string().nullable(),
   remote_scope: remoteScopeSchema,
   employment_type: employmentTypeSchema,
-  /** Raw salary text; formats vary too much between listings to parse reliably. */
+  /** Raw salary text as the listing states it; `parseSalary` (salary.ts) reads it when needed. */
   salary: z.string().nullable(),
   tags: z.array(z.string()),
   /** HTML as provided by the source. */

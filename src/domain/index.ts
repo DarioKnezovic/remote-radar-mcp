@@ -29,6 +29,16 @@ export {
   type RedFlagCode,
 } from './match.js';
 export { profileSchema, type Profile, type ProfileInput, type SkillLevel } from './profile.js';
+export {
+  CURRENCIES,
+  parseSalary,
+  RATES_DATE,
+  toYearly,
+  type Currency,
+  type MinSalary,
+  type PayPeriod,
+  type Salary,
+} from './salary.js';
 export { canonicalSkill, SKILL_NAMES } from './skills.js';
 export { htmlToText, truncate } from './text.js';
 export { VERSION } from '../version.js';

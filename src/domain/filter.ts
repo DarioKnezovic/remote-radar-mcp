@@ -1,5 +1,6 @@
 import type { Job, RemoteScope } from './job.js';
 import { detectRegions, type Region } from './remote-scope.js';
+import { paysAtLeast, type MinSalary } from './salary.js';
 import { foldText, htmlToText } from './text.js';
 
 export interface JobFilter {
@@ -10,6 +11,10 @@ export interface JobFilter {
   /** Job must be open to at least one of these scopes. Defaults to every remote scope (on-site excluded). */
   remoteScopes?: readonly RemoteScope[] | undefined;
   postedWithinDays?: number | undefined;
+  /** Hides jobs whose stated salary can't reach this a year. Jobs without one are kept. */
+  minSalary?: MinSalary | undefined;
+  /** Only jobs that state a salary. */
+  salaryListed?: boolean | undefined;
   now: Date;
 }
 
@@ -78,6 +83,8 @@ export function matchesFilter(job: Job, filter: JobFilter): boolean {
     (filter.postedWithinDays === undefined ||
       isPostedWithin(job, filter.postedWithinDays, filter.now)) &&
     (filter.tags === undefined || matchesTags(job, filter.tags)) &&
+    (!filter.salaryListed || job.salary !== null) &&
+    (filter.minSalary === undefined || paysAtLeast(job, filter.minSalary)) &&
     // Query last: it's the most expensive check.
     (filter.query === undefined || matchesQuery(job, filter.query))
   );

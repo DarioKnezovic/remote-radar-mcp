@@ -64,6 +64,9 @@ describe('MCP server', () => {
       'tags',
       'remote_scope',
       'posted_within_days',
+      'min_salary',
+      'salary_currency',
+      'salary_listed_only',
       'limit',
     ]);
   });
@@ -118,6 +121,29 @@ describe('search_jobs tool', () => {
 
     expect(content.jobs.map((job) => job.company)).toEqual(['B', 'C']);
     expect(content.total_matches).toBe(3);
+  });
+
+  it('filters by minimum yearly salary, converting currencies and rates', async () => {
+    const c = await connect([
+      new FakeSource([
+        makeJob({ title: 'Euro', salary: '€70K – €90K' }), // ≈ $101k at most
+        makeJob({ title: 'Hourly', salary: '$60-$70 /hour' }), // $145.6k a year at most
+        makeJob({ title: 'Unstated', salary: null }),
+      ]),
+    ]);
+
+    const call = async (args: Record<string, unknown>) => {
+      const result = await c.callTool({ name: 'search_jobs', arguments: args });
+      return (result.structuredContent as { jobs: { title: string }[] }).jobs.map((j) => j.title);
+    };
+
+    expect(await call({ min_salary: 120_000 })).toEqual(['Hourly', 'Unstated']);
+    expect(await call({ min_salary: 85_000, salary_currency: 'EUR' })).toEqual([
+      'Euro',
+      'Hourly',
+      'Unstated',
+    ]);
+    expect(await call({ salary_listed_only: true })).toEqual(['Euro', 'Hourly']);
   });
 
   it('accepts a single remote_scope or a list', async () => {

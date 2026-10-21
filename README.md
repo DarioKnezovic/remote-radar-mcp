@@ -81,13 +81,13 @@ login, so it only accepts connections from your own computer, not from your netw
 
 ## The web app
 
-| Page             | What it does                                                                                                                                                                                                                                                                                                            |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Find jobs**    | Search by keywords, where you can work from (_open to where I live_, _anyone, anywhere_, _all remote jobs_) and how recent. Sort by best fit, or show only jobs with no warnings for you. Each result shows where it can be done from, the contract type, pay if listed, and a one-line fit summary.                    |
-| **Job page**     | The full listing, and **How well this fits you**: each warning in plain words with the sentence from the listing it's based on, matched and missing skills, and a big **Open the original listing** button. Plus a **cover letter draft** written from your profile, which you edit, save, copy, or polish with Claude. |
-| **My jobs**      | Saved jobs by stage: Saved → Applied → Interviewing → Offer, plus Rejected and Not interested. Mark a job **I applied** after applying on the company's site, change its stage, and add notes.                                                                                                                          |
-| **My profile**   | A form for your profile, with a three-step setup the first time. Countries and time zones are dropdowns; skills are understood in their common spellings ("node" → Node.js).                                                                                                                                            |
-| **How it works** | The whole process in five steps, every source, what each "where can I work from" label and each warning means, and what Remote Radar never does.                                                                                                                                                                        |
+| Page             | What it does                                                                                                                                                                                                                                                                                                                                 |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Find jobs**    | Search by keywords, where you can work from (_open to where I live_, _anyone, anywhere_, _all remote jobs_) and how recent, with an optional minimum yearly salary. Sort by best fit, or show only jobs with no warnings for you. Each result shows where it can be done from, the contract type, pay if listed, and a one-line fit summary. |
+| **Job page**     | The full listing, and **How well this fits you**: each warning in plain words with the sentence from the listing it's based on, matched and missing skills, and a big **Open the original listing** button. Plus a **cover letter draft** written from your profile, which you edit, save, copy, or polish with Claude.                      |
+| **My jobs**      | Saved jobs by stage: Saved → Applied → Interviewing → Offer, plus Rejected and Not interested. Mark a job **I applied** after applying on the company's site, change its stage, and add notes.                                                                                                                                               |
+| **My profile**   | A form for your profile, with a three-step setup the first time. Countries and time zones are dropdowns; skills are understood in their common spellings ("node" → Node.js).                                                                                                                                                                 |
+| **How it works** | The whole process in five steps, every source, what each "where can I work from" label and each warning means, and what Remote Radar never does.                                                                                                                                                                                             |
 
 To run the web app without Docker (for development), see [Development](#development).
 
@@ -140,15 +140,15 @@ depend on what the sources have that day.
 
 ### Tools
 
-| Tool                | Input                                                               | What it does                                                                                                                                                                                           |
-| ------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `search_jobs`       | `query?`, `tags?`, `remote_scope?`, `posted_within_days?`, `limit?` | Fetches from all sources (cached), normalizes, dedupes, filters, and returns up to `limit` (default 20, max 50) short job summaries, newest first. Includes per-source status and an attribution line. |
-| `get_job_details`   | `job_id`                                                            | The full normalized job, description converted to plain text, plus tracker status if saved and the cover letter draft saved on the job page, if any.                                                   |
-| `save_job`          | `job_id`, `notes?`                                                  | Saves the job with status `found`. Saving again keeps the status and appends the note.                                                                                                                 |
-| `update_job_status` | `job_id`, `status`, `notes?`                                        | `status` is one of `found`, `applied`, `interview`, `offer`, `rejected`, `skipped`. Every change goes into the status history.                                                                         |
-| `list_saved_jobs`   | `status?`                                                           | Saved jobs with status and notes, most recently updated first.                                                                                                                                         |
-| `get_profile`       | –                                                                   | Your `profile.json`: skills by level, location, citizenship, languages, what you're looking for, achievement stories (for drafting tailored applications you send yourself).                           |
-| `match_job`         | `job_id`                                                            | Matched skills (with your level), missing skills, skill coverage, red flags with evidence, and notes (e.g. "requires EU work authorization: you have it").                                             |
+| Tool                | Input                                                                                                                         | What it does                                                                                                                                                                                                                                                                                                                       |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search_jobs`       | `query?`, `tags?`, `remote_scope?`, `posted_within_days?`, `min_salary?`, `salary_currency?`, `salary_listed_only?`, `limit?` | Fetches from all sources (cached), normalizes, dedupes, filters, and returns up to `limit` (default 20, max 50) short job summaries, newest first. `min_salary` is yearly, in `salary_currency` (default USD); jobs that state no salary are kept unless `salary_listed_only`. Includes per-source status and an attribution line. |
+| `get_job_details`   | `job_id`                                                                                                                      | The full normalized job, description converted to plain text, plus tracker status if saved and the cover letter draft saved on the job page, if any.                                                                                                                                                                               |
+| `save_job`          | `job_id`, `notes?`                                                                                                            | Saves the job with status `found`. Saving again keeps the status and appends the note.                                                                                                                                                                                                                                             |
+| `update_job_status` | `job_id`, `status`, `notes?`                                                                                                  | `status` is one of `found`, `applied`, `interview`, `offer`, `rejected`, `skipped`. Every change goes into the status history.                                                                                                                                                                                                     |
+| `list_saved_jobs`   | `status?`                                                                                                                     | Saved jobs with status and notes, most recently updated first.                                                                                                                                                                                                                                                                     |
+| `get_profile`       | –                                                                                                                             | Your `profile.json`: skills by level, location, citizenship, languages, what you're looking for, achievement stories (for drafting tailored applications you send yourself).                                                                                                                                                       |
+| `match_job`         | `job_id`                                                                                                                      | Matched skills (with your level), missing skills, skill coverage, red flags with evidence, and notes (e.g. "requires EU work authorization: you have it").                                                                                                                                                                         |
 
 **Red flags `match_job` looks for:** on-site or hybrid; remote region that excludes where you
 live (US only, Americas, …); EU or country residence requirements; work authorization you don't
@@ -186,7 +186,7 @@ only `save_job` and `update_job_status` write, and they only write to your local
   location: string | null,       // raw text from the source
   remote_scope: RemoteScope,     // see above
   employment_type: "full_time" | "part_time" | "contract" | "freelance" | "internship" | "unknown",
-  salary: string | null,         // raw text, not parsed
+  salary: string | null,         // raw text; parsed by parseSalary when filtering
   tags: string[],
   description: string,           // HTML (plain text in get_job_details)
   published_at: string           // ISO 8601, UTC
@@ -467,6 +467,14 @@ currently ignored by the free API, which always returns the latest 10 jobs. Arbe
 search parameters. Fetching the feed once and filtering locally behaves the same for every
 source and costs nothing extra in requests.
 
+**Why the salary filter keeps jobs without a salary.** Most listings don't state one, so hiding
+them would hide nearly everything. A minimum salary hides only jobs whose stated range can't reach
+it ("€70K – €90K" for a €100k minimum); "Only jobs that state a salary" is a separate choice.
+Hourly, day and monthly rates count as full-time pay for a year (2,080 hours, 230 days), and other
+currencies are converted with fixed rates from one day, updated by hand: close enough to compare,
+and no exchange-rate service to call. Text it can't read with confidence ("$1000 per task", a
+"yearly" USD 30–36) counts as not stated rather than as a guess.
+
 **Why remote scope is conservative.** Location text is free-form. The classifier recognizes
 regions (Worldwide, Europe, EU, US, Americas, APAC and others) and only picks a scope when the
 text actually names one. "Remote" alone or a city name ("Berlin") stays `Unknown` rather than
@@ -570,8 +578,10 @@ job searching.
 - Remotive's free API gives few jobs (about 10). Arbeitnow is mostly German and on-site.
 - Many remote jobs say only "Remote" or a city, so they get scope `Unknown`. Include `Unknown` in
   `remote_scope` to see them, and check the listing.
-- Salaries are raw text, and Arbeitnow and Greenhouse (in its list API) give none, so there's no salary
-  filter yet.
+- Only about 1 in 14 jobs states a salary (Arbeitnow and Greenhouse's list API give none), so the
+  salary filter keeps jobs without one. Other currencies are compared with fixed, approximate
+  exchange rates (`src/domain/salary.ts`), and salaries in currencies it doesn't know count as
+  not stated.
 - `match_job` is pattern-based: it catches common phrasings, not every way a requirement can be
   written. Read the evidence and the listing before deciding.
 - The web app has no login and is meant for one person on one computer. Don't expose it to a
@@ -581,7 +591,7 @@ job searching.
 ## Ideas
 
 - Show the other locations of a role that was posted once per country.
-- A salary filter, once salaries are parsed into numbers.
+- Read pay ranges from the description text (many US listings on Greenhouse state them there).
 - More ATS providers (Workable, SmartRecruiters, Recruitee) through `BoardsJobSource`.
 
 ## License
