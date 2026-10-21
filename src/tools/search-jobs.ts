@@ -10,7 +10,8 @@ import {
 import { CURRENCIES, RATES_DATE } from '../domain/salary.js';
 import { htmlToText, truncate } from '../domain/text.js';
 import type { JobSearchService } from '../services/job-search.js';
-import { toolError, toolResult } from './shared.js';
+import type { OtherListing } from '../domain/dedupe.js';
+import { MAX_OTHER_LOCATIONS, otherLocationsSchema, toolError, toolResult } from './shared.js';
 
 const SNIPPET_LENGTH = 240;
 const MAX_TAGS_IN_SUMMARY = 8;
@@ -73,6 +74,7 @@ const jobSummarySchema = z.object({
   tags: z.array(z.string()),
   published_at: z.string(),
   snippet: z.string(),
+  other_locations: otherLocationsSchema,
 });
 
 export const searchJobsOutput = {
@@ -92,7 +94,10 @@ export const searchJobsOutput = {
   attribution: z.string(),
 };
 
-export function toJobSummary(job: Job): z.infer<typeof jobSummarySchema> {
+export function toJobSummary(
+  job: Job,
+  others: readonly OtherListing[] = [],
+): z.infer<typeof jobSummarySchema> {
   return {
     id: job.id,
     title: job.title,
@@ -106,6 +111,7 @@ export function toJobSummary(job: Job): z.infer<typeof jobSummarySchema> {
     tags: job.tags.slice(0, MAX_TAGS_IN_SUMMARY),
     published_at: job.published_at,
     snippet: truncate(htmlToText(job.description).replace(/\s+/g, ' '), SNIPPET_LENGTH),
+    other_locations: others.slice(0, MAX_OTHER_LOCATIONS),
   };
 }
 
@@ -120,7 +126,7 @@ export function registerSearchJobs(server: McpServer, search: JobSearchService):
     {
       title: 'Search remote jobs',
       description:
-        "Searches remote job listings from official public job APIs, removes duplicates (same company + similar title) and returns a short list, newest first. Results are read-only: this never applies to jobs. Always show each job's source and url.",
+        "Searches remote job listings from official public job APIs, removes duplicates (same company + similar title; a role posted once per country becomes one job, with the other places in other_locations) and returns a short list, newest first. Results are read-only: this never applies to jobs. Always show each job's source and url.",
       inputSchema: searchJobsInput,
       outputSchema: searchJobsOutput,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -146,7 +152,7 @@ export function registerSearchJobs(server: McpServer, search: JobSearchService):
       }
 
       return toolResult({
-        jobs: result.jobs.map(toJobSummary),
+        jobs: result.jobs.map((job) => toJobSummary(job, result.otherListings.get(job.id))),
         total_matches: result.totalMatches,
         duplicates_removed: result.duplicatesRemoved,
         sources: result.sources,

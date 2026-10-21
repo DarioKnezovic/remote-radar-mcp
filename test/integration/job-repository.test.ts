@@ -70,6 +70,19 @@ describe.skipIf(!TEST_DATABASE_URL)('JobRepository (Postgres)', () => {
       const jobs = await repo.listJobsSeenSince('remotive', nextFetch);
       expect(jobs.map((job) => job.id)).toEqual([current.id]);
     });
+
+    it("lists a company's jobs that are still in their source's latest fetch", async () => {
+      const gone = makeJob({ company: 'Mozilla' });
+      const current = makeJob({ company: 'Mozilla' });
+      const elsewhere = makeJob({ company: 'Globex' });
+      const otherSource = makeJob({ company: 'Mozilla', source: 'greenhouse' });
+      await repo.recordSuccessfulFetch('remotive', [gone, current, elsewhere], seenAt);
+      await repo.recordSuccessfulFetch('greenhouse', [otherSource], seenAt);
+      await repo.recordSuccessfulFetch('remotive', [current, elsewhere], clock);
+
+      const jobs = await repo.listCurrentJobsAtCompany('Mozilla');
+      expect(jobs.map((job) => job.id).sort()).toEqual([current.id, otherSource.id].sort());
+    });
   });
 
   describe('source fetches', () => {

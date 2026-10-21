@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { coverLetterPromptIntro, draftCoverLetter } from 'remote-radar-mcp/domain';
+import { coverLetterPromptIntro, draftCoverLetter, otherListings } from 'remote-radar-mcp/domain';
 import { CoverLetterEditor } from '@/components/cover-letter';
 import { FitPanel } from '@/components/fit-panel';
 import { scopeTone } from '@/components/job-card';
@@ -11,7 +11,7 @@ import { SetupProblem } from '@/components/setup-problem';
 import { StatusControls } from '@/components/status-controls';
 import { Badge } from '@/components/ui';
 import { fitFor } from '@/lib/fit';
-import { formatDate, postedAgo } from '@/lib/format';
+import { formatDate, jobHref, postedAgo } from '@/lib/format';
 import { EMPLOYMENT_LABELS, SCOPE_LABELS, STATUS_LABELS } from '@/lib/labels';
 import { loadRadar } from '@/lib/load';
 import { sanitizeDescription } from '@/lib/sanitize';
@@ -43,12 +43,14 @@ export default async function JobPage({ params }: { params: Params }) {
   const { radar, job } = loaded;
   if (!job) notFound();
 
-  const [profileResult, saved, history, coverLetter] = await Promise.all([
+  const [profileResult, saved, history, coverLetter, sameCompany] = await Promise.all([
     radar.profiles.load(),
     radar.tracker.getSavedJob(job.id),
     radar.tracker.getStatusHistory(job.id),
     radar.tracker.getCoverLetter(job.id),
+    radar.tracker.listCurrentJobsAtCompany(job.company),
   ]);
+  const others = otherListings(job, sameCompany);
   const fit = profileResult.ok ? fitFor(job, profileResult.profile) : undefined;
   const source = radar.sources.find((s) => s.id === job.source);
   const scope = SCOPE_LABELS[job.remote_scope];
@@ -75,6 +77,26 @@ export default async function JobPage({ params }: { params: Params }) {
             {scope.hint}
             {job.location && ` Listing says: “${job.location}”.`}
           </dd>
+          {others.length > 0 && (
+            <>
+              <dt className="text-text font-medium">Also posted for</dt>
+              <dd>
+                <ul className="space-y-0.5">
+                  {others.map((other) => (
+                    <li key={other.job_id}>
+                      <Link href={jobHref(other.job_id)} className="text-accent hover:underline">
+                        {other.location}
+                      </Link>{' '}
+                      · {SCOPE_LABELS[other.remote_scope].label}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-1">
+                  Each place has its own listing. Apply through the one for where you live.
+                </p>
+              </dd>
+            </>
+          )}
           <dt className="text-text font-medium">Posted</dt>
           <dd>
             {postedAgo(job.published_at)} ({formatDate(job.published_at)})

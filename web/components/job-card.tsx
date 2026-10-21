@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { Job, MatchResult } from 'remote-radar-mcp/domain';
+import type { Job, MatchResult, OtherListing } from 'remote-radar-mcp/domain';
 import { EMPLOYMENT_LABELS, RED_FLAG_LABELS, SCOPE_LABELS } from '@/lib/labels';
 import { jobHref, postedAgo } from '@/lib/format';
 import { SaveButton } from './save-button';
@@ -9,6 +9,14 @@ export function scopeTone(scope: Job['remote_scope']) {
   if (scope === 'On-site') return 'bad' as const;
   if (scope === 'Unknown') return 'warn' as const;
   return 'accent' as const;
+}
+
+/** "Also posted for Remote France, Remote Germany and 4 more places". */
+export function alsoPostedFor(others: readonly OtherListing[], shown = 2): string {
+  const names = others.slice(0, shown).map((other) => other.location);
+  const rest = others.length - names.length;
+  if (rest === 0) return `Also posted for ${names.join(' and ')}`;
+  return `Also posted for ${names.join(', ')} and ${rest} more ${rest === 1 ? 'place' : 'places'}`;
 }
 
 /** One-line fit summary: warnings first, then skills. */
@@ -36,11 +44,14 @@ export function JobCard({
   sourceName,
   fit,
   saved,
+  others = [],
 }: {
   job: Job;
   sourceName: string;
   fit?: MatchResult | undefined;
   saved: boolean;
+  /** The same role posted for other places. */
+  others?: readonly OtherListing[] | undefined;
 }) {
   const scope = SCOPE_LABELS[job.remote_scope];
   return (
@@ -66,6 +77,9 @@ export function JobCard({
         {job.salary && <Badge tone="good">{job.salary}</Badge>}
       </div>
       {job.location && <p className="text-muted mt-2 line-clamp-1 text-sm">📍 {job.location}</p>}
+      {others.length > 0 && (
+        <p className="text-muted mt-1 line-clamp-2 text-sm">🌍 {alsoPostedFor(others)}</p>
+      )}
 
       {fit && (
         <div className="border-border mt-3 border-t pt-3">

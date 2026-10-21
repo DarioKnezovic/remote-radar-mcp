@@ -291,6 +291,7 @@ async function Results({
                 fit={fit}
                 saved={savedIds.has(job.id)}
                 sourceName={sourceNames.get(job.source) ?? job.source}
+                others={result.otherListings.get(job.id)}
               />
             </li>
           ))}

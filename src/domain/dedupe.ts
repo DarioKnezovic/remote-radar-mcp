@@ -1,4 +1,4 @@
-import type { Job } from './job.js';
+import type { Job, RemoteScope } from './job.js';
 import { foldText } from './text.js';
 
 /** Minimum word overlap (Jaccard index) for two titles at the same company to count as the same job. */
@@ -58,7 +58,21 @@ export function normalizeCompany(company: string): string {
   return words.join('');
 }
 
-export function titleTokens(title: string): Set<string> {
+/** Titles repeat a lot (one role, many countries); tokenizing each once keeps grouping fast. */
+const tokenCache = new Map<string, ReadonlySet<string>>();
+const TOKEN_CACHE_LIMIT = 20_000;
+
+export function titleTokens(title: string): ReadonlySet<string> {
+  let tokens = tokenCache.get(title);
+  if (!tokens) {
+    if (tokenCache.size >= TOKEN_CACHE_LIMIT) tokenCache.clear();
+    tokens = tokenizeTitle(title);
+    tokenCache.set(title, tokens);
+  }
+  return tokens;
+}
+
+function tokenizeTitle(title: string): Set<string> {
   const text = foldText(title)
     // Gender markers common in EU listings: (m/w/d), (f/m/x), (all genders) …
     .replace(/\((?:[mwfdx]\s*\/\s*)+[mwfdx]\)|\(all genders\)/g, ' ')
@@ -149,4 +163,58 @@ export function dedupeJobs(jobs: readonly Job[]): DedupeResult {
   }
 
   return { jobs: order, removed: jobs.length - order.length };
+}
+
+/** Another listing of the same role, posted for a different place. */
+export interface OtherListing {
+  job_id: string;
+  location: string;
+  remote_scope: RemoteScope;
+  url: string;
+}
+
+/**
+ * Words of a location without "remote" and punctuation, in any order: "Remote Germany",
+ * "Germany (Remote)" and "Remote: Germany" are the same place.
+ */
+function placeKey(location: string): string {
+  const words = foldText(location)
+    .split(/[^a-z0-9]+/)
+    .filter((word) => word && word !== 'remote');
+  return [...new Set(words)].sort().join(' ');
+}
+
+/**
+ * Where else the same role is posted: listings among `candidates` that dedupe would merge
+ * with `job` (many companies post a role once per country), one per place that differs from
+ * the job's own location, sorted by location.
+ */
+export function otherListings(job: Job, candidates: Iterable<Job>): OtherListing[] {
+  const seen = new Set([job.location ? placeKey(job.location) : '']);
+  const others: OtherListing[] = [];
+  for (const other of candidates) {
+    if (other.id === job.id || !other.location || !isDuplicate(job, other)) continue;
+    const key = placeKey(other.location);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    others.push({
+      job_id: other.id,
+      location: other.location,
+      remote_scope: other.remote_scope,
+      url: other.url,
+    });
+  }
+  return others.sort((a, b) => a.location.localeCompare(b.location));
+}
+
+/** All jobs by normalized company, to look up candidates for {@link otherListings}. */
+export function jobsByCompany(jobs: Iterable<Job>): Map<string, Job[]> {
+  const index = new Map<string, Job[]>();
+  for (const job of jobs) {
+    const key = normalizeCompany(job.company);
+    const list = index.get(key);
+    if (list) list.push(job);
+    else index.set(key, [job]);
+  }
+  return index;
 }

@@ -137,6 +137,22 @@ export class JobRepository {
     return rows.map(toJob);
   }
 
+  /**
+   * Jobs at this company (same name as stored) that were in their source's latest
+   * successful fetch, i.e. still listed. Used to find a role's other per-country listings.
+   */
+  async listCurrentJobsAtCompany(company: string): Promise<Job[]> {
+    const { rows } = await this.pool.query<JobRow>(
+      `SELECT ${JOB_COLUMNS} FROM jobs j
+       WHERE j.company = $1
+         AND j.last_seen_at >= (SELECT max(f.fetched_at) FROM source_fetches f
+                                WHERE f.source = j.source AND f.ok)
+       ORDER BY j.published_at DESC`,
+      [company],
+    );
+    return rows.map(toJob);
+  }
+
   // ── Source fetches (rate-limit bookkeeping) ────────────────────────────────
 
   /** Stores a successful fetch: jobs and the fetch record commit together. */

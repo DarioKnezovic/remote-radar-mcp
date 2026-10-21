@@ -148,4 +148,20 @@ describe('JobSearchService', () => {
     await new JobSearchService([a, b], now).search({ limit: 1 });
     expect([a.calls, b.calls]).toEqual([1, 1]);
   });
+
+  it('names the other places of a role, also those outside the filter', async () => {
+    const role = { company: 'Grafana Labs', title: 'Staff Technical Writer' };
+    const germany = makeJob({ ...role, location: 'Germany (Remote)', remote_scope: 'Europe' });
+    const us = makeJob({ ...role, location: 'United States (Remote)', remote_scope: 'US only' });
+    const other = makeJob({ company: 'Acme', location: 'Spain', remote_scope: 'Europe' });
+    const service = new JobSearchService([new FakeSource([germany, us, other])], now);
+
+    const result = await service.search({ remoteScopes: ['Europe'], limit: 10 });
+
+    expect(result.jobs.map((job) => job.id)).toEqual([germany.id, other.id]);
+    expect(result.otherListings.get(germany.id)).toEqual([
+      { job_id: us.id, location: 'United States (Remote)', remote_scope: 'US only', url: us.url },
+    ]);
+    expect(result.otherListings.has(other.id)).toBe(false);
+  });
 });

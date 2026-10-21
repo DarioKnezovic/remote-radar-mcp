@@ -109,6 +109,17 @@ describe.skipIf(!TEST_DATABASE_URL)('tracker tools (MCP + Postgres)', () => {
     });
   });
 
+  it('get_job_details names the other places the role is still posted for', async () => {
+    const germany = makeJob({ title: react.title, company: 'Acme', location: 'Remote Germany' });
+    await new JobRepository(db.pool, () => NOW).upsertJobs([germany], NOW);
+
+    const result = await call('get_job_details', { job_id: react.id });
+
+    expect(result.structuredContent).toMatchObject({
+      other_locations: [{ job_id: germany.id, location: 'Remote Germany', url: germany.url }],
+    });
+  });
+
   it('get_job_details explains unknown ids', async () => {
     const result = await call('get_job_details', { job_id: 'remotive:404' });
     expect(result.isError).toBe(true);

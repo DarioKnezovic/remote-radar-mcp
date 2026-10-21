@@ -104,6 +104,27 @@ describe('search_jobs tool', () => {
     expect((result.structuredContent as { attribution: string }).attribution).toContain('Fake');
   });
 
+  it('returns the other places of a role posted once per country', async () => {
+    const role = { title: 'Staff Engineer', company: 'Mozilla' };
+    const germany = makeJob({ ...role, location: 'Remote Germany', remote_scope: 'Europe' });
+    const canada = makeJob({ ...role, location: 'Remote Canada', remote_scope: 'Americas' });
+    const c = await connect([new FakeSource([germany, canada])]);
+
+    const result = await c.callTool({ name: 'search_jobs', arguments: {} });
+
+    expect(result.structuredContent).toMatchObject({
+      duplicates_removed: 1,
+      jobs: [
+        {
+          id: germany.id,
+          other_locations: [
+            { job_id: canada.id, location: 'Remote Canada', remote_scope: 'Americas' },
+          ],
+        },
+      ],
+    });
+  });
+
   it('applies limit and sorts newest first', async () => {
     const c = await connect([
       new FakeSource([

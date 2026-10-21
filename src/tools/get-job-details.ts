@@ -2,8 +2,17 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { applicationStatusSchema } from '../domain/application.js';
 import { employmentTypeSchema, remoteScopeSchema, sourceIdSchema } from '../domain/job.js';
+import { otherListings } from '../domain/dedupe.js';
 import { htmlToText, truncate } from '../domain/text.js';
-import { jobIdInput, attributionFor, toolError, toolResult, type TrackerStore } from './shared.js';
+import {
+  attributionFor,
+  jobIdInput,
+  MAX_OTHER_LOCATIONS,
+  otherLocationsSchema,
+  toolError,
+  toolResult,
+  type TrackerStore,
+} from './shared.js';
 
 /** Keeps one very long listing from flooding the model's context. */
 const MAX_DESCRIPTION_LENGTH = 12_000;
@@ -24,6 +33,7 @@ export const getJobDetailsOutput = {
     description: z.string().describe('Plain text converted from the listing HTML.'),
     published_at: z.string(),
   }),
+  other_locations: otherLocationsSchema,
   saved: z
     .object({
       status: applicationStatusSchema,
@@ -46,7 +56,7 @@ export function registerGetJobDetails(server: McpServer, store: TrackerStore): v
     {
       title: 'Get job details',
       description:
-        'Returns the full normalized job (including the description as plain text) for an id from search_jobs, plus its tracker status if saved and the cover letter draft saved in the web app, if any.',
+        'Returns the full normalized job (including the description as plain text) for an id from search_jobs, the other places the same role is posted for, plus its tracker status if saved and the cover letter draft saved in the web app, if any.',
       inputSchema: { job_id: jobIdInput },
       outputSchema: getJobDetailsOutput,
       annotations: { readOnlyHint: true, openWorldHint: false },
@@ -62,8 +72,10 @@ export function registerGetJobDetails(server: McpServer, store: TrackerStore): v
           `No job with id "${job_id}". Ids come from search_jobs results; run a search first.`,
         );
       }
+      const others = otherListings(job, await store.listCurrentJobsAtCompany(job.company));
       return toolResult({
         job: { ...job, description: truncate(htmlToText(job.description), MAX_DESCRIPTION_LENGTH) },
+        other_locations: others.slice(0, MAX_OTHER_LOCATIONS),
         saved: saved
           ? {
               status: saved.status,

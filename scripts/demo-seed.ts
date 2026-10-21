@@ -154,6 +154,23 @@ const DEMO_JOBS: DemoJob[] = [
       'Orbital Freight books container shipping. Help us keep our Angular and RxJS dashboard fast and reliable.',
     ),
   },
+  // One role posted once per country, as Mozilla and Grafana Labs do: shown as one job.
+  ...(['Spain', 'Canada'] as const).map((country, i): DemoJob => ({
+    slug: `harbor-platform-${country.toLowerCase()}`,
+    source: 'greenhouse',
+    title: 'Platform Engineer',
+    company: 'Harbor Metrics',
+    location: `Remote, ${country}`,
+    remote_scope: country === 'Spain' ? 'Europe' : 'Americas',
+    employment_type: 'full_time',
+    salary: null,
+    tags: [],
+    published_at: daysAgo(3 + i),
+    description: html(
+      'Harbor Metrics measures port traffic. We hire in each country through a local entity.',
+      'You will run our Kubernetes clusters on AWS with Terraform, and keep our Node.js services observable.',
+    ),
+  })),
 ];
 
 function toJob(demo: DemoJob): Job {

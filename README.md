@@ -140,15 +140,15 @@ depend on what the sources have that day.
 
 ### Tools
 
-| Tool                | Input                                                                                                                         | What it does                                                                                                                                                                                                                                                                                                                       |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `search_jobs`       | `query?`, `tags?`, `remote_scope?`, `posted_within_days?`, `min_salary?`, `salary_currency?`, `salary_listed_only?`, `limit?` | Fetches from all sources (cached), normalizes, dedupes, filters, and returns up to `limit` (default 20, max 50) short job summaries, newest first. `min_salary` is yearly, in `salary_currency` (default USD); jobs that state no salary are kept unless `salary_listed_only`. Includes per-source status and an attribution line. |
-| `get_job_details`   | `job_id`                                                                                                                      | The full normalized job, description converted to plain text, plus tracker status if saved and the cover letter draft saved on the job page, if any.                                                                                                                                                                               |
-| `save_job`          | `job_id`, `notes?`                                                                                                            | Saves the job with status `found`. Saving again keeps the status and appends the note.                                                                                                                                                                                                                                             |
-| `update_job_status` | `job_id`, `status`, `notes?`                                                                                                  | `status` is one of `found`, `applied`, `interview`, `offer`, `rejected`, `skipped`. Every change goes into the status history.                                                                                                                                                                                                     |
-| `list_saved_jobs`   | `status?`                                                                                                                     | Saved jobs with status and notes, most recently updated first.                                                                                                                                                                                                                                                                     |
-| `get_profile`       | –                                                                                                                             | Your `profile.json`: skills by level, location, citizenship, languages, what you're looking for, achievement stories (for drafting tailored applications you send yourself).                                                                                                                                                       |
-| `match_job`         | `job_id`                                                                                                                      | Matched skills (with your level), missing skills, skill coverage, red flags with evidence, and notes (e.g. "requires EU work authorization: you have it").                                                                                                                                                                         |
+| Tool                | Input                                                                                                                         | What it does                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search_jobs`       | `query?`, `tags?`, `remote_scope?`, `posted_within_days?`, `min_salary?`, `salary_currency?`, `salary_listed_only?`, `limit?` | Fetches from all sources (cached), normalizes, dedupes, filters, and returns up to `limit` (default 20, max 50) short job summaries, newest first. `min_salary` is yearly, in `salary_currency` (default USD); jobs that state no salary are kept unless `salary_listed_only`. A role posted once per country comes back as one job, with the other places in `other_locations` (each with its own id and URL). Includes per-source status and an attribution line. |
+| `get_job_details`   | `job_id`                                                                                                                      | The full normalized job, description converted to plain text, the other places the same role is still posted for (`other_locations`), plus tracker status if saved and the cover letter draft saved on the job page, if any.                                                                                                                                                                                                                                        |
+| `save_job`          | `job_id`, `notes?`                                                                                                            | Saves the job with status `found`. Saving again keeps the status and appends the note.                                                                                                                                                                                                                                                                                                                                                                              |
+| `update_job_status` | `job_id`, `status`, `notes?`                                                                                                  | `status` is one of `found`, `applied`, `interview`, `offer`, `rejected`, `skipped`. Every change goes into the status history.                                                                                                                                                                                                                                                                                                                                      |
+| `list_saved_jobs`   | `status?`                                                                                                                     | Saved jobs with status and notes, most recently updated first.                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `get_profile`       | –                                                                                                                             | Your `profile.json`: skills by level, location, citizenship, languages, what you're looking for, achievement stories (for drafting tailored applications you send yourself).                                                                                                                                                                                                                                                                                        |
+| `match_job`         | `job_id`                                                                                                                      | Matched skills (with your level), missing skills, skill coverage, red flags with evidence, and notes (e.g. "requires EU work authorization: you have it").                                                                                                                                                                                                                                                                                                          |
 
 **Red flags `match_job` looks for:** on-site or hybrid; remote region that excludes where you
 live (US only, Americas, …); EU or country residence requirements; work authorization you don't
@@ -335,7 +335,8 @@ caches, matching and profile. Whatever you do in one shows up in the other.
 3. The source client validates the raw response with zod, one listing at a time, so one bad
    listing doesn't drop the whole feed, and normalizes it into a `Job`. Company-board sources
    fetch their boards four at a time and skip a board that fails (renamed, moved to another ATS).
-4. Jobs from all sources are merged, filtered, deduped, sorted and cut to `limit`.
+4. Jobs from all sources are merged, filtered, deduped, sorted and cut to `limit`. Each result
+   gets the other places its role is posted for, looked up in all fetched jobs.
 5. A failing source shows up as `ok: false` in the result, and the other sources' jobs are still
    returned. The tool only reports an error if every source fails.
 
@@ -449,8 +450,9 @@ different ways. Remotive gives free-text locations. Arbeitnow mixes languages in
 sometimes reports remote jobs as `remote: false`, and sometimes puts the location in the title.
 Greenhouse has no remote flag at all, Lever's `workplaceType` says `"onsite"` where its docs
 say `"on-site"`, Ashby's address sometimes holds a region ("European Union") instead of a
-country, and Workable lists a job open in two cities twice under the same id. Each source keeps that mess in its own folder and outputs the same `Job`, so dedupe,
-filters, matching and the tracker are written once. Rate limiting is a separate concern, so
+country, and Workable lists a job open in two cities twice under the same id. Each source keeps
+that mess in its own folder and outputs the same `Job`, so dedupe, filters, matching and the
+tracker are written once. Rate limiting is a separate concern, so
 `CachedJobSource` wraps any source instead of each client caching on its own. The v2 sources
 were added exactly that way: a folder each, plus a line in the registry.
 
@@ -497,8 +499,11 @@ Remote") is moved into the location first, so per-country copies match.
 
 Dedupe runs **after** filtering. Companies often post one copy of a role per country ("Remote,
 US" and "Remote, Germany"); deduping first could keep the US copy and a Europe search would then
-lose the job entirely. Trade-off: copies that all match collapse into one result, so the other
-locations aren't listed.
+lose the job entirely. The copies that were merged aren't lost: each result lists the other
+places its role is posted for, with links, looked up among _all_ fetched jobs, so a Europe search
+still says the role is also open in Canada. Locations that only differ in wording ("Remote
+Germany", "Germany (Remote)") count as one place. Trade-off: which copy is shown first doesn't
+depend on where you live, so check the list and apply through the listing for your country.
 
 **Why `match_job` is heuristic, and shows its evidence.** Requirements hide in prose ("you must
 be based in the EU", "Deutschkenntnisse", "overlap with PST business hours"). Pattern rules
@@ -601,7 +606,6 @@ job searching.
 
 ## Ideas
 
-- Show the other locations of a role that was posted once per country.
 - Read pay ranges from the description text (many US listings on Greenhouse state them there).
 
 ## License

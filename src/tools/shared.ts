@@ -13,7 +13,13 @@ import type { JobRepository } from '../db/job-repository.js';
 /** The subset of the repository the tracker tools need (keeps tools easy to test). */
 export type TrackerStore = Pick<
   JobRepository,
-  'getJob' | 'getSavedJob' | 'saveJob' | 'updateStatus' | 'listSavedJobs' | 'getCoverLetter'
+  | 'getJob'
+  | 'getSavedJob'
+  | 'saveJob'
+  | 'updateStatus'
+  | 'listSavedJobs'
+  | 'getCoverLetter'
+  | 'listCurrentJobsAtCompany'
 >;
 
 /** Job boards whose terms ask for credit by name, with a link back. */
@@ -27,6 +33,9 @@ const ATS_NAMES: Partial<Record<SourceId, string>> = {
   greenhouse: 'Greenhouse',
   lever: 'Lever',
   ashby: 'Ashby',
+  workable: 'Workable',
+  smartrecruiters: 'SmartRecruiters',
+  recruitee: 'Recruitee',
 };
 
 /** Credit line for one job: the job board, or the company's own careers page on its ATS. */
@@ -43,6 +52,22 @@ export const jobIdInput = z
   .regex(/^[a-z]+:.+$/, 'expected "<source>:<id>", e.g. "remotive:2091158"')
   .max(300)
   .describe('Job id from search_jobs, e.g. "remotive:2091158".');
+
+/** Keeps a role posted in dozens of cities from flooding the model's context. */
+export const MAX_OTHER_LOCATIONS = 20;
+
+export const otherLocationsSchema = z
+  .array(
+    z.object({
+      job_id: z.string(),
+      location: z.string(),
+      remote_scope: remoteScopeSchema,
+      url: z.string(),
+    }),
+  )
+  .describe(
+    `The same role posted for other places (many companies post it once per country), each with its own job id and listing url; apply through the one for where the user lives. At most ${MAX_OTHER_LOCATIONS}.`,
+  );
 
 export const noteInput = z.string().trim().min(1).max(2000);
 

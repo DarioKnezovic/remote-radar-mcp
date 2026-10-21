@@ -12,6 +12,7 @@ export {
   STORY_PLACEHOLDER,
   type CoverLetterInput,
 } from './cover-letter.js';
+export { otherListings, type OtherListing } from './dedupe.js';
 export {
   EMPLOYMENT_TYPES,
   REMOTE_SCOPES,

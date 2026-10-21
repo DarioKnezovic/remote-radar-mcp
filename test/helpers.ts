@@ -63,6 +63,7 @@ export const unusedStore: TrackerStore = {
   updateStatus: notInThisTest,
   listSavedJobs: notInThisTest,
   getCoverLetter: notInThisTest,
+  listCurrentJobsAtCompany: notInThisTest,
 };
 
 /** A valid profile resembling the project owner's situation: EU citizen living outside the EU. */

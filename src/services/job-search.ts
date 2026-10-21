@@ -1,4 +1,10 @@
-import { dedupeJobs } from '../domain/dedupe.js';
+import {
+  dedupeJobs,
+  jobsByCompany,
+  normalizeCompany,
+  otherListings,
+  type OtherListing,
+} from '../domain/dedupe.js';
 import { filterJobs } from '../domain/filter.js';
 import type { Job, RemoteScope } from '../domain/job.js';
 import type { MinSalary } from '../domain/salary.js';
@@ -27,6 +33,12 @@ export interface SearchResult {
   /** Matches before `limit` was applied. */
   totalMatches: number;
   duplicatesRemoved: number;
+  /**
+   * For returned jobs posted more than once (often once per country): the other places,
+   * by job id. Taken from every fetched listing, not just the ones matching the filters, so
+   * a Europe search still says the role is also open in Canada. Jobs without any are absent.
+   */
+  otherListings: ReadonlyMap<string, OtherListing[]>;
   sources: SourceStatus[];
 }
 
@@ -66,11 +78,20 @@ export class JobSearchService {
     });
     const { jobs: unique, removed } = dedupeJobs(filtered);
     const matches = unique.sort((a, b) => b.published_at.localeCompare(a.published_at));
+    const jobs = matches.slice(0, params.limit);
+
+    const byCompany = jobsByCompany(all);
+    const others = new Map<string, OtherListing[]>();
+    for (const job of jobs) {
+      const listings = otherListings(job, byCompany.get(normalizeCompany(job.company)) ?? []);
+      if (listings.length > 0) others.set(job.id, listings);
+    }
 
     return {
-      jobs: matches.slice(0, params.limit),
+      jobs,
       totalMatches: matches.length,
       duplicatesRemoved: removed,
+      otherListings: others,
       sources,
     };
   }
