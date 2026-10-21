@@ -13,7 +13,7 @@ import type { JobRepository } from '../db/job-repository.js';
 /** The subset of the repository the tracker tools need (keeps tools easy to test). */
 export type TrackerStore = Pick<
   JobRepository,
-  'getJob' | 'getSavedJob' | 'saveJob' | 'updateStatus' | 'listSavedJobs'
+  'getJob' | 'getSavedJob' | 'saveJob' | 'updateStatus' | 'listSavedJobs' | 'getCoverLetter'
 >;
 
 /** Job boards whose terms ask for credit by name, with a link back. */

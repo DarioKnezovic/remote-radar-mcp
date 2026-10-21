@@ -33,6 +33,10 @@ export const getJobDetailsOutput = {
     })
     .nullable()
     .describe('Tracker entry if the job is saved, otherwise null.'),
+  cover_letter: z
+    .object({ body: z.string(), updated_at: z.string() })
+    .nullable()
+    .describe('Cover letter draft saved in the web app for this job, otherwise null.'),
   attribution: z.string(),
 };
 
@@ -42,13 +46,17 @@ export function registerGetJobDetails(server: McpServer, store: TrackerStore): v
     {
       title: 'Get job details',
       description:
-        'Returns the full normalized job (including the description as plain text) for an id from search_jobs, plus its tracker status if saved.',
+        'Returns the full normalized job (including the description as plain text) for an id from search_jobs, plus its tracker status if saved and the cover letter draft saved in the web app, if any.',
       inputSchema: { job_id: jobIdInput },
       outputSchema: getJobDetailsOutput,
       annotations: { readOnlyHint: true, openWorldHint: false },
     },
     async ({ job_id }) => {
-      const [job, saved] = await Promise.all([store.getJob(job_id), store.getSavedJob(job_id)]);
+      const [job, saved, coverLetter] = await Promise.all([
+        store.getJob(job_id),
+        store.getSavedJob(job_id),
+        store.getCoverLetter(job_id),
+      ]);
       if (!job) {
         return toolError(
           `No job with id "${job_id}". Ids come from search_jobs results; run a search first.`,
@@ -64,6 +72,7 @@ export function registerGetJobDetails(server: McpServer, store: TrackerStore): v
               updated_at: saved.updated_at,
             }
           : null,
+        cover_letter: coverLetter ?? null,
         attribution: `Listing via ${attributionFor(job)}. Apply at ${job.url}`,
       });
     },

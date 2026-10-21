@@ -94,7 +94,18 @@ describe.skipIf(!TEST_DATABASE_URL)('tracker tools (MCP + Postgres)', () => {
         description: 'React & TypeScript.\nRemote',
       },
       saved: null,
+      cover_letter: null,
       attribution: expect.stringContaining('Remotive') as string,
+    });
+  });
+
+  it('get_job_details includes the cover letter draft saved in the web app', async () => {
+    await new JobRepository(db.pool, () => NOW).saveCoverLetter(react.id, 'Dear Acme team,');
+
+    const result = await call('get_job_details', { job_id: react.id });
+
+    expect(result.structuredContent).toMatchObject({
+      cover_letter: { body: 'Dear Acme team,', updated_at: NOW.toISOString() },
     });
   });
 
