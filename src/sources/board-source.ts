@@ -2,7 +2,7 @@ import type { Job } from '../domain/job.js';
 import { logger } from '../logger.js';
 import type { JobSource, SourceInfo } from './job-source.js';
 
-/** One company's public job board on an applicant tracking system (Greenhouse, Lever, Ashby). */
+/** One company's public job board on an applicant tracking system (Greenhouse, Lever, Ashby, …). */
 export interface Board {
   /** The board token / site name in the URL, e.g. "gitlab". */
   board: string;

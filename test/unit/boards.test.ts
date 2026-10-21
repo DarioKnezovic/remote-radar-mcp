@@ -36,6 +36,9 @@ describe('boards config', () => {
       greenhouse: [],
       lever: [{ board: 'acme', company: 'Acme', region: 'global' }],
       ashby: [],
+      workable: [],
+      smartrecruiters: [],
+      recruitee: [],
     });
   });
 

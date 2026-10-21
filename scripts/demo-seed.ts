@@ -14,7 +14,7 @@ import { loadConfig } from '../src/config.js';
 import { JobRepository } from '../src/db/job-repository.js';
 import { migrate } from '../src/db/migrate.js';
 import { createPool } from '../src/db/pool.js';
-import { makeJobId, type Job, type SourceId } from '../src/domain/job.js';
+import { makeJobId, SOURCE_IDS, type Job, type SourceId } from '../src/domain/job.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const now = new Date();
@@ -200,8 +200,7 @@ async function main() {
     const repository = new JobRepository(pool);
     const jobs = DEMO_JOBS.map(toJob);
     const sources = [...new Set(jobs.map((job) => job.source))] as SourceId[];
-    const all: SourceId[] = ['remotive', 'arbeitnow', 'remoteok', 'greenhouse', 'lever', 'ashby'];
-    for (const source of all) {
+    for (const source of SOURCE_IDS) {
       // Every source gets a fresh (possibly empty) fetch, so none is called for real.
       await repository.recordSuccessfulFetch(
         source,

@@ -36,8 +36,19 @@ const NEVER = [
   'Send your profile or saved jobs anywhere. They stay on your computer.',
 ] as const;
 
-type BoardSource = 'greenhouse' | 'lever' | 'ashby';
-const BOARD_SOURCES: readonly SourceId[] = ['greenhouse', 'lever', 'ashby'];
+const BOARD_SOURCES = [
+  'greenhouse',
+  'lever',
+  'ashby',
+  'workable',
+  'smartrecruiters',
+  'recruitee',
+] as const satisfies readonly SourceId[];
+type BoardSource = (typeof BOARD_SOURCES)[number];
+
+function isBoardSource(id: SourceId): id is BoardSource {
+  return (BOARD_SOURCES as readonly SourceId[]).includes(id);
+}
 
 export default async function HowItWorksPage() {
   const loaded = await loadRadar();
@@ -74,9 +85,7 @@ export default async function HowItWorksPage() {
         </p>
         <ul className="grid gap-3 sm:grid-cols-2">
           {radar.sources.map((source) => {
-            const boards = BOARD_SOURCES.includes(source.id)
-              ? radar.boards[source.id as BoardSource]
-              : undefined;
+            const boards = isBoardSource(source.id) ? radar.boards[source.id] : undefined;
             return (
               <li key={source.id}>
                 <Card className="h-full">

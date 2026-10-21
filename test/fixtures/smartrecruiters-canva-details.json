@@ -1,0 +1,335 @@
+{
+  "6000000001510195": {
+    "id": "6000000001510195",
+    "name": "Strategic Account Executive - DACH (German-Speaking)",
+    "uuid": "2403e598-afd5-4c12-95af-ade47700e527",
+    "jobId": "f8731d03-5dee-4701-849f-8a851a5b7245",
+    "jobAdId": "4488e3d7-c401-4f57-9ba9-83fff90ad6d3",
+    "defaultJobAd": true,
+    "refNumber": "R102974",
+    "company": {
+      "name": "Canva",
+      "identifier": "Canva"
+    },
+    "location": {
+      "city": "Munich",
+      "region": "BY",
+      "country": "de",
+      "remote": true,
+      "hybrid": false,
+      "latitude": "48.1351253",
+      "longitude": "11.5819806",
+      "fullLocation": "Munich, BY, Germany"
+    },
+    "customField": [
+      {
+        "fieldId": "651ba508aac0da4b9cbd91cb",
+        "fieldLabel": "Worker type",
+        "valueId": "d588c41a446c11de98360015c5e6daf6",
+        "valueLabel": "Employee"
+      },
+      {
+        "fieldId": "67db425d21ec03315da962cb",
+        "fieldLabel": "Org",
+        "valueId": "552b243cafd4100169ad594c750c0000",
+        "valueLabel": "Go To Market"
+      }
+    ],
+    "releasedDate": "2026-10-21T18:56:59.242Z",
+    "postingUrl": "https://jobs.smartrecruiters.com/Canva/6000000001510195-strategic-account-executive-dach-german-speaking-",
+    "applyUrl": "https://jobs.smartrecruiters.com/Canva/6000000001510195-strategic-account-executive-dach-german-speaking-?oga=true",
+    "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/Canva/publication/2403e598-afd5-4c12-95af-ade47700e527?dcr_ci=Canva",
+    "jobAd": {
+      "sections": {
+        "companyDescription": {
+          "title": "Company Description",
+          "text": ""
+        },
+        "jobDescription": {
+          "title": "Job Description",
+          "text": "<p>Join the team redefining how the world experiences design.\nHey, g'day, mabuhay, kia ora, 你好, hallo, vítejte!</p>"
+        },
+        "qualifications": {
+          "title": "Qualifications",
+          "text": ""
+        },
+        "additionalInformation": {
+          "title": "Additional Information",
+          "text": ""
+        }
+      }
+    },
+    "active": true,
+    "visibility": "PUBLIC",
+    "industry": {
+      "id": "computer_software",
+      "label": "Computer Software"
+    },
+    "function": {
+      "id": "sales",
+      "label": "Sales"
+    },
+    "experienceLevel": {
+      "id": "not_applicable",
+      "label": "Not Applicable"
+    },
+    "typeOfEmployment": {
+      "id": "permanent",
+      "label": "Full-time"
+    },
+    "language": {
+      "code": "en",
+      "label": "English",
+      "labelNative": "English (US)"
+    }
+  },
+  "6000000001468836": {
+    "id": "6000000001468836",
+    "name": "Senior Backend Engineer - Export",
+    "uuid": "5f9b898c-c073-4a98-aa78-da4606764071",
+    "jobId": "a9076f5c-e9a2-4b4b-b8fb-8992339830ab",
+    "jobAdId": "145dfc49-a165-497a-8e3e-0c74110907e0",
+    "defaultJobAd": true,
+    "refNumber": "R102024",
+    "company": {
+      "name": "Canva",
+      "identifier": "Canva"
+    },
+    "location": {
+      "city": "Sydney",
+      "country": "au",
+      "remote": true,
+      "hybrid": false,
+      "fullLocation": "Sydney, , Australia"
+    },
+    "customField": [
+      {
+        "fieldId": "651ba0114967807d2e86fe5a",
+        "fieldLabel": "Team",
+        "valueId": "220b5c7e743d0116babeddcd97004507",
+        "valueLabel": "Export"
+      },
+      {
+        "fieldId": "651ba508aac0da4b9cbd91cb",
+        "fieldLabel": "Worker type",
+        "valueId": "d588c41a446c11de98360015c5e6daf6",
+        "valueLabel": "Employee"
+      }
+    ],
+    "releasedDate": "2026-10-07T04:48:31.149Z",
+    "postingUrl": "https://jobs.smartrecruiters.com/Canva/6000000001468836-senior-backend-engineer-export",
+    "applyUrl": "https://jobs.smartrecruiters.com/Canva/6000000001468836-senior-backend-engineer-export?oga=true",
+    "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/Canva/publication/5f9b898c-c073-4a98-aa78-da4606764071?dcr_ci=Canva",
+    "jobAd": {
+      "sections": {
+        "companyDescription": {
+          "title": "Company Description",
+          "text": ""
+        },
+        "jobDescription": {
+          "title": "Job Description",
+          "text": "<p>Join the team redefining how the world experiences design.Hey, g'day, mabuhay, kia ora, 你好, hallo, vítejte!</p>"
+        },
+        "qualifications": {
+          "title": "Qualifications",
+          "text": ""
+        },
+        "additionalInformation": {
+          "title": "Additional Information",
+          "text": ""
+        }
+      }
+    },
+    "active": true,
+    "visibility": "PUBLIC",
+    "industry": {
+      "id": "computer_software",
+      "label": "Computer Software"
+    },
+    "function": {
+      "id": "information_technology",
+      "label": "Information Technology"
+    },
+    "experienceLevel": {
+      "id": "mid_senior_level",
+      "label": "Mid-Senior Level"
+    },
+    "typeOfEmployment": {
+      "id": "permanent",
+      "label": "Full-time"
+    },
+    "language": {
+      "code": "en",
+      "label": "English",
+      "labelNative": "English (US)"
+    }
+  },
+  "6000000001417410": {
+    "id": "6000000001417410",
+    "name": "Template Art Director (12-month contract) - Japan ",
+    "uuid": "a9b97221-ca52-477a-baa5-9c3b528b5c42",
+    "jobId": "363f0733-82c7-4754-8014-460411a3d550",
+    "jobAdId": "75207f3d-e4d4-413e-845a-9e98fd5a1a19",
+    "defaultJobAd": true,
+    "refNumber": "REF4530P",
+    "company": {
+      "name": "Canva",
+      "identifier": "Canva"
+    },
+    "location": {
+      "city": "Tokyo",
+      "region": "Tokyo",
+      "country": "jp",
+      "remote": true,
+      "hybrid": false,
+      "latitude": "35.6803997",
+      "longitude": "139.7690174",
+      "fullLocation": "Tokyo, Tokyo, Japan"
+    },
+    "customField": [
+      {
+        "fieldId": "651ba508aac0da4b9cbd91cb",
+        "fieldLabel": "Worker type",
+        "valueId": "d588c334446c11de98360015c5e6daf6",
+        "valueLabel": "Contingent Worker"
+      },
+      {
+        "fieldId": "651b99e25ddc3c31d9224321",
+        "fieldLabel": "Group",
+        "valueId": "a8bf775b9259100124de29c73ba70000",
+        "valueLabel": "CJKI"
+      }
+    ],
+    "releasedDate": "2026-09-17T08:16:11.949Z",
+    "postingUrl": "https://jobs.smartrecruiters.com/Canva/6000000001417410-template-art-director-12-month-contract-japan-",
+    "applyUrl": "https://jobs.smartrecruiters.com/Canva/6000000001417410-template-art-director-12-month-contract-japan-?oga=true",
+    "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/Canva/publication/a9b97221-ca52-477a-baa5-9c3b528b5c42?dcr_ci=Canva",
+    "jobAd": {
+      "sections": {
+        "companyDescription": {
+          "title": "Company Description",
+          "text": ""
+        },
+        "jobDescription": {
+          "title": "Job Description",
+          "text": "<p>Join the team redefining how the world experiences design.Hey, hello, hiya, g'day, mabuhay, kia ora, 你好, hallo, vítejte,&#xa0;こんにちは!</p>"
+        },
+        "qualifications": {
+          "title": "Qualifications",
+          "text": "<p>What we're looking for求める人物像・スキル</p>"
+        },
+        "additionalInformation": {
+          "title": "Additional Information",
+          "text": "<p>About the Group/Team</p>"
+        }
+      }
+    },
+    "active": true,
+    "visibility": "PUBLIC",
+    "industry": {
+      "id": "graphic_design",
+      "label": "Graphic Design"
+    },
+    "function": {
+      "id": "other",
+      "label": "Other"
+    },
+    "experienceLevel": {
+      "id": "mid_senior_level",
+      "label": "Mid-Senior Level"
+    },
+    "typeOfEmployment": {
+      "id": "contract",
+      "label": "Contract"
+    },
+    "language": {
+      "code": "en",
+      "label": "English",
+      "labelNative": "English (US)"
+    }
+  },
+  "6000000000760848": {
+    "id": "6000000000760848",
+    "name": "Country Manager, Argentina",
+    "uuid": "d4974284-497f-41d5-8efb-8625a1a10036",
+    "jobId": "3d330c18-0ee4-4bb7-89cd-7f4b6718bf8d",
+    "jobAdId": "206eab83-2ea1-40e5-986b-18f0bc2ae790",
+    "defaultJobAd": true,
+    "refNumber": "REF3835F",
+    "company": {
+      "name": "Canva",
+      "identifier": "Canva"
+    },
+    "location": {
+      "city": "Buenos Aires",
+      "region": "Buenos Aires",
+      "country": "ar",
+      "remote": true,
+      "hybrid": false,
+      "latitude": "-34.6036739",
+      "longitude": "-58.3821215",
+      "fullLocation": "Buenos Aires, Buenos Aires, Argentina"
+    },
+    "customField": [
+      {
+        "fieldId": "651ba508aac0da4b9cbd91cb",
+        "fieldLabel": "Worker type",
+        "valueId": "d588c334446c11de98360015c5e6daf6",
+        "valueLabel": "Contingent Worker"
+      },
+      {
+        "fieldId": "651ba171eec5b66729429433",
+        "fieldLabel": "Subspecialty",
+        "valueId": "220b5c7e743d010e25b6fcf3b7009912",
+        "valueLabel": "Canva Leadership"
+      }
+    ],
+    "releasedDate": "2025-12-18T00:38:52.537Z",
+    "postingUrl": "https://jobs.smartrecruiters.com/Canva/6000000000760848-country-manager-argentina",
+    "applyUrl": "https://jobs.smartrecruiters.com/Canva/6000000000760848-country-manager-argentina?oga=true",
+    "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/Canva/publication/d4974284-497f-41d5-8efb-8625a1a10036?dcr_ci=Canva",
+    "jobAd": {
+      "sections": {
+        "companyDescription": {
+          "title": "Company Description",
+          "text": "<p>Join the team redefining how the world experiences design.Hey, hello, hiya, g'day, mabuhay, kia ora, 你好, hallo, vítejte!</p>"
+        },
+        "jobDescription": {
+          "title": "Job Description",
+          "text": "<p>Where and how you can work</p>"
+        },
+        "qualifications": {
+          "title": "Qualifications",
+          "text": ""
+        },
+        "additionalInformation": {
+          "title": "Additional Information",
+          "text": ""
+        }
+      }
+    },
+    "active": true,
+    "visibility": "PUBLIC",
+    "industry": {
+      "id": "computer_software",
+      "label": "Computer Software"
+    },
+    "function": {
+      "id": "general_business",
+      "label": "General Business"
+    },
+    "experienceLevel": {
+      "id": "director",
+      "label": "Director"
+    },
+    "typeOfEmployment": {
+      "id": "permanent",
+      "label": "Full-time"
+    },
+    "language": {
+      "code": "en",
+      "label": "English",
+      "labelNative": "English (US)"
+    }
+  }
+}

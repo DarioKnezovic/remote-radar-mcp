@@ -24,6 +24,9 @@ export const boardsConfigSchema = z.object({
     )
     .default([]),
   ashby: z.array(boardSchema).default([]),
+  workable: z.array(boardSchema).default([]),
+  smartrecruiters: z.array(boardSchema).default([]),
+  recruitee: z.array(boardSchema).default([]),
 });
 export type BoardsConfig = z.infer<typeof boardsConfigSchema>;
 

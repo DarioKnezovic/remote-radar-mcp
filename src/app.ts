@@ -92,6 +92,9 @@ export async function createRemoteRadar(options: RemoteRadarOptions = {}): Promi
     greenhouse: boards.greenhouse.length,
     lever: boards.lever.length,
     ashby: boards.ashby.length,
+    workable: boards.workable.length,
+    smartrecruiters: boards.smartrecruiters.length,
+    recruitee: boards.recruitee.length,
   });
   const sources = createSources(http, new PostgresFetchCacheStore(tracker), boards);
 

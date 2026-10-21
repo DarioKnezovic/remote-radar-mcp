@@ -1,0 +1,36 @@
+{
+  "name": "Persado",
+  "description": "<p>…</p>",
+  "jobs": [
+    {
+      "title": "Senior Account Manager",
+      "shortcode": "D6FB457899",
+      "code": null,
+      "employment_type": "Full-time",
+      "telecommuting": true,
+      "department": "Customer Success",
+      "url": "https://apply.workable.com/j/D6FB457899",
+      "shortlink": "https://apply.workable.com/j/D6FB457899",
+      "application_url": "https://apply.workable.com/j/D6FB457899/apply",
+      "published_on": "2026-09-22",
+      "created_at": "2026-07-07",
+      "country": "United States",
+      "city": "Washington",
+      "state": "District of Columbia",
+      "education": null,
+      "experience": "Mid-Senior level",
+      "function": null,
+      "industry": null,
+      "locations": [
+        {
+          "country": "United States",
+          "countryCode": "US",
+          "city": "Washington",
+          "region": "District of Columbia",
+          "hidden": false
+        }
+      ],
+      "description": "<p>Salary Range:$105,000 - $125,000 per year base salary (which is dependent on a variety of factors including relevant experience, geographic location, business needs, and market demand).</p>"
+    }
+  ]
+}

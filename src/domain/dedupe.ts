@@ -89,7 +89,14 @@ export function isDuplicate(a: Job, b: Job): boolean {
 }
 
 /** Company job boards are the original listing (where you apply); aggregators repost them. */
-const COMPANY_BOARD_SOURCES: ReadonlySet<Job['source']> = new Set(['greenhouse', 'lever', 'ashby']);
+const COMPANY_BOARD_SOURCES: ReadonlySet<Job['source']> = new Set([
+  'greenhouse',
+  'lever',
+  'ashby',
+  'workable',
+  'smartrecruiters',
+  'recruitee',
+]);
 
 /** How much useful information a listing carries; the richer copy of a duplicate wins. */
 function richness(job: Job): number {

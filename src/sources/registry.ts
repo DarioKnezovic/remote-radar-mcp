@@ -6,18 +6,28 @@ import { createGreenhouseSource } from './greenhouse/client.js';
 import type { HttpClient } from './http.js';
 import type { JobSource } from './job-source.js';
 import { createLeverSource } from './lever/client.js';
+import { createRecruiteeSource } from './recruitee/client.js';
 import { RemoteOkSource } from './remoteok/client.js';
 import { RemotiveSource } from './remotive/client.js';
+import { createSmartRecruitersSource } from './smartrecruiters/client.js';
+import { createWorkableSource } from './workable/client.js';
 
 const HOUR_MS = 60 * 60 * 1000;
 const RETRY_AFTER_MS = HOUR_MS / 4;
 
-const EMPTY_BOARDS: BoardsConfig = { greenhouse: [], lever: [], ashby: [] };
+const EMPTY_BOARDS: BoardsConfig = {
+  greenhouse: [],
+  lever: [],
+  ashby: [],
+  workable: [],
+  smartrecruiters: [],
+  recruitee: [],
+};
 
 /**
  * Builds every enabled source, each wrapped in a cache tuned to that source's rate
- * limits. Company-board sources (Greenhouse, Lever, Ashby) are only enabled when the
- * boards config lists at least one board for them.
+ * limits. Company-board sources (Greenhouse, Lever, Ashby, Workable, SmartRecruiters,
+ * Recruitee) are only enabled when the boards config lists at least one board for them.
  */
 export function createSources(
   http: HttpClient,
@@ -43,6 +53,16 @@ export function createSources(
       : []),
     ...(boards.ashby.length > 0
       ? [cached(createAshbySource(http, boards.ashby), 6 * HOUR_MS)]
+      : []),
+    ...(boards.workable.length > 0
+      ? [cached(createWorkableSource(http, boards.workable), 6 * HOUR_MS)]
+      : []),
+    // One refresh = one list request plus one per remote posting (≤ 100) per board.
+    ...(boards.smartrecruiters.length > 0
+      ? [cached(createSmartRecruitersSource(http, boards.smartrecruiters), 12 * HOUR_MS)]
+      : []),
+    ...(boards.recruitee.length > 0
+      ? [cached(createRecruiteeSource(http, boards.recruitee), 6 * HOUR_MS)]
       : []),
   ];
 }

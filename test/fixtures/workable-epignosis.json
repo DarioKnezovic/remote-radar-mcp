@@ -1,0 +1,96 @@
+{
+  "name": "Epignosis",
+  "description": "<p>…</p>",
+  "jobs": [
+    {
+      "title": "Senior Software Engineer",
+      "shortcode": "7D027E513D",
+      "code": "",
+      "employment_type": "Full-time",
+      "telecommuting": false,
+      "department": "Engineering",
+      "url": "https://apply.workable.com/j/7D027E513D",
+      "shortlink": "https://apply.workable.com/j/7D027E513D",
+      "application_url": "https://apply.workable.com/j/7D027E513D/apply",
+      "published_on": "2026-10-01",
+      "created_at": "2026-10-01",
+      "country": "Greece",
+      "city": "Athens",
+      "state": "Attica",
+      "education": "",
+      "experience": "Mid-Senior level",
+      "function": "Engineering",
+      "industry": "Computer Software",
+      "locations": [
+        {
+          "country": "Greece",
+          "countryCode": "GR",
+          "city": "Athens",
+          "region": "Attica",
+          "hidden": false
+        }
+      ],
+      "description": "<p>…</p>"
+    },
+    {
+      "title": "Senior Software Engineer",
+      "shortcode": "7D027E513D",
+      "code": "",
+      "employment_type": "Full-time",
+      "telecommuting": false,
+      "department": "Engineering",
+      "url": "https://apply.workable.com/j/7D027E513D",
+      "shortlink": "https://apply.workable.com/j/7D027E513D",
+      "application_url": "https://apply.workable.com/j/7D027E513D/apply",
+      "published_on": "2026-10-01",
+      "created_at": "2026-10-01",
+      "country": "Greece",
+      "city": "Heraklion",
+      "state": "Crete",
+      "education": "",
+      "experience": "Mid-Senior level",
+      "function": "Engineering",
+      "industry": "Computer Software",
+      "locations": [
+        {
+          "country": "Greece",
+          "countryCode": "GR",
+          "city": "Heraklion",
+          "region": "Crete",
+          "hidden": false
+        }
+      ],
+      "description": "<p>…</p>"
+    },
+    {
+      "title": "Software Engineer (React Native)",
+      "shortcode": "89A172FE5C",
+      "code": "",
+      "employment_type": "",
+      "telecommuting": false,
+      "department": "Engineering",
+      "url": "https://apply.workable.com/j/89A172FE5C",
+      "shortlink": "https://apply.workable.com/j/89A172FE5C",
+      "application_url": "https://apply.workable.com/j/89A172FE5C/apply",
+      "published_on": "2026-10-08",
+      "created_at": "2026-10-08",
+      "country": "Greece",
+      "city": "Athens",
+      "state": "Attica",
+      "education": "",
+      "experience": "",
+      "function": "Engineering",
+      "industry": "Computer Software",
+      "locations": [
+        {
+          "country": "Greece",
+          "countryCode": "GR",
+          "city": "Athens",
+          "region": "Attica",
+          "hidden": false
+        }
+      ],
+      "description": "<p>…</p>"
+    }
+  ]
+}

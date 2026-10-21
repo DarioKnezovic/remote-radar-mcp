@@ -41,6 +41,9 @@ describe.skipIf(!TEST_DATABASE_URL)('createRemoteRadar', () => {
       'greenhouse',
       'lever',
       'ashby',
+      'workable',
+      'smartrecruiters',
+      'recruitee',
     ]);
     expect(app.boardsFile).toMatch(/boards(\.default)?\.json$/);
   });

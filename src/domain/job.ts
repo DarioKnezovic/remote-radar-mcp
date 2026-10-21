@@ -7,6 +7,9 @@ export const SOURCE_IDS = [
   'greenhouse',
   'lever',
   'ashby',
+  'workable',
+  'smartrecruiters',
+  'recruitee',
 ] as const;
 export const sourceIdSchema = z.enum(SOURCE_IDS);
 export type SourceId = z.infer<typeof sourceIdSchema>;

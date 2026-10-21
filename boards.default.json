@@ -1,30 +1,139 @@
 {
-  "$comment": "Starter list of company job boards (verified 2026-10-20: each responds and had remote engineering roles). To customise, copy this file to boards.json (git-ignored) and edit it; boards.json takes precedence. Board tokens are the company part of the board URL, e.g. job-boards.greenhouse.io/gitlab, jobs.lever.co/jumpcloud, jobs.ashbyhq.com/linear.",
+  "$comment": "Starter list of company job boards (verified 2026-10-20, Workable/SmartRecruiters/Recruitee 2026-10-21: each responds and had remote roles). To customise, copy this file to boards.json (git-ignored) and edit it; boards.json takes precedence. Board tokens are the company part of the board URL, e.g. job-boards.greenhouse.io/gitlab, jobs.lever.co/jumpcloud, jobs.ashbyhq.com/linear, apply.workable.com/modash, jobs.smartrecruiters.com/Canva (case-sensitive), thecodest.recruitee.com.",
   "greenhouse": [
-    { "board": "gitlab", "company": "GitLab" },
-    { "board": "grafanalabs", "company": "Grafana Labs" },
-    { "board": "mozilla", "company": "Mozilla" },
-    { "board": "canonical", "company": "Canonical" },
-    { "board": "wikimedia", "company": "Wikimedia Foundation" },
-    { "board": "planetscale", "company": "PlanetScale" },
-    { "board": "dataiku", "company": "Dataiku" }
+    {
+      "board": "gitlab",
+      "company": "GitLab"
+    },
+    {
+      "board": "grafanalabs",
+      "company": "Grafana Labs"
+    },
+    {
+      "board": "mozilla",
+      "company": "Mozilla"
+    },
+    {
+      "board": "canonical",
+      "company": "Canonical"
+    },
+    {
+      "board": "wikimedia",
+      "company": "Wikimedia Foundation"
+    },
+    {
+      "board": "planetscale",
+      "company": "PlanetScale"
+    },
+    {
+      "board": "dataiku",
+      "company": "Dataiku"
+    }
   ],
   "lever": [
-    { "board": "offchainlabs", "company": "Offchain Labs" },
-    { "board": "jumpcloud", "company": "JumpCloud" },
-    { "board": "swile", "company": "Swile" }
+    {
+      "board": "offchainlabs",
+      "company": "Offchain Labs"
+    },
+    {
+      "board": "jumpcloud",
+      "company": "JumpCloud"
+    },
+    {
+      "board": "swile",
+      "company": "Swile"
+    }
   ],
   "ashby": [
-    { "board": "linear", "company": "Linear" },
-    { "board": "posthog", "company": "PostHog" },
-    { "board": "supabase", "company": "Supabase" },
-    { "board": "n8n", "company": "n8n" },
-    { "board": "sentry", "company": "Sentry" },
-    { "board": "clickhouse", "company": "ClickHouse" },
-    { "board": "doctolib", "company": "Doctolib" },
-    { "board": "voodoo", "company": "Voodoo" },
-    { "board": "kong", "company": "Kong" },
-    { "board": "qonto", "company": "Qonto" },
-    { "board": "ledger", "company": "Ledger" }
+    {
+      "board": "linear",
+      "company": "Linear"
+    },
+    {
+      "board": "posthog",
+      "company": "PostHog"
+    },
+    {
+      "board": "supabase",
+      "company": "Supabase"
+    },
+    {
+      "board": "n8n",
+      "company": "n8n"
+    },
+    {
+      "board": "sentry",
+      "company": "Sentry"
+    },
+    {
+      "board": "clickhouse",
+      "company": "ClickHouse"
+    },
+    {
+      "board": "doctolib",
+      "company": "Doctolib"
+    },
+    {
+      "board": "voodoo",
+      "company": "Voodoo"
+    },
+    {
+      "board": "kong",
+      "company": "Kong"
+    },
+    {
+      "board": "qonto",
+      "company": "Qonto"
+    },
+    {
+      "board": "ledger",
+      "company": "Ledger"
+    }
+  ],
+  "workable": [
+    {
+      "board": "modash",
+      "company": "Modash"
+    },
+    {
+      "board": "huggingface",
+      "company": "Hugging Face"
+    },
+    {
+      "board": "spd-technology",
+      "company": "SPD Technology"
+    }
+  ],
+  "smartrecruiters": [
+    {
+      "board": "Canva",
+      "company": "Canva"
+    },
+    {
+      "board": "Devoteam",
+      "company": "Devoteam"
+    },
+    {
+      "board": "NielsenIQ",
+      "company": "NielsenIQ"
+    },
+    {
+      "board": "Freshworks",
+      "company": "Freshworks"
+    }
+  ],
+  "recruitee": [
+    {
+      "board": "hostaway",
+      "company": "Hostaway"
+    },
+    {
+      "board": "holepunch",
+      "company": "Holepunch"
+    },
+    {
+      "board": "thecodest",
+      "company": "The Codest"
+    }
   ]
 }

@@ -108,4 +108,9 @@ export const SOURCE_DESCRIPTIONS: Record<SourceId, string> = {
   greenhouse: 'Hiring software many companies use. We read their public job boards directly.',
   lever: 'Hiring software many companies use. We read their public job boards directly.',
   ashby: 'Hiring software many companies use. We read their public job boards directly.',
+  workable: 'Hiring software many companies use. We read their public job boards directly.',
+  smartrecruiters:
+    'Hiring software many large companies use. We read only their remote jobs, to keep requests low.',
+  recruitee:
+    'Hiring software many European companies use. We read their public job boards directly.',
 };

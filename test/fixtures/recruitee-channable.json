@@ -1,0 +1,133 @@
+{
+  "offers": [
+    {
+      "id": 2694685,
+      "guid": "89sad",
+      "slug": "account-executive-north-america-1",
+      "title": "Account Executive - North America",
+      "status": "published",
+      "careers_url": "https://jobs.channable.com/o/account-executive-north-america-1",
+      "careers_apply_url": "https://jobs.channable.com/o/account-executive-north-america-1/c/new",
+      "company_name": "Channable",
+      "department": "US",
+      "tags": [],
+      "remote": true,
+      "hybrid": false,
+      "on_site": false,
+      "location": "Remote job",
+      "city": "New York City",
+      "country": "United States",
+      "country_code": "US",
+      "locations": [
+        {
+          "id": 64457,
+          "name": "New York City",
+          "city": "New York City",
+          "state": "New York",
+          "country": "United States",
+          "country_code": "US"
+        }
+      ],
+      "employment_type_code": "fulltime_permanent",
+      "salary": {
+        "max": "250000",
+        "min": "200000",
+        "period": "year",
+        "currency": "USD"
+      },
+      "description": "<p>…</p>",
+      "requirements": "<p>Who you are</p>",
+      "published_at": "2026-08-06 16:09:53 UTC",
+      "created_at": "2026-07-30 07:49:07 UTC",
+      "updated_at": "2026-10-01 09:44:35 UTC",
+      "min_hours": 40,
+      "max_hours": 40
+    },
+    {
+      "id": 2670943,
+      "guid": "cg4do",
+      "slug": "team-lead-platform-team",
+      "title": "Team Lead - Platform Team",
+      "status": "published",
+      "careers_url": "https://jobs.channable.com/o/team-lead-platform-team",
+      "careers_apply_url": "https://jobs.channable.com/o/team-lead-platform-team/c/new",
+      "company_name": "Channable",
+      "department": "Engineering",
+      "tags": [],
+      "remote": false,
+      "hybrid": true,
+      "on_site": false,
+      "location": "Utrecht, Utrecht, Netherlands",
+      "city": "Utrecht",
+      "country": "Netherlands",
+      "country_code": "NL",
+      "locations": [
+        {
+          "id": 64463,
+          "name": "Utrecht",
+          "city": "Utrecht",
+          "state": "Utrecht",
+          "country": "Netherlands",
+          "country_code": "NL"
+        }
+      ],
+      "employment_type_code": "fulltime_permanent",
+      "salary": {
+        "max": "103000",
+        "min": "77000",
+        "period": "year",
+        "currency": "EUR"
+      },
+      "description": "<p>About the role:</p>",
+      "requirements": "<p>What do we offer?Gross annual salary ranging from</p>",
+      "published_at": "2026-07-16 10:59:08 UTC",
+      "created_at": "2026-07-08 12:40:30 UTC",
+      "updated_at": "2026-10-07 17:35:16 UTC",
+      "min_hours": 40,
+      "max_hours": 40
+    },
+    {
+      "id": 396939,
+      "guid": "6br3e",
+      "slug": "open-application",
+      "title": "Open application",
+      "status": "published",
+      "careers_url": "https://jobs.channable.com/o/open-application",
+      "careers_apply_url": "https://jobs.channable.com/o/open-application/c/new",
+      "company_name": "Channable",
+      "department": "Open application",
+      "tags": [],
+      "remote": false,
+      "hybrid": true,
+      "on_site": false,
+      "location": "Utrecht, Utrecht, Netherlands",
+      "city": "Utrecht",
+      "country": "Netherlands",
+      "country_code": "NL",
+      "locations": [
+        {
+          "id": 64463,
+          "name": "Utrecht",
+          "city": "Utrecht",
+          "state": "Utrecht",
+          "country": "Netherlands",
+          "country_code": "NL"
+        }
+      ],
+      "employment_type_code": "fulltime",
+      "salary": {
+        "max": null,
+        "min": null,
+        "period": null,
+        "currency": null
+      },
+      "description": "<p>…</p>",
+      "requirements": "<p>Who are we?</p>",
+      "published_at": "2021-09-07 08:26:19 UTC",
+      "created_at": "2019-10-30 12:09:29 UTC",
+      "updated_at": "2026-09-07 10:09:05 UTC",
+      "min_hours": 32,
+      "max_hours": 40
+    }
+  ]
+}

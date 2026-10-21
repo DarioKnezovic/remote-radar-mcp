@@ -24,6 +24,20 @@ Responses recorded from the real APIs (2026-10-20) so tests never hit the networ
   4 jobs each covering regions, secondary locations, hybrid/on-site and region-valued
   addresses.
 
+- **`workable-blueground.json`**, **`workable-epignosis.json`**, **`workable-persado.json`**
+  (recorded 2026-10-21): `GET apply.workable.com/api/v1/widget/accounts/{board}?details=true`.
+  3, 3 and 1 jobs covering remote/on-site, an empty employment type and a job listed once per
+  city under the same shortcode. Company description cut too.
+- **`smartrecruiters-canva.json`**, **`smartrecruiters-canva-details.json`** (2026-10-21):
+  `GET api.smartrecruiters.com/v1/companies/Canva/postings?limit=100&locationType=REMOTE`
+  cut to 4 postings, and `GET …/postings/{id}` for each of them, keyed by id. Custom fields
+  trimmed to two.
+- **`recruitee-thecodest.json`**, **`recruitee-curotec.json`**, **`recruitee-channable.json`**
+  (2026-10-21): `GET {board}.recruitee.com/api/offers/`. 5, 3 and 3 offers covering remote
+  offers open to one or many countries, hybrid and on-site, monthly and yearly salaries, a
+  currency without amounts and a contract. Application questions, translations and mailbox
+  addresses dropped.
+
 All descriptions are cut to a short excerpt. Several sources restrict republishing
 their listings (Remotive: don't submit jobs to third-party sites; Arbeitnow: personal,
 non-commercial viewing only, no copying or mirroring), so only trimmed samples are

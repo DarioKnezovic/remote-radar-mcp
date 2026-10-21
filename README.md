@@ -179,7 +179,8 @@ only `save_job` and `update_job_status` write, and they only write to your local
 ```ts
 {
   id: "remotive:2091158",        // "<source>:<source id>"; company boards: "greenhouse:gitlab:8860302002"
-  source: "remotive" | "arbeitnow" | "remoteok" | "greenhouse" | "lever" | "ashby",
+  source: "remotive" | "arbeitnow" | "remoteok" | "greenhouse" | "lever" | "ashby"
+        | "workable" | "smartrecruiters" | "recruitee",
   url: string,                   // original listing: apply here
   title: string,
   company: string,
@@ -220,11 +221,12 @@ with `npm run db:migrate`.
 `profile.example.json` to `profile.json` and edit it. `profile.json` is git-ignored and re-read on
 every call, so edits apply without a restart.
 
-**Company boards:** `boards.default.json` is a starter list of 21 remote-friendly companies on
-Greenhouse, Lever and Ashby. To follow other companies, copy it to `boards.json` (git-ignored) and
-edit it; the board token is the company part of the board URL (`job-boards.greenhouse.io/gitlab`,
-`jobs.lever.co/jumpcloud`, `jobs.ashbyhq.com/linear`). Lever boards hosted in the EU need
-`"region": "eu"`.
+**Company boards:** `boards.default.json` is a starter list of 31 remote-friendly companies on
+Greenhouse, Lever, Ashby, Workable, SmartRecruiters and Recruitee. To follow other companies, copy
+it to `boards.json` (git-ignored) and edit it; the board token is the company part of the board URL
+(`job-boards.greenhouse.io/gitlab`, `jobs.lever.co/jumpcloud`, `jobs.ashbyhq.com/linear`,
+`apply.workable.com/modash`, `jobs.smartrecruiters.com/Canva`, `thecodest.recruitee.com`). Lever
+boards hosted in the EU need `"region": "eu"`. SmartRecruiters tokens are case-sensitive.
 
 > **Docker Desktop on macOS:** if `docker` says it can't connect to `/var/run/docker.sock`, run
 > `docker context use desktop-linux` once.
@@ -297,7 +299,7 @@ flowchart LR
     domain["domain/ (pure)<br/>Job · remote scope · filter · dedupe<br/>skills · match"]
     cache["CachedJobSource<br/>TTL · stale-on-error · retry throttle"]
     boardsrc["Job boards<br/>Remotive · Arbeitnow · Remote OK"]
-    atssrc["BoardsJobSource ×3<br/>Greenhouse · Lever · Ashby<br/>(one request per company)"]
+    atssrc["BoardsJobSource ×6<br/>Greenhouse · Lever · Ashby<br/>Workable · SmartRecruiters · Recruitee<br/>(one request per company)"]
     repo["JobRepository<br/>(all SQL)"]
     profile["FileProfileStore"]
   end
@@ -357,6 +359,9 @@ src/
     greenhouse/       schema (raw API) · normalize · client (one request per board)
     lever/            schema (raw API) · normalize · client (global and EU hosts)
     ashby/            schema (raw API) · normalize · client
+    workable/         schema (raw API) · normalize · client (merges per-city copies)
+    smartrecruiters/  schema (raw API) · normalize · client (list, then one detail per posting)
+    recruitee/        schema (raw API) · normalize · client
   services/           JobSearchService
   db/                 pool, migration runner, JobRepository, Postgres cache store
   tools/              one file per MCP tool + shared output schemas
@@ -443,15 +448,15 @@ Their terms shape the code:
 different ways. Remotive gives free-text locations. Arbeitnow mixes languages in `job_types`,
 sometimes reports remote jobs as `remote: false`, and sometimes puts the location in the title.
 Greenhouse has no remote flag at all, Lever's `workplaceType` says `"onsite"` where its docs
-say `"on-site"`, and Ashby's address sometimes holds a region ("European Union") instead of a
-country. Each source keeps that mess in its own folder and outputs the same `Job`, so dedupe,
+say `"on-site"`, Ashby's address sometimes holds a region ("European Union") instead of a
+country, and Workable lists a job open in two cities twice under the same id. Each source keeps that mess in its own folder and outputs the same `Job`, so dedupe,
 filters, matching and the tracker are written once. Rate limiting is a separate concern, so
 `CachedJobSource` wraps any source instead of each client caching on its own. The v2 sources
 were added exactly that way: a folder each, plus a line in the registry.
 
 **Why company boards.** Aggregators like Remotive give few jobs and repost listings late.
-Greenhouse, Lever and Ashby host the careers pages of thousands of companies, through public
-APIs, so following a company means adding its board token to `boards.json`. When an aggregator
+Greenhouse, Lever, Ashby, Workable, SmartRecruiters and Recruitee host the careers pages of
+thousands of companies, through public APIs, so following a company means adding its board token to `boards.json`. When an aggregator
 reposts a company's job, dedupe keeps the company's own listing, since that's where you apply.
 
 **Why the cache lives in Postgres.** MCP clients start a new server process for many sessions.
@@ -561,14 +566,17 @@ saved per job in the `cover_letters` table.
 
 ## Sources
 
-| Source                                   | Endpoint                                                                     | Notes                                                                                                                       |
-| ---------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| [Remotive](https://remotive.com)         | `GET https://remotive.com/api/remote-jobs`                                   | Free API returns the latest ~10 jobs, delayed 24 h. Cached 6 h (≤ 4 requests/day). Credit Remotive and link to the listing. |
-| [Arbeitnow](https://www.arbeitnow.com)   | `GET https://www.arbeitnow.com/api/job-board-api`                            | 300 jobs/page, mostly Germany/EU, mostly on-site. First 3 pages, cached 1 h. Personal, non-commercial use; link back.       |
-| [Remote OK](https://remoteok.com)        | `GET https://remoteok.com/api`                                               | Latest ~100 remote jobs. Cached 2 h. Link back to the Remote OK listing (followed) and name Remote OK; don't use the logo.  |
-| [Greenhouse](https://www.greenhouse.com) | `GET boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true`           | Public, no auth. Free-text location only (no remote flag or employment type). Cached 6 h.                                   |
-| [Lever](https://www.lever.co)            | `GET api.lever.co/v0/postings/{board}?mode=json` (EU: `api.eu.lever.co`)     | Public, no auth. `workplaceType`, country code, salary range. Cached 6 h.                                                   |
-| [Ashby](https://www.ashbyhq.com)         | `GET api.ashbyhq.com/posting-api/job-board/{board}?includeCompensation=true` | Public, no auth. Unlisted jobs skipped; `publishedAt` is the last publish date. Cached 6 h.                                 |
+| Source                                             | Endpoint                                                                                                | Notes                                                                                                                                                    |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Remotive](https://remotive.com)                   | `GET https://remotive.com/api/remote-jobs`                                                              | Free API returns the latest ~10 jobs, delayed 24 h. Cached 6 h (≤ 4 requests/day). Credit Remotive and link to the listing.                              |
+| [Arbeitnow](https://www.arbeitnow.com)             | `GET https://www.arbeitnow.com/api/job-board-api`                                                       | 300 jobs/page, mostly Germany/EU, mostly on-site. First 3 pages, cached 1 h. Personal, non-commercial use; link back.                                    |
+| [Remote OK](https://remoteok.com)                  | `GET https://remoteok.com/api`                                                                          | Latest ~100 remote jobs. Cached 2 h. Link back to the Remote OK listing (followed) and name Remote OK; don't use the logo.                               |
+| [Greenhouse](https://www.greenhouse.com)           | `GET boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true`                                      | Public, no auth. Free-text location only (no remote flag or employment type). Cached 6 h.                                                                |
+| [Lever](https://www.lever.co)                      | `GET api.lever.co/v0/postings/{board}?mode=json` (EU: `api.eu.lever.co`)                                | Public, no auth. `workplaceType`, country code, salary range. Cached 6 h.                                                                                |
+| [Ashby](https://www.ashbyhq.com)                   | `GET api.ashbyhq.com/posting-api/job-board/{board}?includeCompensation=true`                            | Public, no auth. Unlisted jobs skipped; `publishedAt` is the last publish date. Cached 6 h.                                                              |
+| [Workable](https://www.workable.com)               | `GET apply.workable.com/api/v1/widget/accounts/{board}?details=true`                                    | Public, no auth: the API behind Workable's careers widget. Remote flag, no salary. Rate-limited by Cloudflare if hit too often. Cached 6 h.              |
+| [SmartRecruiters](https://www.smartrecruiters.com) | `GET api.smartrecruiters.com/v1/companies/{board}/postings?locationType=REMOTE`, then `…/postings/{id}` | Public, no auth. The list has no description, so each posting is a second request: only remote postings, newest 100 per company. No salary. Cached 12 h. |
+| [Recruitee](https://recruitee.com)                 | `GET {board}.recruitee.com/api/offers/`                                                                 | Public, no auth. Remote/hybrid flags, the countries a remote job is open to, salary range. Cached 6 h.                                                   |
 
 Job data belongs to these sources and the companies that posted it. This project is for personal
 job searching.
@@ -576,9 +584,12 @@ job searching.
 ## Limitations
 
 - Remotive's free API gives few jobs (about 10). Arbeitnow is mostly German and on-site.
+- SmartRecruiters is read for remote postings only (each one costs a request), so its hybrid and
+  on-site jobs never show up.
 - Many remote jobs say only "Remote" or a city, so they get scope `Unknown`. Include `Unknown` in
   `remote_scope` to see them, and check the listing.
-- Only about 1 in 14 jobs states a salary (Arbeitnow and Greenhouse's list API give none), so the
+- Only about 1 in 14 jobs states a salary (Arbeitnow, Greenhouse's list API, Workable and
+  SmartRecruiters give none), so the
   salary filter keeps jobs without one. Other currencies are compared with fixed, approximate
   exchange rates (`src/domain/salary.ts`), and salaries in currencies it doesn't know count as
   not stated.
@@ -592,7 +603,6 @@ job searching.
 
 - Show the other locations of a role that was posted once per country.
 - Read pay ranges from the description text (many US listings on Greenhouse state them there).
-- More ATS providers (Workable, SmartRecruiters, Recruitee) through `BoardsJobSource`.
 
 ## License
 

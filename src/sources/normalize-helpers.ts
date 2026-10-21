@@ -33,6 +33,19 @@ export function textOrNull(value: string | null | undefined): string | null {
   return trimmed !== undefined && trimmed.length > 0 ? trimmed : null;
 }
 
+/**
+ * Remote jobs on some ATSs say only "Remote" and list the countries people can work from
+ * separately. Returns "Remote: Poland, Germany" so the scope can be read from the text, or
+ * `fallback` when no country is given.
+ */
+export function remoteIn(
+  countries: readonly (string | null | undefined)[],
+  fallback: string | null,
+): string | null {
+  const unique = [...new Set(countries.map((country) => country?.trim()).filter(Boolean))];
+  return unique.length > 0 ? `Remote: ${unique.join(', ')}` : fallback;
+}
+
 /** Trims, drops empties, and removes case-insensitive duplicates while keeping the first spelling. */
 export function normalizeTags(tags: readonly string[]): string[] {
   const seen = new Set<string>();

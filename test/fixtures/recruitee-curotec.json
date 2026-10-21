@@ -1,0 +1,422 @@
+{
+  "offers": [
+    {
+      "id": 2216721,
+      "guid": "991n5",
+      "slug": "senior-full-stack-engineer-laravelreactjs",
+      "title": "Senior Full-Stack Engineer (Laravel/ReactJS)",
+      "status": "published",
+      "careers_url": "https://curotec.recruitee.com/o/senior-full-stack-engineer-laravelreactjs",
+      "careers_apply_url": "https://curotec.recruitee.com/o/senior-full-stack-engineer-laravelreactjs/c/new",
+      "company_name": "Curotec",
+      "department": "Technology",
+      "tags": [
+        "API Development",
+        "Laravel",
+        "React"
+      ],
+      "remote": true,
+      "hybrid": false,
+      "on_site": false,
+      "location": "Remote job",
+      "city": "Philadelphia",
+      "country": "United States",
+      "country_code": "US",
+      "locations": [
+        {
+          "id": 231295,
+          "name": "Philadelphia",
+          "city": "Philadelphia",
+          "state": "Pennsylvania",
+          "country": "United States",
+          "country_code": "US"
+        },
+        {
+          "id": 231300,
+          "name": "Bolivia",
+          "city": "El Beni",
+          "state": "El Beni",
+          "country": "Bolivia, Plurinational State of",
+          "country_code": "BO"
+        },
+        {
+          "id": 222035,
+          "name": "Brazil",
+          "city": "São Paulo ",
+          "state": "São Paulo",
+          "country": "Brazil",
+          "country_code": "BR"
+        },
+        {
+          "id": 231292,
+          "name": "Chile",
+          "city": "Atacama",
+          "state": "Atacama",
+          "country": "Chile",
+          "country_code": "CL"
+        },
+        {
+          "id": 231291,
+          "name": "Colombia",
+          "city": "Bolívar",
+          "state": "Bolívar",
+          "country": "Colombia",
+          "country_code": "CO"
+        },
+        {
+          "id": 231303,
+          "name": "Costa Rica",
+          "city": "Alajuela",
+          "state": "Alajuela",
+          "country": "Costa Rica",
+          "country_code": "CR"
+        },
+        {
+          "id": 231298,
+          "name": "Ecuador",
+          "city": "Azuay",
+          "state": "Azuay",
+          "country": "Ecuador",
+          "country_code": "EC"
+        },
+        {
+          "id": 231304,
+          "name": "El Salvador",
+          "city": "Ahuachapán",
+          "state": "Ahuachapán",
+          "country": "El Salvador",
+          "country_code": "SV"
+        },
+        {
+          "id": 231305,
+          "name": "Guatemala",
+          "city": "Guatemala",
+          "state": "Guatemala",
+          "country": "Guatemala",
+          "country_code": "GT"
+        },
+        {
+          "id": 231301,
+          "name": "Guyana",
+          "city": "Barima-Waini",
+          "state": "Barima-Waini",
+          "country": "Guyana",
+          "country_code": "GY"
+        },
+        {
+          "id": 231306,
+          "name": "Honduras",
+          "city": "Atlántida",
+          "state": "Atlántida",
+          "country": "Honduras",
+          "country_code": "HN"
+        },
+        {
+          "id": 270943,
+          "name": "India",
+          "city": "Mumbai",
+          "state": "Mahārāshtra",
+          "country": "India",
+          "country_code": "IN"
+        },
+        {
+          "id": 231932,
+          "name": "Los Angeles",
+          "city": "Los Angeles",
+          "state": "California",
+          "country": "United States",
+          "country_code": "US"
+        },
+        {
+          "id": 231299,
+          "name": "Mexico",
+          "city": "Baja California",
+          "state": "Baja California",
+          "country": "Mexico",
+          "country_code": "MX"
+        },
+        {
+          "id": 221467,
+          "name": "New York",
+          "city": "New York",
+          "state": "New York",
+          "country": "United States",
+          "country_code": "US"
+        },
+        {
+          "id": 231302,
+          "name": "Panama",
+          "city": "Panamá Oeste",
+          "state": "Panamá Oeste",
+          "country": "Panama",
+          "country_code": "PA"
+        },
+        {
+          "id": 231297,
+          "name": "Paraguay",
+          "city": "Concepción",
+          "state": "Concepción",
+          "country": "Paraguay",
+          "country_code": "PY"
+        },
+        {
+          "id": 231294,
+          "name": "Peru",
+          "city": "Lima",
+          "state": "Lima",
+          "country": "Peru",
+          "country_code": "PE"
+        },
+        {
+          "id": 233723,
+          "name": "Philadelphia",
+          "city": "Philadelphia",
+          "state": "Pennsylvania",
+          "country": "United States",
+          "country_code": "US"
+        },
+        {
+          "id": 222037,
+          "name": "remote",
+          "city": "Belize",
+          "state": "Belize",
+          "country": "Belize",
+          "country_code": "BZ"
+        },
+        {
+          "id": 222033,
+          "name": "Remote",
+          "city": "Araucania",
+          "state": "La Araucanía",
+          "country": "Chile",
+          "country_code": "CL"
+        },
+        {
+          "id": 231296,
+          "name": "Uruguay",
+          "city": "Artigas",
+          "state": "Artigas",
+          "country": "Uruguay",
+          "country_code": "UY"
+        }
+      ],
+      "employment_type_code": "fulltime_fixed_term",
+      "salary": {
+        "max": null,
+        "min": null,
+        "period": null,
+        "currency": "USD"
+      },
+      "description": "<p>About CurotecWe are a globally leading software services company specializing in developing enterprise-level projects for clients worldwide.</p>",
+      "requirements": "<p>ExperienceExperience with Laravel/ReactJS.Experience with custom application development.</p>",
+      "published_at": "2025-07-22 19:25:33 UTC",
+      "created_at": "2025-07-22 19:21:50 UTC",
+      "updated_at": "2026-09-01 18:34:57 UTC",
+      "min_hours": 40,
+      "max_hours": 40
+    },
+    {
+      "id": 2760421,
+      "guid": "l54cu",
+      "slug": "ai-platform-engineer-1",
+      "title": "AI Platform Engineer",
+      "status": "published",
+      "careers_url": "https://curotec.recruitee.com/o/ai-platform-engineer-1",
+      "careers_apply_url": "https://curotec.recruitee.com/o/ai-platform-engineer-1/c/new",
+      "company_name": "Curotec",
+      "department": "Technology",
+      "tags": [
+        "CI/CD",
+        "Claude",
+        "Copilot",
+        "Curotec",
+        "Data connector",
+        "DevOps",
+        "Gemini",
+        "Terraform",
+        "VertexAI",
+        "integration",
+        "platform engineer",
+        "security"
+      ],
+      "remote": true,
+      "hybrid": false,
+      "on_site": false,
+      "location": "Remote job",
+      "city": "São Paulo ",
+      "country": "Brazil",
+      "country_code": "BR",
+      "locations": [
+        {
+          "id": 222035,
+          "name": "Brazil",
+          "city": "São Paulo ",
+          "state": "São Paulo",
+          "country": "Brazil",
+          "country_code": "BR"
+        },
+        {
+          "id": 231300,
+          "name": "Bolivia",
+          "city": "El Beni",
+          "state": "El Beni",
+          "country": "Bolivia, Plurinational State of",
+          "country_code": "BO"
+        },
+        {
+          "id": 231292,
+          "name": "Chile",
+          "city": "Atacama",
+          "state": "Atacama",
+          "country": "Chile",
+          "country_code": "CL"
+        },
+        {
+          "id": 231291,
+          "name": "Colombia",
+          "city": "Bolívar",
+          "state": "Bolívar",
+          "country": "Colombia",
+          "country_code": "CO"
+        },
+        {
+          "id": 231303,
+          "name": "Costa Rica",
+          "city": "Alajuela",
+          "state": "Alajuela",
+          "country": "Costa Rica",
+          "country_code": "CR"
+        },
+        {
+          "id": 231298,
+          "name": "Ecuador",
+          "city": "Azuay",
+          "state": "Azuay",
+          "country": "Ecuador",
+          "country_code": "EC"
+        },
+        {
+          "id": 231304,
+          "name": "El Salvador",
+          "city": "Ahuachapán",
+          "state": "Ahuachapán",
+          "country": "El Salvador",
+          "country_code": "SV"
+        },
+        {
+          "id": 231305,
+          "name": "Guatemala",
+          "city": "Guatemala",
+          "state": "Guatemala",
+          "country": "Guatemala",
+          "country_code": "GT"
+        },
+        {
+          "id": 231306,
+          "name": "Honduras",
+          "city": "Atlántida",
+          "state": "Atlántida",
+          "country": "Honduras",
+          "country_code": "HN"
+        },
+        {
+          "id": 231299,
+          "name": "Mexico",
+          "city": "Baja California",
+          "state": "Baja California",
+          "country": "Mexico",
+          "country_code": "MX"
+        },
+        {
+          "id": 231302,
+          "name": "Panama",
+          "city": "Panamá Oeste",
+          "state": "Panamá Oeste",
+          "country": "Panama",
+          "country_code": "PA"
+        },
+        {
+          "id": 231297,
+          "name": "Paraguay",
+          "city": "Concepción",
+          "state": "Concepción",
+          "country": "Paraguay",
+          "country_code": "PY"
+        },
+        {
+          "id": 231294,
+          "name": "Peru",
+          "city": "Lima",
+          "state": "Lima",
+          "country": "Peru",
+          "country_code": "PE"
+        },
+        {
+          "id": 231296,
+          "name": "Uruguay",
+          "city": "Artigas",
+          "state": "Artigas",
+          "country": "Uruguay",
+          "country_code": "UY"
+        }
+      ],
+      "employment_type_code": "contract",
+      "salary": {
+        "max": null,
+        "min": null,
+        "period": null,
+        "currency": null
+      },
+      "description": "<p>…</p>",
+      "requirements": "<p>6+ years of experience in platform engineering, cloud engineering, DevOps, or enterprise systems administration.</p>",
+      "published_at": "2026-09-25 18:00:43 UTC",
+      "created_at": "2026-09-25 17:54:21 UTC",
+      "updated_at": "2026-09-25 21:09:27 UTC",
+      "min_hours": null,
+      "max_hours": null
+    },
+    {
+      "id": 2266556,
+      "guid": "6gtga",
+      "slug": "revenue-marketing-manager",
+      "title": "Revenue Marketing Manager",
+      "status": "published",
+      "careers_url": "https://curotec.recruitee.com/o/revenue-marketing-manager",
+      "careers_apply_url": "https://curotec.recruitee.com/o/revenue-marketing-manager/c/new",
+      "company_name": "Curotec",
+      "department": "Marketing",
+      "tags": [],
+      "remote": false,
+      "hybrid": false,
+      "on_site": true,
+      "location": "Philadelphia, Pennsylvania, United States",
+      "city": "Philadelphia",
+      "country": "United States",
+      "country_code": "US",
+      "locations": [
+        {
+          "id": 233723,
+          "name": "Philadelphia",
+          "city": "Philadelphia",
+          "state": "Pennsylvania",
+          "country": "United States",
+          "country_code": "US"
+        }
+      ],
+      "employment_type_code": "fulltime_permanent",
+      "salary": {
+        "max": null,
+        "min": null,
+        "period": null,
+        "currency": "USD"
+      },
+      "description": "<p>Note, this is an onsite role, at least 3 days per week(ideally 5), at our Center City Philadelphia office. About Curotec</p>",
+      "requirements": "<p>Key ResponsibilitiesBuild Our Demand Generation Engine:</p>",
+      "published_at": "2026-03-19 13:18:20 UTC",
+      "created_at": "2025-09-09 15:16:29 UTC",
+      "updated_at": "2026-07-23 17:49:41 UTC",
+      "min_hours": 40,
+      "max_hours": 40
+    }
+  ]
+}

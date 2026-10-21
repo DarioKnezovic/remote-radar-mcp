@@ -1,0 +1,243 @@
+{
+  "offers": [
+    {
+      "id": 2791872,
+      "guid": "s19c7",
+      "slug": "senior-backend-engineer-python-full-stack-mindset",
+      "title": "Senior Backend Engineer (Python) - Full-Stack Mindset",
+      "status": "published",
+      "careers_url": "https://thecodest.recruitee.com/o/senior-backend-engineer-python-full-stack-mindset",
+      "careers_apply_url": "https://thecodest.recruitee.com/o/senior-backend-engineer-python-full-stack-mindset/c/new",
+      "company_name": "Codest Ltd. Company No. 12590542, VAT number: GB363431020",
+      "department": "Development",
+      "tags": [
+        "Senior"
+      ],
+      "remote": true,
+      "hybrid": false,
+      "on_site": false,
+      "location": "Remote job",
+      "city": "Warsaw",
+      "country": "Poland",
+      "country_code": "PL",
+      "locations": [
+        {
+          "id": 1035,
+          "name": "Warsaw",
+          "city": "Warsaw",
+          "state": "Mazowieckie",
+          "country": "Poland",
+          "country_code": "PL"
+        }
+      ],
+      "employment_type_code": "fulltime_permanent",
+      "salary": {
+        "max": "26000",
+        "min": "20000",
+        "period": "month",
+        "currency": "PLN"
+      },
+      "description": "<p>🌍 Hello World!</p>",
+      "requirements": "<p>…</p>",
+      "published_at": "2026-10-21 07:58:33 UTC",
+      "created_at": "2026-10-21 07:54:23 UTC",
+      "updated_at": "2026-10-21 10:18:25 UTC",
+      "min_hours": null,
+      "max_hours": null
+    },
+    {
+      "id": 2615807,
+      "guid": "8u7pb",
+      "slug": "senior-platform-engineer",
+      "title": "Senior Platform Engineer",
+      "status": "published",
+      "careers_url": "https://thecodest.recruitee.com/o/senior-platform-engineer",
+      "careers_apply_url": "https://thecodest.recruitee.com/o/senior-platform-engineer/c/new",
+      "company_name": "Codest Ltd. Company No. 12590542, VAT number: GB363431020",
+      "department": "Development",
+      "tags": [
+        "Senior",
+        "cloud",
+        "devops",
+        "platform"
+      ],
+      "remote": true,
+      "hybrid": false,
+      "on_site": false,
+      "location": "Remote job",
+      "city": "Warsaw",
+      "country": "Poland",
+      "country_code": "PL",
+      "locations": [
+        {
+          "id": 1035,
+          "name": "Warsaw",
+          "city": "Warsaw",
+          "state": "Mazowieckie",
+          "country": "Poland",
+          "country_code": "PL"
+        }
+      ],
+      "employment_type_code": "contract",
+      "salary": {
+        "max": "33000",
+        "min": "30000",
+        "period": "month",
+        "currency": "PLN"
+      },
+      "description": "<p>🌍 Hello World!We are The Codest</p>",
+      "requirements": "<p>📈 Responsibilities:Operate the production system: deploys, rollbacks, capacity, incident response.</p>",
+      "published_at": "2026-05-26 10:15:55 UTC",
+      "created_at": "2026-05-26 10:02:19 UTC",
+      "updated_at": "2026-10-19 09:45:54 UTC",
+      "min_hours": 40,
+      "max_hours": 40
+    },
+    {
+      "id": 2606555,
+      "guid": "mgfer",
+      "slug": "senior-react-developer-4",
+      "title": "Senior React Developer",
+      "status": "published",
+      "careers_url": "https://thecodest.recruitee.com/o/senior-react-developer-4",
+      "careers_apply_url": "https://thecodest.recruitee.com/o/senior-react-developer-4/c/new",
+      "company_name": "Codest Ltd. Company No. 12590542, VAT number: GB363431020",
+      "department": "Development",
+      "tags": [
+        "Banking",
+        "Finance",
+        "Frontend",
+        "React"
+      ],
+      "remote": false,
+      "hybrid": true,
+      "on_site": false,
+      "location": "Kraków, Małopolskie, Poland",
+      "city": "Kraków",
+      "country": "Poland",
+      "country_code": "PL",
+      "locations": [
+        {
+          "id": 1033,
+          "name": "Kraków",
+          "city": "Kraków",
+          "state": "Małopolskie",
+          "country": "Poland",
+          "country_code": "PL"
+        }
+      ],
+      "employment_type_code": "fulltime_permanent",
+      "salary": {
+        "max": "22000",
+        "min": "18000",
+        "period": "month",
+        "currency": "PLN"
+      },
+      "description": "<p>🌍 Hello World!We are The Codest</p>",
+      "requirements": "<p>📈 Your Responsibilities:Build responsive user interfaces with React.js</p>",
+      "published_at": "2026-05-18 11:20:50 UTC",
+      "created_at": "2026-05-18 11:17:13 UTC",
+      "updated_at": "2026-08-20 14:12:53 UTC",
+      "min_hours": 40,
+      "max_hours": 40
+    },
+    {
+      "id": 2791035,
+      "guid": "bn1l9",
+      "slug": "bdm-itservices",
+      "title": "Business Development Manager — IT Services & New Business",
+      "status": "published",
+      "careers_url": "https://thecodest.recruitee.com/o/bdm-itservices",
+      "careers_apply_url": "https://thecodest.recruitee.com/o/bdm-itservices/c/new",
+      "company_name": "Codest Ltd. Company No. 12590542, VAT number: GB363431020",
+      "department": "Sales & Marketing",
+      "tags": [],
+      "remote": true,
+      "hybrid": false,
+      "on_site": false,
+      "location": "Remote job",
+      "city": "Warszawa",
+      "country": "Poland",
+      "country_code": "PL",
+      "locations": [
+        {
+          "id": 1041,
+          "name": "Warszawa",
+          "city": "Warszawa",
+          "state": "Mazowieckie",
+          "country": "Poland",
+          "country_code": "PL"
+        }
+      ],
+      "employment_type_code": "fulltime_permanent",
+      "salary": {
+        "max": null,
+        "min": null,
+        "period": null,
+        "currency": "PLN"
+      },
+      "description": "<p>About The Codest</p>",
+      "requirements": "<p>Your responsibilities</p>",
+      "published_at": "2026-10-20 13:49:35 UTC",
+      "created_at": "2026-10-20 13:47:25 UTC",
+      "updated_at": "2026-10-20 13:49:35 UTC",
+      "min_hours": null,
+      "max_hours": null
+    },
+    {
+      "id": 2719910,
+      "guid": "g95on",
+      "slug": "senior-data-engineer-5",
+      "title": "Senior Data Engineer",
+      "status": "published",
+      "careers_url": "https://thecodest.recruitee.com/o/senior-data-engineer-5",
+      "careers_apply_url": "https://thecodest.recruitee.com/o/senior-data-engineer-5/c/new",
+      "company_name": "Codest Ltd. Company No. 12590542, VAT number: GB363431020",
+      "department": "Development",
+      "tags": [
+        "Airflow",
+        "CI/CD",
+        "GCP",
+        "Java",
+        "Kubernetes",
+        "Senior",
+        "Terraform",
+        "kotlin",
+        "python",
+        "scala",
+        "sql"
+      ],
+      "remote": true,
+      "hybrid": false,
+      "on_site": false,
+      "location": "Remote job",
+      "city": "Warszawa",
+      "country": "Poland",
+      "country_code": "PL",
+      "locations": [
+        {
+          "id": 1041,
+          "name": "Warszawa",
+          "city": "Warszawa",
+          "state": "Mazowieckie",
+          "country": "Poland",
+          "country_code": "PL"
+        }
+      ],
+      "employment_type_code": "fulltime_permanent",
+      "salary": {
+        "max": null,
+        "min": null,
+        "period": "month",
+        "currency": "PLN"
+      },
+      "description": "<p>🌍 Hello World!</p>",
+      "requirements": "<p>At least 5 years of commercial experience in data engineering.</p>",
+      "published_at": "2026-08-24 10:00:45 UTC",
+      "created_at": "2026-08-24 09:55:34 UTC",
+      "updated_at": "2026-10-19 09:43:54 UTC",
+      "min_hours": null,
+      "max_hours": null
+    }
+  ]
+}
